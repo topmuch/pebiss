@@ -21,30 +21,18 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Menu,
-  Search,
-  LogIn,
-  UserPlus,
   LayoutDashboard,
   LogOut,
   Shield,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
 export function Header() {
   const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 60);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isEnterprise = session?.user?.role === 'ENTERPRISE';
@@ -58,13 +46,7 @@ export function Header() {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <header
-      className={`z-50 w-full top-0 transition-all duration-300 ${
-        scrolled
-          ? 'sticky bg-white/95 backdrop-blur border-b border-border shadow-sm'
-          : 'absolute bg-transparent'
-      }`}
-    >
+    <header className="z-50 w-full sticky top-0 bg-white border-b border-border shadow-sm">
       <div className="container mx-auto flex h-16 md:h-20 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
@@ -73,9 +55,7 @@ export function Header() {
             alt="Pebiss"
             width={140}
             height={44}
-            className={`h-10 md:h-11 w-auto object-contain transition-all duration-300 ${
-              !scrolled ? 'drop-shadow-lg brightness-0 invert' : ''
-            }`}
+            className="h-10 md:h-11 w-auto object-contain"
           />
         </Link>
 
@@ -86,13 +66,9 @@ export function Header() {
               key={link.href}
               href={link.href}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
-                scrolled
-                  ? isActive(link.href)
-                    ? 'text-foreground font-semibold'
-                    : 'text-muted-foreground hover:text-foreground'
-                  : isActive(link.href)
-                    ? 'text-white font-semibold'
-                    : 'text-white/80 hover:text-white'
+                isActive(link.href)
+                  ? 'text-foreground font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {link.label}
@@ -144,11 +120,7 @@ export function Header() {
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <Link href="/login">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`text-sm ${!scrolled ? 'text-white hover:text-white/90 hover:bg-white/10' : ''}`}
-                >
+                <Button variant="ghost" size="sm" className="text-sm">
                   Connexion
                 </Button>
               </Link>
@@ -163,11 +135,7 @@ export function Header() {
           {/* Mobile Menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`md:hidden ${!scrolled ? 'text-white hover:text-white/90 hover:bg-white/10' : ''}`}
-              >
+              <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
