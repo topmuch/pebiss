@@ -20,6 +20,9 @@ import {
   Megaphone,
   TrendingUp,
   Eye,
+  QrCode,
+  ShoppingCart,
+  Landmark,
 } from 'lucide-react';
 import {
   BarChart,
@@ -63,29 +66,25 @@ export default function AdminDashboardPage() {
       label: t('admin_dash_total_businesses'),
       value: stats?.totals?.businesses || 0,
       icon: Building2,
-      color: 'bg-primary text-primary-foreground',
-      bgColor: 'bg-primary/10',
+      gradient: 'kpi-gradient-green',
     },
     {
       label: t('admin_dash_total_users'),
       value: stats?.totals?.users || 0,
       icon: Users,
-      color: 'bg-pebiss-orange text-white',
-      bgColor: 'bg-pebiss-orange/10',
+      gradient: 'kpi-gradient-orange',
     },
     {
       label: t('admin_dash_total_reviews'),
       value: stats?.totals?.reviews || 0,
       icon: Star,
-      color: 'bg-yellow-500 text-white',
-      bgColor: 'bg-yellow-500/10',
+      gradient: 'kpi-gradient-purple',
     },
     {
       label: t('admin_dash_total_ads'),
       value: stats?.totals?.ads || 0,
       icon: Megaphone,
-      color: 'bg-green-600 text-white',
-      bgColor: 'bg-green-600/10',
+      gradient: 'kpi-gradient-cyan',
     },
   ];
 
@@ -122,20 +121,20 @@ export default function AdminDashboardPage() {
         <p className="text-muted-foreground">{t('admin_dash_subtitle')}</p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Multicolor Gradient */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
-            <Card key={stat.label}>
+            <Card key={stat.label} className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                <div className={`rounded-xl ${stat.gradient} p-6 flex items-center justify-between`}>
+                  <div className="text-white">
+                    <p className="text-sm font-medium text-white/80">{stat.label}</p>
                     <p className="text-3xl font-bold mt-1">{stat.value}</p>
                   </div>
-                  <div className={`p-3 rounded-xl ${stat.bgColor} ${stat.color}`}>
-                    <Icon className="h-5 w-5" />
+                  <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm">
+                    <Icon className="h-6 w-6 text-white" />
                   </div>
                 </div>
               </CardContent>
@@ -148,8 +147,8 @@ export default function AdminDashboardPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <TrendingUp className="h-4 w-4 text-primary" />
+            <div className="p-2 rounded-lg bg-green-500/10">
+              <TrendingUp className="h-4 w-4 text-green-600" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground">{t('admin_dash_avg_rating')}</p>
@@ -159,8 +158,8 @@ export default function AdminDashboardPage() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-pebiss-orange/10">
-              <Building2 className="h-4 w-4 text-pebiss-orange" />
+            <div className="p-2 rounded-lg bg-orange-500/10">
+              <Building2 className="h-4 w-4 text-orange-600" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground">{t('admin_dash_total_categories')}</p>
@@ -170,8 +169,8 @@ export default function AdminDashboardPage() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-yellow-500/10">
-              <Users className="h-4 w-4 text-yellow-600" />
+            <div className="p-2 rounded-lg bg-purple-500/10">
+              <Users className="h-4 w-4 text-purple-600" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground">{t('admin_dash_active_businesses')}</p>
@@ -202,7 +201,7 @@ export default function AdminDashboardPage() {
                       borderRadius: '8px',
                     }}
                   />
-                  <Bar dataKey="count" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="count" fill="#004A99" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -232,7 +231,7 @@ export default function AdminDashboardPage() {
                       borderRadius: '8px',
                     }}
                   />
-                  <Line type="monotone" dataKey="inscriptions" stroke="var(--color-pebiss-orange)" strokeWidth={2} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="inscriptions" stroke="#F97316" strokeWidth={2} dot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
