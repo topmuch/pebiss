@@ -1,0 +1,321 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Building2,
+  Users,
+  Star,
+  Megaphone,
+  TrendingUp,
+  Eye,
+} from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from 'recharts';
+
+export default function AdminDashboardPage() {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['admin-stats'],
+    queryFn: async () => {
+      const res = await fetch('/api/stats');
+      if (!res.ok) throw new Error('Erreur');
+      return res.json();
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-32 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const statCards = [
+    {
+      label: 'Total entreprises',
+      value: stats?.totals?.businesses || 0,
+      icon: Building2,
+      color: 'bg-primary text-primary-foreground',
+      bgColor: 'bg-primary/10',
+    },
+    {
+      label: 'Total utilisateurs',
+      value: stats?.totals?.users || 0,
+      icon: Users,
+      color: 'bg-pebiss-orange text-white',
+      bgColor: 'bg-pebiss-orange/10',
+    },
+    {
+      label: 'Total avis',
+      value: stats?.totals?.reviews || 0,
+      icon: Star,
+      color: 'bg-yellow-500 text-white',
+      bgColor: 'bg-yellow-500/10',
+    },
+    {
+      label: 'Total annonces',
+      value: stats?.totals?.ads || 0,
+      icon: Megaphone,
+      color: 'bg-green-600 text-white',
+      bgColor: 'bg-green-600/10',
+    },
+  ];
+
+  const categoryData = (stats?.topCategories || []).slice(0, 8).map((c: any) => ({
+    name: c.name?.length > 15 ? c.name.slice(0, 15) + '...' : c.name,
+    fullName: c.name,
+    count: c._count?.businesses || 0,
+  }));
+
+  // Generate monthly data from recent businesses
+  const recentBusinesses = stats?.recentBusinesses || [];
+  const monthlyMap: Record<string, number> = {};
+  recentBusinesses.forEach((b: any) => {
+    const month = new Date(b.createdAt).toLocaleDateString('fr-FR', { year: '2-digit', month: 'short' });
+    monthlyMap[month] = (monthlyMap[month] || 0) + 1;
+  });
+  // Generate some baseline data
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = d.toLocaleDateString('fr-FR', { year: '2-digit', month: 'short' });
+    months.push({ month: key, inscriptions: monthlyMap[key] || 0 });
+  }
+
+  const topBusinesses = stats?.topBusinesses || [];
+  const recentSignups = stats?.recentBusinesses || [];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Tableau de bord</h1>
+        <p className="text-muted-foreground">Vue d&apos;ensemble de la plateforme Pebiss</p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {statCards.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <Card key={stat.label}>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                    <p className="text-3xl font-bold mt-1">{stat.value}</p>
+                  </div>
+                  <div className={`p-3 rounded-xl ${stat.bgColor} ${stat.color}`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <TrendingUp className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Note moyenne</p>
+              <p className="text-lg font-bold">{(stats?.totals?.avgRating || 0).toFixed(1)} / 5</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-pebiss-orange/10">
+              <Building2 className="h-4 w-4 text-pebiss-orange" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Total catégories</p>
+              <p className="text-lg font-bold">{stats?.totals?.categories || 0}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-yellow-500/10">
+              <Users className="h-4 w-4 text-yellow-600" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Entreprises actives</p>
+              <p className="text-lg font-bold">{stats?.totals?.businesses || 0}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Entreprises par catégorie</CardTitle>
+            <CardDescription>Répartition des entreprises par secteur</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {categoryData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={categoryData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-muted)" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
+                  <YAxis tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'var(--color-card)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Bar dataKey="count" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                Aucune donnée disponible
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Inscriptions mensuelles</CardTitle>
+            <CardDescription>Nouveaux utilisateurs au cours des 6 derniers mois</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {months.some((m) => m.inscriptions > 0) ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={months}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-muted)" />
+                  <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
+                  <YAxis tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'var(--color-card)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Line type="monotone" dataKey="inscriptions" stroke="var(--color-pebiss-orange)" strokeWidth={2} dot={{ r: 4 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                Aucune donnée disponible
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tables */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Top Businesses */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Eye className="h-5 w-5" />
+              Entreprises les plus vues
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {topBusinesses.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Entreprise</TableHead>
+                    <TableHead className="text-right">Vues</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topBusinesses.slice(0, 5).map((b: any, i: number) => (
+                    <TableRow key={b.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground w-4">{i + 1}</span>
+                          <span className="font-medium text-sm truncate max-w-[150px]">{b.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Badge variant="secondary">{b.views}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">Aucune donnée</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Signups */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Inscriptions récentes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {recentSignups.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Entreprise</TableHead>
+                    <TableHead>Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentSignups.slice(0, 5).map((b: any) => (
+                    <TableRow key={b.id}>
+                      <TableCell className="font-medium text-sm truncate max-w-[180px]">{b.name}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(b.createdAt).toLocaleDateString('fr-FR')}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">Aucune donnée</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
