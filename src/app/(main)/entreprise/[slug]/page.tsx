@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { RatingStars } from '@/components/shared/rating-stars';
 import { BusinessCard } from '@/components/shared/business-card';
-import { AdBanner1, AdBanner2, AdBanner3 } from '@/components/shared/ad-banner';
+import { AdBanner1, AdBanner2, AdBanner3, AdBanner4, AdBanner5 } from '@/components/shared/ad-banner';
 import { useToast } from '@/hooks/use-toast';
 import {
   Building2,
@@ -496,6 +496,9 @@ export default function BusinessDetailPage() {
             {/* Ad Banner 2 - After Products/Photos */}
             <AdBanner2 />
 
+            {/* Ad Banner 3 - After Products, before Hours */}
+            <AdBanner3 />
+
             {/* Opening Hours */}
             {business.hours.length > 0 && (
               <div className="bg-white border border-[#F0F0F0] rounded">
@@ -556,8 +559,11 @@ export default function BusinessDetailPage() {
               </div>
             )}
 
-            {/* Ad Banner 3 - After Location */}
-            <AdBanner3 />
+            {/* Ad Banner 4 - After Location */}
+            <AdBanner4 />
+
+            {/* Ad Banner 5 - After Location 2 */}
+            <AdBanner5 />
 
             {/* Reviews Section */}
             <div className="bg-white border border-[#F0F0F0] rounded">
