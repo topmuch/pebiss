@@ -98,15 +98,15 @@ export function Header() {
                   </div>
                 </div>
                 <DropdownMenuSeparator />
-                {(isEnterprise || isAdmin) && (
+                {isEnterprise && (
                   <DropdownMenuItem onClick={() => router.push('/dashboard')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Tableau de bord
+                    Mon tableau de bord
                   </DropdownMenuItem>
                 )}
                 {isAdmin && (
                   <DropdownMenuItem onClick={() => router.push('/admin')}>
-                    <Shield className="mr-2 h-4 w-4" />
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
                     Administration
                   </DropdownMenuItem>
                 )}
@@ -168,14 +168,16 @@ export function Header() {
                 ))}
                 {isAuth ? (
                   <>
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setMobileOpen(false)}
-                      className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
-                    >
-                      <LayoutDashboard className="mr-2 h-4 w-4 inline" />
-                      Tableau de bord
-                    </Link>
+                    {isEnterprise && (
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setMobileOpen(false)}
+                        className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+                      >
+                        <LayoutDashboard className="mr-2 h-4 w-4 inline" />
+                        Mon tableau de bord
+                      </Link>
+                    )}
                     {isAdmin && (
                       <Link
                         href="/admin"

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, getCsrfToken, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { LogIn, Mail, Lock, Building2 } from 'lucide-react';
+import { LogIn, Mail, Lock, Building2, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,11 +36,19 @@ export default function LoginPage() {
           variant: 'destructive',
         });
       } else {
+        // Fetch session to get user role for redirect
+        const session = await getSession();
         toast({
           title: 'Connexion réussie',
           description: 'Bienvenue !',
         });
-        router.push('/');
+        if (session?.user?.role === 'ADMIN') {
+          router.push('/admin');
+        } else if (session?.user?.role === 'ENTERPRISE') {
+          router.push('/dashboard');
+        } else {
+          router.push('/');
+        }
       }
     } catch {
       toast({

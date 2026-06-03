@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -133,6 +133,13 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           <ArrowLeft className="h-4 w-4 shrink-0" />
           {!collapsed && <span>Retour au site</span>}
         </Link>
+        <button
+          onClick={() => signOut({ callbackUrl: '/' })}
+          className={cn('flex items-center gap-2 text-sm text-destructive hover:text-destructive/80 transition-colors mt-2', collapsed ? 'justify-center' : '')}
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          {!collapsed && <span>Déconnexion</span>}
+        </button>
       </div>
     </div>
   );
