@@ -1,46 +1,50 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function BusinessCardSkeleton({ variant = 'grid' }: { variant?: 'grid' | 'list' }) {
   if (variant === 'list') {
     return (
-      <Card className="border-border/60">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-4">
-            <Skeleton className="h-16 w-16 rounded-lg flex-shrink-0" />
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-5 w-48" />
-                <Skeleton className="h-5 w-20 rounded-full" />
-              </div>
+      <Card className="border-border/60 overflow-hidden">
+        <div className="flex">
+          <Skeleton className="w-40 sm:w-52 flex-shrink-0" />
+          <div className="flex-1 p-4 sm:p-5 space-y-2">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-5 w-48" />
+              <Skeleton className="h-5 w-24 rounded-full" />
+            </div>
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <div className="flex items-center justify-between pt-2">
               <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-20" />
             </div>
           </div>
-        </CardContent>
+        </div>
       </Card>
     );
   }
 
   return (
-    <Card className="border-border/60">
-      <CardContent className="p-6">
-        <div className="flex flex-col items-center text-center gap-3">
-          <Skeleton className="h-20 w-20 rounded-xl" />
-          <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-5 w-20 rounded-full" />
-          <Skeleton className="h-4 w-24" />
+    <Card className="border-border/60 overflow-hidden flex flex-col">
+      {/* Image skeleton */}
+      <Skeleton className="aspect-[16/10] w-full" />
+      {/* Content skeleton */}
+      <div className="p-4 space-y-3">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+        </div>
+        <div className="flex items-center justify-between pt-3 border-t border-border/40">
           <div className="flex gap-0.5">
             {[1, 2, 3, 4, 5].map((i) => (
               <Skeleton key={i} className="h-4 w-4 rounded-full" />
             ))}
           </div>
-          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-8 w-24 rounded-md" />
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 }

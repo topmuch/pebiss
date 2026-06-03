@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BusinessCard } from '@/components/shared/business-card';
+import { BusinessCardSkeleton } from '@/components/shared/business-card-skeleton';
 import { RatingStars } from '@/components/shared/rating-stars';
 import {
   Search,
@@ -392,17 +393,7 @@ export default function HomePage() {
           {!businessesData ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }, (_, i) => (
-                <Card key={i} className="border-border/40">
-                  <CardContent className="p-6">
-                    <div className="flex flex-col items-center text-center gap-3">
-                      <Skeleton className="h-20 w-20 rounded-xl" />
-                      <Skeleton className="h-5 w-32" />
-                      <Skeleton className="h-5 w-20 rounded-full" />
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-8 w-full" />
-                    </div>
-                  </CardContent>
-                </Card>
+                <BusinessCardSkeleton key={i} />
               ))}
             </div>
           ) : businesses.length === 0 ? (
