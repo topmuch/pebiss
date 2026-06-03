@@ -55,6 +55,23 @@ const categoryIcons: Record<string, React.ElementType> = {
 
 const defaultIcon = Building2;
 
+const categoryGradients = [
+  'bg-gradient-to-br from-emerald-500 to-emerald-700',
+  'bg-gradient-to-br from-orange-500 to-orange-700',
+  'bg-gradient-to-br from-violet-500 to-violet-700',
+  'bg-gradient-to-br from-cyan-500 to-cyan-700',
+  'bg-gradient-to-br from-rose-500 to-rose-700',
+  'bg-gradient-to-br from-amber-500 to-amber-700',
+  'bg-gradient-to-br from-indigo-500 to-indigo-700',
+  'bg-gradient-to-br from-teal-500 to-teal-700',
+  'bg-gradient-to-br from-pink-500 to-pink-700',
+  'bg-gradient-to-br from-sky-500 to-sky-700',
+  'bg-gradient-to-br from-fuchsia-500 to-fuchsia-700',
+  'bg-gradient-to-br from-lime-600 to-lime-800',
+  'bg-gradient-to-br from-red-500 to-red-700',
+  'bg-gradient-to-br from-blue-500 to-blue-700',
+];
+
 function getCategoryIcon(slug: string | undefined): React.ElementType {
   if (!slug) return defaultIcon;
   return categoryIcons[slug] || defaultIcon;
@@ -283,26 +300,28 @@ export default function HomePage() {
           {!categories ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 md:gap-4">
               {Array.from({ length: 14 }, (_, i) => (
-                <div key={i} className="bg-white rounded-xl shadow-sm p-4 flex flex-col items-center gap-3">
-                  <Skeleton className="h-10 w-10 rounded-lg" />
-                  <Skeleton className="h-4 w-20" />
+                <div key={i} className="aspect-square rounded-2xl">
+                  <Skeleton className="h-full w-full rounded-2xl" />
                 </div>
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 md:gap-4">
-              {categories.slice(0, 14).map((cat) => {
+              {categories.slice(0, 14).map((cat, index) => {
                 const Icon = getCategoryIcon(cat.slug);
+                const gradient = categoryGradients[index % categoryGradients.length];
                 return (
                   <Link key={cat.id} href={`/annuaire?category=${cat.slug}`}>
-                    <div className="group bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 hover:border-primary/20 transition-all duration-300 cursor-pointer h-full p-4 md:p-5 flex flex-col items-center text-center gap-2.5">
-                      <div className="h-11 w-11 rounded-lg bg-gray-50 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
-                        <Icon className="h-5 w-5 text-gray-700 group-hover:text-primary transition-colors" />
+                    <div
+                      className={`group ${gradient} rounded-2xl aspect-square flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:shadow-lg`}
+                    >
+                      <div className="h-12 w-12 rounded-xl bg-white/20 group-hover:bg-white/30 flex items-center justify-center transition-colors">
+                        <Icon className="h-6 w-6 text-white" />
                       </div>
-                      <h3 className="font-medium text-sm text-gray-800 group-hover:text-primary transition-colors leading-tight">
+                      <h3 className="font-semibold text-sm text-white leading-tight text-center px-2">
                         {cat.name}
                       </h3>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-white/70">
                         {cat._count.businesses} entreprise{cat._count.businesses > 1 ? 's' : ''}
                       </span>
                     </div>
