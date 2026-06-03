@@ -57,11 +57,11 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <Image
-            src="/pebiss-logo.png"
+            src="/pebiss-logo.jpeg"
             alt="Pebiss"
             width={40}
             height={40}
-            className="rounded-lg object-contain"
+            className="rounded-full object-cover"
           />
           <span className="text-xl font-bold text-primary group-hover:text-pebiss-blue-light transition-colors">
             Pebiss

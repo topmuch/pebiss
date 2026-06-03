@@ -41,14 +41,24 @@ const categoryIcons: Record<string, React.ElementType> = {
 
 const defaultIcon = Building2;
 
-const categoryGradients = [
-  'bg-gradient-to-br from-pink-500 to-pink-700',       // Mode & Textile
-  'bg-gradient-to-br from-orange-500 to-orange-700',     // Restaurants & Alimentation
-  'bg-gradient-to-br from-cyan-500 to-cyan-700',         // Tourisme & Hôtellerie
-  'bg-gradient-to-br from-emerald-500 to-emerald-700',   // Services Financiers
-  'bg-gradient-to-br from-lime-600 to-lime-800',         // Agriculture & Agroalimentaire
-  'bg-gradient-to-br from-violet-500 to-violet-700',      // Commerce & Distribution
-  'bg-gradient-to-br from-amber-600 to-amber-800',        // BTP & Construction
+const categoryImages: Record<string, string> = {
+  'mode-textile': '/categories/mode-textile.png',
+  'restaurants-alimentation': '/categories/restaurants-alimentation.png',
+  'tourisme-hotellerie': '/categories/tourisme-hotellerie.png',
+  'services-financiers': '/categories/services-financiers.png',
+  'agriculture-agroalimentaire': '/categories/agriculture-agroalimentaire.png',
+  'commerce-distribution': '/categories/commerce-distribution.png',
+  'btp-construction': '/categories/btp-construction.png',
+};
+
+const allowedCategories = [
+  'mode-textile',
+  'restaurants-alimentation',
+  'tourisme-hotellerie',
+  'services-financiers',
+  'agriculture-agroalimentaire',
+  'commerce-distribution',
+  'btp-construction',
 ];
 
 function getCategoryIcon(slug: string | undefined): React.ElementType {
@@ -286,27 +296,38 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
-              {categories.map((cat, index) => {
-                const Icon = getCategoryIcon(cat.slug);
-                const gradient = categoryGradients[index % categoryGradients.length];
-                return (
-                  <Link key={cat.id} href={`/annuaire?category=${cat.slug}`}>
-                    <div
-                      className={`group ${gradient} rounded-2xl aspect-square flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:shadow-lg`}
-                    >
-                      <div className="h-12 w-12 rounded-xl bg-white/20 group-hover:bg-white/30 flex items-center justify-center transition-colors">
-                        <Icon className="h-6 w-6 text-white" />
+              {categories
+                .filter((cat) => allowedCategories.includes(cat.slug))
+                .map((cat) => {
+                  const Icon = getCategoryIcon(cat.slug);
+                  const imgUrl = categoryImages[cat.slug];
+                  return (
+                    <Link key={cat.id} href={`/annuaire?category=${cat.slug}`}>
+                      <div className="group relative rounded-2xl aspect-square overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:shadow-lg">
+                        <Image
+                          src={imgUrl || '/hero.png'}
+                          alt={cat.name}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                        {/* Overlay gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                        {/* Content at bottom */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 px-2">
+                          <div className="h-10 w-10 rounded-full bg-white/20 backdrop-blur-sm group-hover:bg-white/30 flex items-center justify-center transition-colors mb-1.5">
+                            <Icon className="h-5 w-5 text-white" />
+                          </div>
+                          <h3 className="font-semibold text-xs sm:text-sm text-white leading-tight text-center">
+                            {cat.name}
+                          </h3>
+                          <span className="text-[10px] sm:text-xs text-white/70 mt-0.5">
+                            {cat._count.businesses} entreprise{cat._count.businesses > 1 ? 's' : ''}
+                          </span>
+                        </div>
                       </div>
-                      <h3 className="font-semibold text-sm text-white leading-tight text-center px-2">
-                        {cat.name}
-                      </h3>
-                      <span className="text-xs text-white/70">
-                        {cat._count.businesses} entreprise{cat._count.businesses > 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
+                    </Link>
+                  );
+                })}
             </div>
           )}
 

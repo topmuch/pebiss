@@ -14,11 +14,11 @@ export function Footer() {
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/pebiss-logo.png"
+                src="/pebiss-logo.jpeg"
                 alt="Pebiss"
                 width={40}
                 height={40}
-                className="rounded-lg brightness-0 invert object-contain"
+                className="rounded-full brightness-0 invert object-cover"
               />
               <span className="text-xl font-bold">Pebiss</span>
             </Link>
@@ -50,17 +50,17 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold text-white">Catégories populaires</h3>
             <nav className="flex flex-col gap-2">
-              <Link href="/annuaire?cat=restaurants-alimentation" className="text-sm text-primary-foreground/80 hover:text-white transition-colors">
+              <Link href="/annuaire?category=mode-textile" className="text-sm text-primary-foreground/80 hover:text-white transition-colors">
+                Mode & Textile
+              </Link>
+              <Link href="/annuaire?category=restaurants-alimentation" className="text-sm text-primary-foreground/80 hover:text-white transition-colors">
                 Restaurants & Alimentation
               </Link>
-              <Link href="/annuaire?cat=technologie-informatique" className="text-sm text-primary-foreground/80 hover:text-white transition-colors">
-                Technologie & Informatique
+              <Link href="/annuaire?category=tourisme-hotellerie" className="text-sm text-primary-foreground/80 hover:text-white transition-colors">
+                Tourisme & Hôtellerie
               </Link>
-              <Link href="/annuaire?cat=immobilier" className="text-sm text-primary-foreground/80 hover:text-white transition-colors">
-                Immobilier
-              </Link>
-              <Link href="/annuaire?cat=transport-logistique" className="text-sm text-primary-foreground/80 hover:text-white transition-colors">
-                Transport & Logistique
+              <Link href="/annuaire?category=services-financiers" className="text-sm text-primary-foreground/80 hover:text-white transition-colors">
+                Services Financiers
               </Link>
             </nav>
           </div>

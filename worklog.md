@@ -105,3 +105,34 @@ Stage Summary:
 - Login flow working for both admin and enterprise users
 - Dashboard and admin panels fully functional
 - Lint passes with zero errors
+
+---
+Task ID: 7
+Agent: Verification Subagent
+Task: Verify Pebiss homepage visual elements (logo, hero, categories, footer)
+
+Work Log:
+- Opened http://localhost:3000/ with agent-browser, waited for network idle
+- Inspected all 16 images on the page - zero broken images
+- Verified header logo: uses /pebiss-logo.jpeg, rendered 40x40 with rounded-full + object-cover ✅
+- Verified hero right-side image: uses /hero.png (1344x768 real photo), renders at 640x366 inside rounded-2xl container with shadow ✅
+- Verified 7 category cards in section below hero:
+  1. Agriculture & Agroalimentaire ✅
+  2. BTP & Construction ✅
+  3. Commerce & Distribution ✅
+  4. Mode & Textile ✅
+  5. Restaurants & Alimentation ✅
+  6. Services Financiers ✅
+  7. Tourisme & Hôtellerie ✅
+- Each card: aspect-square, real JPEG image (1024x1024), dark overlay gradient (from-black/70 via-black/20 to-transparent), white text with icon at bottom ✅
+- All 7 category image files confirmed as real JPEG photo data (not gradients) via `file` command
+- Verified footer logo: uses /pebiss-logo.jpeg with rounded-full brightness-0 invert for white appearance on dark bg ✅
+- Screenshots saved: verify-fullpage.png, verify-viewport.png, verify-header-logo.png
+
+Stage Summary:
+- All 4 verification checks PASSED
+- Zero broken images across the entire page
+- Logo is correctly round (rounded-full) in both header and footer
+- Hero section displays a real photograph (/hero.png, 1344x768)
+- All 7 category cards have real photographs with dark overlay gradient and white text
+- Footer uses inverted version of same logo for visibility on dark background
