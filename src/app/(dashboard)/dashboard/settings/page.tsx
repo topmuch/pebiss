@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,7 @@ import { Settings, Key, Mail, Phone, User, Save, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
   const { data: session, update: updateSession } = useSession();
 
   // Password form
@@ -43,11 +45,11 @@ export default function SettingsPage() {
       return res.json();
     },
     onSuccess: () => {
-      toast.success('Mot de passe mis à jour avec succès');
+      toast.success(t('dash_settings_password_updated'));
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
     },
     onError: (err) => {
-      toast.error(err.message || 'Erreur lors de la mise à jour du mot de passe');
+      toast.error(err.message || t('dash_settings_password_error'));
     },
   });
 
@@ -65,10 +67,10 @@ export default function SettingsPage() {
       return res.json();
     },
     onSuccess: () => {
-      toast.success('Profil mis à jour avec succès');
+      toast.success(t('dash_settings_profile_updated'));
     },
     onError: (err) => {
-      toast.error(err.message || 'Erreur lors de la mise à jour');
+      toast.error(err.message || t('dash_settings_update_error'));
     },
   });
 
@@ -85,18 +87,18 @@ export default function SettingsPage() {
       profileMutation.mutate({ avatar: url });
     },
     onError: () => {
-      toast.error('Erreur lors du téléchargement');
+      toast.error(t('biz_upload_error'));
     },
   });
 
   const handleChangePassword = (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast.error('Les mots de passe ne correspondent pas');
+      toast.error(t('dash_settings_password_mismatch'));
       return;
     }
     if (passwordForm.newPassword.length < 6) {
-      toast.error('Le mot de passe doit contenir au moins 6 caractères');
+      toast.error(t('dash_settings_password_short'));
       return;
     }
     passwordMutation.mutate({
@@ -113,8 +115,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Paramètres</h1>
-        <p className="text-muted-foreground">Gérez les paramètres de votre compte</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('dash_settings_title')}</h1>
+        <p className="text-muted-foreground">{t('dash_settings_subtitle')}</p>
       </div>
 
       {/* Avatar */}
@@ -122,7 +124,7 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Photo de profil
+            {t('dash_settings_avatar')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -141,7 +143,7 @@ export default function SettingsPage() {
                 disabled={avatarMutation.isPending}
               >
                 <Upload className="mr-2 h-4 w-4" />
-                {avatarMutation.isPending ? 'Téléchargement...' : 'Changer la photo'}
+                {avatarMutation.isPending ? t('biz_upload_hint').replace('...', '') : t('dash_settings_change_avatar')}
               </Button>
               <input
                 id="avatar-input"
@@ -154,7 +156,7 @@ export default function SettingsPage() {
                   e.target.value = '';
                 }}
               />
-              <p className="text-xs text-muted-foreground mt-1">JPG, PNG — Max 5 Mo</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('dash_settings_avatar_format')}</p>
             </div>
           </div>
         </CardContent>
@@ -165,19 +167,19 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5" />
-            Informations du profil
+            {t('dash_settings_profile_info')}
           </CardTitle>
-          <CardDescription>Mettez à jour vos informations personnelles</CardDescription>
+          <CardDescription>{t('dash_settings_profile_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSaveProfile} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nom complet</Label>
+              <Label htmlFor="name">{t('dash_settings_fullname')}</Label>
               <Input
                 id="name"
                 value={profileForm.name}
                 onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                placeholder="Votre nom"
+                placeholder={t('dash_settings_fullname')}
               />
             </div>
             <div className="space-y-2">
@@ -191,17 +193,17 @@ export default function SettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="settings-phone">Téléphone</Label>
+              <Label htmlFor="settings-phone">{t('biz_phone')}</Label>
               <Input
                 id="settings-phone"
                 value={profileForm.phone}
                 onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                placeholder="+221 77 XXX XX XX"
+                placeholder="+245 XX XXX XXXX"
               />
             </div>
             <Button type="submit" disabled={profileMutation.isPending}>
               <Save className="mr-2 h-4 w-4" />
-              {profileMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+              {profileMutation.isPending ? t('common_saving') : t('common_save')}
             </Button>
           </form>
         </CardContent>
@@ -212,14 +214,14 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Key className="h-5 w-5" />
-            Changer le mot de passe
+            {t('dash_settings_password_section')}
           </CardTitle>
-          <CardDescription>Modifiez votre mot de passe de connexion</CardDescription>
+          <CardDescription>{t('dash_settings_password_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="current-password">Mot de passe actuel</Label>
+              <Label htmlFor="current-password">{t('dash_settings_current_password')}</Label>
               <Input
                 id="current-password"
                 type="password"
@@ -229,7 +231,7 @@ export default function SettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="new-password">Nouveau mot de passe</Label>
+              <Label htmlFor="new-password">{t('dash_settings_new_password')}</Label>
               <Input
                 id="new-password"
                 type="password"
@@ -240,7 +242,7 @@ export default function SettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirm-password">{t('dash_settings_confirm_password')}</Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -252,7 +254,7 @@ export default function SettingsPage() {
             </div>
             <Button type="submit" disabled={passwordMutation.isPending}>
               <Key className="mr-2 h-4 w-4" />
-              {passwordMutation.isPending ? 'Mise à jour...' : 'Changer le mot de passe'}
+              {passwordMutation.isPending ? t('dash_settings_updating_password') : t('dash_settings_change_password')}
             </Button>
           </form>
         </CardContent>

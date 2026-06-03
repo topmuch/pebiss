@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBusinessSlug } from '@/hooks/use-business-slug';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,6 +34,7 @@ import { Package, Briefcase, Plus, Pencil, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ProductsPage() {
+  const { t } = useTranslation();
   const { slug, business, isLoading } = useBusinessSlug();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('products');
@@ -84,11 +86,11 @@ export default function ProductsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-detail', slug] });
-      toast.success(editingItem?.id ? 'Produit mis à jour' : 'Produit ajouté');
+      toast.success(editingItem?.id ? t('dash_products_saved') : t('dash_products_added'));
       closeDialog();
     },
     onError: () => {
-      toast.error("Erreur lors de l'opération");
+      toast.error(t('dash_products_error'));
     },
   });
 
@@ -108,11 +110,11 @@ export default function ProductsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-detail', slug] });
-      toast.success(editingItem?.id ? 'Service mis à jour' : 'Service ajouté');
+      toast.success(editingItem?.id ? t('dash_products_service_saved') : t('dash_products_service_added'));
       closeDialog();
     },
     onError: () => {
-      toast.error("Erreur lors de l'opération");
+      toast.error(t('dash_products_error'));
     },
   });
 
@@ -123,11 +125,11 @@ export default function ProductsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-detail', slug] });
-      toast.success('Produit supprimé');
+      toast.success(t('dash_products_deleted'));
       setDeleteTarget(null);
     },
     onError: () => {
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('dash_products_error'));
     },
   });
 
@@ -138,11 +140,11 @@ export default function ProductsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-detail', slug] });
-      toast.success('Service supprimé');
+      toast.success(t('dash_products_service_deleted'));
       setDeleteTarget(null);
     },
     onError: () => {
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('dash_products_error'));
     },
   });
 
@@ -174,7 +176,7 @@ export default function ProductsPage() {
         const result = await uploadMutation.mutateAsync(imageFile);
         imageUrl = result.urls?.[0] || result.url;
       } catch {
-        toast.error('Erreur lors du téléchargement de l\'image');
+        toast.error(t('dash_products_upload_error'));
         return;
       }
     }
@@ -218,12 +220,12 @@ export default function ProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Produits & Services</h1>
-          <p className="text-muted-foreground">Gérez vos produits et services</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('dash_products_title')}</h1>
+          <p className="text-muted-foreground">{t('dash_products_subtitle')}</p>
         </div>
         <Button onClick={() => openDialog(activeTab)} className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
           <Plus className="mr-2 h-4 w-4" />
-          {activeTab === 'products' ? 'Ajouter un produit' : 'Ajouter un service'}
+          {activeTab === 'products' ? t('dash_products_add_product') : t('dash_products_add_service')}
         </Button>
       </div>
 
@@ -231,11 +233,11 @@ export default function ProductsPage() {
         <TabsList>
           <TabsTrigger value="products" className="gap-2">
             <Package className="h-4 w-4" />
-            Produits ({products.length})
+            {t('dash_products_tab_products')} ({products.length})
           </TabsTrigger>
           <TabsTrigger value="services" className="gap-2">
             <Briefcase className="h-4 w-4" />
-            Services ({services.length})
+            {t('dash_products_tab_services')} ({services.length})
           </TabsTrigger>
         </TabsList>
 
@@ -243,11 +245,11 @@ export default function ProductsPage() {
           {products.length === 0 ? (
             <div className="text-center py-16">
               <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold">Aucun produit</h3>
-              <p className="text-muted-foreground mt-1">Ajoutez vos produits pour les présenter aux clients</p>
+              <h3 className="text-lg font-semibold">{t('dash_products_empty_products')}</h3>
+              <p className="text-muted-foreground mt-1">{t('dash_products_empty_products_desc')}</p>
               <Button onClick={() => openDialog('products')} className="mt-4 bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
                 <Plus className="mr-2 h-4 w-4" />
-                Ajouter un produit
+                {t('dash_products_add_product')}
               </Button>
             </div>
           ) : (
@@ -286,12 +288,12 @@ export default function ProductsPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Supprimer ce produit ?</AlertDialogTitle>
-                              <AlertDialogDescription>Cette action est irréversible.</AlertDialogDescription>
+                              <AlertDialogTitle>{t('dash_products_delete_product_confirm')}</AlertDialogTitle>
+                              <AlertDialogDescription>{t('dash_ads_delete_desc')}</AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)}>Supprimer</AlertDialogAction>
+                              <AlertDialogCancel>{t('common_cancel')}</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)}>{t('common_delete')}</AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
@@ -308,11 +310,11 @@ export default function ProductsPage() {
           {services.length === 0 ? (
             <div className="text-center py-16">
               <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold">Aucun service</h3>
-              <p className="text-muted-foreground mt-1">Ajoutez vos services pour les présenter aux clients</p>
+              <h3 className="text-lg font-semibold">{t('dash_products_empty_services')}</h3>
+              <p className="text-muted-foreground mt-1">{t('dash_products_empty_services_desc')}</p>
               <Button onClick={() => openDialog('services')} className="mt-4 bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
                 <Plus className="mr-2 h-4 w-4" />
-                Ajouter un service
+                {t('dash_products_add_service')}
               </Button>
             </div>
           ) : (
@@ -342,12 +344,12 @@ export default function ProductsPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Supprimer ce service ?</AlertDialogTitle>
-                              <AlertDialogDescription>Cette action est irréversible.</AlertDialogDescription>
+                              <AlertDialogTitle>{t('dash_products_delete_service_confirm')}</AlertDialogTitle>
+                              <AlertDialogDescription>{t('dash_ads_delete_desc')}</AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteServiceMutation.mutate(service.id)}>Supprimer</AlertDialogAction>
+                              <AlertDialogCancel>{t('common_cancel')}</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => deleteServiceMutation.mutate(service.id)}>{t('common_delete')}</AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
@@ -367,31 +369,31 @@ export default function ProductsPage() {
           <DialogHeader>
             <DialogTitle>
               {editingItem?.id
-                ? (activeTab === 'products' ? 'Modifier le produit' : 'Modifier le service')
-                : (activeTab === 'products' ? 'Ajouter un produit' : 'Ajouter un service')
+                ? (activeTab === 'products' ? t('dash_products_edit_product') : t('dash_products_edit_service'))
+                : (activeTab === 'products' ? t('dash_products_add_product') : t('dash_products_add_service'))
               }
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Nom</Label>
+              <Label>{t('dash_products_name')}</Label>
               <Input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Nom du produit ou service"
+                placeholder={t('dash_products_name')}
               />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>{t('dash_products_description')}</Label>
               <Textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="Description..."
+                placeholder={t('dash_products_description')}
                 rows={3}
               />
             </div>
             <div className="space-y-2">
-              <Label>Prix</Label>
+              <Label>{t('dash_products_price')}</Label>
               <Input
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
@@ -400,7 +402,7 @@ export default function ProductsPage() {
             </div>
             {activeTab === 'products' && (
               <div className="space-y-2">
-                <Label>Image</Label>
+                <Label>{t('dash_products_image')}</Label>
                 <div
                   className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50"
                   onClick={() => document.getElementById('product-image-input')?.click()}
@@ -410,7 +412,7 @@ export default function ProductsPage() {
                   ) : (
                     <div className="text-center">
                       <Upload className="h-6 w-6 mx-auto text-muted-foreground mb-1" />
-                      <p className="text-xs text-muted-foreground">Cliquer pour ajouter une image</p>
+                      <p className="text-xs text-muted-foreground">{t('biz_upload_hint')}</p>
                     </div>
                   )}
                 </div>
@@ -424,13 +426,13 @@ export default function ProductsPage() {
               </div>
             )}
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={closeDialog}>Annuler</Button>
+              <Button variant="outline" onClick={closeDialog}>{t('common_cancel')}</Button>
               <Button
                 onClick={handleSubmit}
                 disabled={!form.name.trim() || productMutation.isPending || serviceMutation.isPending || uploadMutation.isPending}
                 className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"
               >
-                {(productMutation.isPending || serviceMutation.isPending || uploadMutation.isPending) ? 'Enregistrement...' : 'Enregistrer'}
+                {(productMutation.isPending || serviceMutation.isPending || uploadMutation.isPending) ? t('common_saving') : t('common_save')}
               </Button>
             </div>
           </div>

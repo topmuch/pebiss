@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBusinessSlug } from '@/hooks/use-business-slug';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,6 +42,7 @@ import { toast } from 'sonner';
 const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
 export default function MonEntreprisePage() {
+  const { t } = useTranslation();
   const { slug, business, isLoading: businessLoading } = useBusinessSlug();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('info');
@@ -112,10 +114,10 @@ export default function MonEntreprisePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-business'] });
-      toast.success('Entreprise mise à jour avec succès');
+      toast.success(t('biz_updated'));
     },
     onError: () => {
-      toast.error("Erreur lors de la mise à jour");
+      toast.error(t('biz_update_error'));
     },
   });
 
@@ -131,10 +133,10 @@ export default function MonEntreprisePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-business'] });
-      toast.success('Horaires mis à jour avec succès');
+      toast.success(t('biz_hours_updated'));
     },
     onError: () => {
-      toast.error("Erreur lors de la mise à jour des horaires");
+      toast.error(t('biz_update_error'));
     },
   });
 
@@ -159,9 +161,9 @@ export default function MonEntreprisePage() {
       const url = result.urls?.[0] || result.url;
       setLogoPreview(url);
       updateMutation.mutate({ logo: url });
-      toast.success('Logo mis à jour');
+      toast.success(t('biz_logo_updated'));
     } catch {
-      toast.error('Erreur lors du téléchargement');
+      toast.error(t('biz_upload_error'));
     }
   };
 
@@ -173,9 +175,9 @@ export default function MonEntreprisePage() {
       const url = result.urls?.[0] || result.url;
       setCoverPreview(url);
       updateMutation.mutate({ coverImage: url });
-      toast.success('Image de couverture mise à jour');
+      toast.success(t('biz_cover_updated'));
     } catch {
-      toast.error('Erreur lors du téléchargement');
+      toast.error(t('biz_upload_error'));
     }
   };
 
@@ -226,7 +228,7 @@ export default function MonEntreprisePage() {
   if (!business) {
     return (
       <div className="text-center py-20 text-muted-foreground">
-        Aucune entreprise trouvée.
+        {t('biz_no_business')}
       </div>
     );
   }
@@ -234,17 +236,17 @@ export default function MonEntreprisePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Mon entreprise</h1>
-        <p className="text-muted-foreground">Gérez les informations de votre entreprise</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('biz_title')}</h1>
+        <p className="text-muted-foreground">{t('biz_subtitle')}</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto gap-1">
-          <TabsTrigger value="info">Informations</TabsTrigger>
-          <TabsTrigger value="contact">Contact</TabsTrigger>
-          <TabsTrigger value="social">Réseaux sociaux</TabsTrigger>
-          <TabsTrigger value="images">Images</TabsTrigger>
-          <TabsTrigger value="hours">Horaires</TabsTrigger>
+          <TabsTrigger value="info">{t('biz_tab_info')}</TabsTrigger>
+          <TabsTrigger value="contact">{t('biz_tab_contact')}</TabsTrigger>
+          <TabsTrigger value="social">{t('biz_tab_social')}</TabsTrigger>
+          <TabsTrigger value="images">{t('biz_tab_images')}</TabsTrigger>
+          <TabsTrigger value="hours">{t('biz_tab_hours')}</TabsTrigger>
         </TabsList>
 
         {/* Basic Info Tab */}
@@ -253,14 +255,14 @@ export default function MonEntreprisePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
-                Informations de base
+                {t('biz_basic_info')}
               </CardTitle>
-              <CardDescription>Nom, description et catégorie de votre entreprise</CardDescription>
+              <CardDescription>{t('biz_basic_info_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nom de l&apos;entreprise</Label>
+                  <Label htmlFor="name">{t('biz_name')}</Label>
                   <Input
                     id="name"
                     value={formData.name}
@@ -269,13 +271,13 @@ export default function MonEntreprisePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="category">Catégorie</Label>
+                  <Label htmlFor="category">{t('biz_category')}</Label>
                   <Select
                     value={formData.categoryId}
                     onValueChange={(val) => setFormData({ ...formData, categoryId: val })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une catégorie" />
+                      <SelectValue placeholder={t('biz_desc_placeholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories?.categories?.map((cat: any) => (
@@ -293,7 +295,7 @@ export default function MonEntreprisePage() {
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Décrivez votre entreprise..."
+                  placeholder={t('biz_desc_placeholder')}
                   rows={5}
                 />
               </div>
@@ -305,11 +307,11 @@ export default function MonEntreprisePage() {
                   onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
                   placeholder="mot1, mot2, mot3"
                 />
-                <p className="text-xs text-muted-foreground">Séparez les mots-clés par des virgules</p>
+                <p className="text-xs text-muted-foreground">{t('biz_keywords_hint')}</p>
               </div>
               <Button onClick={handleSaveInfo} disabled={updateMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" />
-                {updateMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                {updateMutation.isPending ? t('biz_saving') : t('biz_save')}
               </Button>
             </CardContent>
           </Card>
@@ -321,14 +323,14 @@ export default function MonEntreprisePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Phone className="h-5 w-5" />
-                Informations de contact
+                {t('biz_contact_info')}
               </CardTitle>
-              <CardDescription>Comment les clients peuvent vous contacter</CardDescription>
+              <CardDescription>{t('biz_contact_info_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Téléphone</Label>
+                  <Label htmlFor="phone">{t('biz_phone')}</Label>
                   <Input
                     id="phone"
                     value={formData.phone}
@@ -337,7 +339,7 @@ export default function MonEntreprisePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('biz_email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -348,7 +350,7 @@ export default function MonEntreprisePage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="website">Site web</Label>
+                <Label htmlFor="website">{t('biz_website')}</Label>
                 <Input
                   id="website"
                   value={formData.website}
@@ -357,7 +359,7 @@ export default function MonEntreprisePage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="address">Adresse</Label>
+                <Label htmlFor="address">{t('biz_address')}</Label>
                 <Input
                   id="address"
                   value={formData.address}
@@ -367,7 +369,7 @@ export default function MonEntreprisePage() {
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="city">Ville</Label>
+                  <Label htmlFor="city">{t('biz_city')}</Label>
                   <Input
                     id="city"
                     value={formData.city}
@@ -376,7 +378,7 @@ export default function MonEntreprisePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="country">Pays</Label>
+                  <Label htmlFor="country">{t('biz_country')}</Label>
                   <Input
                     id="country"
                     value={formData.country}
@@ -387,7 +389,7 @@ export default function MonEntreprisePage() {
               </div>
               <Button onClick={handleSaveContact} disabled={updateMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" />
-                {updateMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                {updateMutation.isPending ? t('biz_saving') : t('biz_save')}
               </Button>
             </CardContent>
           </Card>
@@ -399,9 +401,9 @@ export default function MonEntreprisePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="h-5 w-5" />
-                Réseaux sociaux
+                {t('biz_tab_social')}
               </CardTitle>
-              <CardDescription>Liens vers vos profils de réseaux sociaux</CardDescription>
+              <CardDescription>{t('biz_social_info')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
@@ -468,7 +470,7 @@ export default function MonEntreprisePage() {
               </div>
               <Button onClick={handleSaveSocial} disabled={updateMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" />
-                {updateMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                {updateMutation.isPending ? t('biz_saving') : t('biz_save')}
               </Button>
             </CardContent>
           </Card>
@@ -480,7 +482,7 @@ export default function MonEntreprisePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <ImageIcon className="h-5 w-5" />
-                Logo
+                {t('biz_logo')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -501,7 +503,7 @@ export default function MonEntreprisePage() {
                 ) : (
                   <div className="text-center">
                     <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">Cliquez pour télécharger votre logo</p>
+                    <p className="text-sm text-muted-foreground">{t('biz_upload_hint')}</p>
                   </div>
                 )}
               </div>
@@ -519,7 +521,7 @@ export default function MonEntreprisePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <ImageIcon className="h-5 w-5" />
-                Image de couverture
+                {t('biz_cover')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -540,7 +542,7 @@ export default function MonEntreprisePage() {
                 ) : (
                   <div className="text-center">
                     <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">Cliquez pour télécharger une image de couverture</p>
+                    <p className="text-sm text-muted-foreground">{t('biz_upload_hint')}</p>
                     <p className="text-xs text-muted-foreground">Recommandé : 1200 x 400px</p>
                   </div>
                 )}
@@ -562,9 +564,9 @@ export default function MonEntreprisePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
-                Horaires d&apos;ouverture
+                {t('biz_hours_title')}
               </CardTitle>
-              <CardDescription>Définissez vos heures d&apos;ouverture pour chaque jour</CardDescription>
+              <CardDescription>{t('biz_hours_desc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -594,7 +596,7 @@ export default function MonEntreprisePage() {
                             }
                             className="w-32"
                           />
-                          <span className="text-muted-foreground">à</span>
+                          <span className="text-muted-foreground">{t('biz_to')}</span>
                           <Input
                             type="time"
                             value={dayHours.closeTime}
@@ -611,7 +613,7 @@ export default function MonEntreprisePage() {
               </div>
               <Button onClick={handleSaveHours} disabled={hoursMutation.isPending} className="mt-6">
                 <Save className="mr-2 h-4 w-4" />
-                {hoursMutation.isPending ? 'Enregistrement...' : 'Enregistrer les horaires'}
+                {hoursMutation.isPending ? t('biz_saving') : t('biz_save_hours')}
               </Button>
             </CardContent>
           </Card>

@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BusinessCard } from '@/components/shared/business-card';
 import { BusinessCardSkeleton } from '@/components/shared/business-card-skeleton';
+import { useTranslation } from '@/lib/i18n';
 import {
   Search,
   MapPin,
@@ -124,6 +125,7 @@ interface Business {
 
 export default function HomePage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchCity, setSearchCity] = useState('');
   const [searchCategory, setSearchCategory] = useState('');
@@ -221,29 +223,29 @@ export default function HomePage() {
           <div className="container mx-auto px-4 text-center">
             {/* Badge */}
             <p className="text-xs sm:text-sm md:text-base font-semibold text-white/90 mb-2 sm:mb-3">
-              Plus de {animStats.businesses} annonces d&apos;entreprises
+              {t('hero_badge', { count: animStats.businesses })}
             </p>
 
             {/* Heading */}
             <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-2 sm:mb-4 px-2">
-              Trouvez, Explorez,{' '}
-              <span className="text-primary">Découvrez</span>
+              {t('hero_title_1')}{' '}
+              <span className="text-primary">{t('hero_title_highlight')}</span>
             </h1>
 
             {/* Description */}
             <p className="text-xs sm:text-sm md:text-base text-white/80 mb-4 sm:mb-8 leading-relaxed max-w-2xl mx-auto px-4">
-              Découvrez des lieux incroyables près de chez vous en quelques clics. Parcourez les meilleures annonces et connectez-vous avec des entreprises locales de confiance chaque jour.
+              {t('hero_desc')}
             </p>
 
             {/* Search Bar */}
             <form onSubmit={handleHeroSearch} className="bg-white p-3 md:p-4 shadow-lg max-w-4xl mx-4 md:mx-auto mb-4 sm:mb-6">
               <div className="flex flex-col sm:flex-row gap-2 items-stretch">
                 <div className="flex-1">
-                  <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Ce que vous cherchez</label>
+                  <label className="block text-[11px] text-muted-foreground mb-1 font-medium">{t('search_what')}</label>
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="Ex : Restaurant, Boutique, Hôtel..."
+                      placeholder={t('search_placeholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full pl-3 pr-9 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -252,13 +254,13 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Catégorie</label>
+                  <label className="block text-[11px] text-muted-foreground mb-1 font-medium">{t('search_category')}</label>
                   <select
                     value={searchCategory}
                     onChange={(e) => setSearchCategory(e.target.value)}
                     className="w-full px-3 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 appearance-none pr-8"
                   >
-                    <option value="">Sélectionner une catégorie</option>
+                    <option value="">{t('search_select_category')}</option>
                     {categories?.map((cat) => (
                       <option key={cat.id} value={cat.slug}>
                         {cat.name}
@@ -267,11 +269,11 @@ export default function HomePage() {
                   </select>
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Emplacement</label>
+                  <label className="block text-[11px] text-muted-foreground mb-1 font-medium">{t('search_location')}</label>
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="Sélectionner un emplacement"
+                      placeholder={t('search_location_placeholder')}
                       value={searchCity}
                       onChange={(e) => setSearchCity(e.target.value)}
                       className="w-full pl-3 pr-9 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -285,7 +287,7 @@ export default function HomePage() {
                     className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 text-sm font-medium w-full sm:w-auto"
                   >
                     <Search className="h-4 w-4 mr-2" />
-                    Rechercher
+                    {t('search_button')}
                   </Button>
                 </div>
               </div>
@@ -293,7 +295,7 @@ export default function HomePage() {
 
             {/* Popular Categories — dynamic from DB */}
             <div className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-4 gap-y-2 text-sm px-4">
-              <span className="text-white/60 font-medium text-xs uppercase tracking-wide">Populaire :</span>
+              <span className="text-white/60 font-medium text-xs uppercase tracking-wide">{t('popular')}</span>
               {categories?.slice(0, 5).map((cat) => {
                 const Icon = getCategoryIcon(cat.slug, getCategoryIndex(cat.slug));
                 return (
@@ -312,7 +314,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl md:text-2xl font-semibold text-foreground">
-              Parcourir par catégories
+              {t('browse_categories')}
             </h2>
             <div className="hidden sm:flex gap-2">
               <button onClick={() => scrollContainer(catScrollRef, 'left')} className="p-2 bg-white border border-border hover:bg-muted transition-colors">
@@ -372,24 +374,24 @@ export default function HomePage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-xl md:text-2xl font-semibold text-foreground">
-                Annonces récentes
+                {t('recent_ads')}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Parcourez les annonces des villes populaires et proches. Trouvez ce dont vous avez besoin.
+                {t('recent_ads_desc')}
               </p>
             </div>
             <Link href="/annuaire" className="hidden sm:flex items-center gap-1 text-sm font-medium text-primary hover:text-pebiss-blue transition-colors">
-              Voir tout <ArrowRight className="h-4 w-4" />
+              {t('see_all')} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
           {/* Listing promo cards data */}
           {(() => {
             const listingPromos = [
-              { title: 'Services Financiers', desc: 'Banques, microfinance et assurances', image: '/listing-banners/listing-finance.png', link: '/annuaire?category=services-financiers', icon: Landmark },
-              { title: 'Tourisme', desc: 'Hôtels, voyages et excursions', image: '/listing-banners/listing-tourisme.png', link: '/annuaire?category=tourisme-hotellerie', icon: Plane },
-              { title: 'Agriculture', desc: 'Produits frais et agroalimentaire', image: '/listing-banners/listing-agriculture.png', link: '/annuaire?category=agriculture-agroalimentaire', icon: Sprout },
-              { title: 'Santé & Bien-être', desc: 'Cliniques, pharmacies et centres de santé', image: '/listing-banners/listing-sante.png', link: '/annuaire?category=sante-bien-etre', icon: Stethoscope },
+              { title: t('promo_financial_title'), desc: t('promo_financial_desc'), image: '/listing-banners/listing-finance.png', link: '/annuaire?category=services-financiers', icon: Landmark },
+              { title: t('promo_tourism_title'), desc: t('promo_tourism_desc'), image: '/listing-banners/listing-tourisme.png', link: '/annuaire?category=tourisme-hotellerie', icon: Plane },
+              { title: t('promo_agriculture_title'), desc: t('promo_agriculture_desc'), image: '/listing-banners/listing-agriculture.png', link: '/annuaire?category=agriculture-agroalimentaire', icon: Sprout },
+              { title: t('promo_health_title'), desc: t('promo_health_desc'), image: '/listing-banners/listing-sante.png', link: '/annuaire?category=sante-bien-etre', icon: Stethoscope },
             ];
 
             if (!businessesData) {
@@ -408,15 +410,15 @@ export default function HomePage() {
                   <CardContent className="p-12 text-center">
                     <Building2 className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-foreground mb-2">
-                      Aucune annonce disponible
+                      {t('no_ads')}
                     </h3>
                     <p className="text-sm text-muted-foreground mb-6">
-                      Soyez le premier à inscrire votre entreprise sur Pebiss !
+                      {t('no_ads_desc')}
                     </p>
                     <Link href="/register">
                       <Button className="bg-primary hover:bg-primary/90 text-white text-sm">
                         <UserPlus className="h-4 w-4 mr-2" />
-                        Inscrire mon entreprise
+                        {t('register_business')}
                       </Button>
                     </Link>
                   </CardContent>
@@ -444,7 +446,7 @@ export default function HomePage() {
                         {/* Badge */}
                         <div className="absolute top-3 left-3">
                           <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                            Promu
+                            {t('promoted')}
                           </span>
                         </div>
                         {/* Content */}
@@ -457,7 +459,7 @@ export default function HomePage() {
                           </div>
                           <p className="text-white/70 text-xs leading-relaxed mb-3">{p.desc}</p>
                           <span className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-semibold px-4 py-2 rounded shadow-md group-hover:bg-white/90 transition-colors">
-                            Explorer <ArrowRight className="h-3.5 w-3.5" />
+                            {t('explore')} <ArrowRight className="h-3.5 w-3.5" />
                           </span>
                         </div>
                       </div>
@@ -478,7 +480,7 @@ export default function HomePage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
                       <div className="absolute top-3 left-3">
                         <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                          Promu
+                          {t('promoted')}
                         </span>
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -490,7 +492,7 @@ export default function HomePage() {
                         </div>
                         <p className="text-white/70 text-xs leading-relaxed mb-3">{p.desc}</p>
                         <span className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-semibold px-4 py-2 rounded shadow-md group-hover:bg-white/90 transition-colors">
-                          Explorer <ArrowRight className="h-3.5 w-3.5" />
+                          {t('explore')} <ArrowRight className="h-3.5 w-3.5" />
                         </span>
                       </div>
                     </div>
@@ -510,7 +512,7 @@ export default function HomePage() {
           <div className="mt-6 text-center sm:hidden">
             <Link href="/annuaire">
               <Button variant="outline" className="text-sm text-primary">
-                Voir toutes les annonces <ChevronRight className="h-4 w-4 ml-1" />
+                {t('see_all_ads')} <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </Link>
           </div>
@@ -523,39 +525,39 @@ export default function HomePage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-xl md:text-2xl font-semibold text-foreground">
-                Découvrez nos catégories populaires
+                {t('popular_categories')}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Explorez les secteurs les plus dynamiques du Sénégal
+                {t('popular_categories_desc')}
               </p>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
-                title: 'Mode & Textile',
-                desc: 'Trouvez les meilleures boutiques et créateurs de mode',
+                title: t('mode'),
+                desc: t('mode_desc'),
                 image: '/home-banners/home-mode.png',
                 link: '/annuaire?category=mode-textile',
                 icon: Palette,
               },
               {
-                title: 'Villes & Régions',
-                desc: 'Explorez les entreprises partout au Sénégal',
+                title: t('cities'),
+                desc: t('cities_desc'),
                 image: '/home-banners/home-ville.png',
                 link: '/annuaire',
                 icon: Building2,
               },
               {
-                title: 'Restaurants',
-                desc: 'Les meilleures adresses culinaires vous attendent',
+                title: t('restaurants'),
+                desc: t('restaurants_desc'),
                 image: '/home-banners/home-resto.png',
                 link: '/annuaire?category=restaurants-alimentation',
                 icon: Utensils,
               },
               {
-                title: 'BTP & Construction',
-                desc: 'Des professionnels de la construction fiables',
+                title: t('btp'),
+                desc: t('btp_desc'),
                 image: '/home-banners/home-btp.png',
                 link: '/annuaire?category=btp-construction',
                 icon: Wrench,
@@ -597,7 +599,7 @@ export default function HomePage() {
               <div className="overflow-hidden">
                 <Image
                   src="/hero.png"
-                  alt="Entreprises sénégalaises"
+                  alt={t('about_image_alt')}
                   width={640}
                   height={400}
                   className="w-full h-[300px] md:h-[400px] object-cover"
@@ -605,27 +607,27 @@ export default function HomePage() {
               </div>
               <div className="absolute bottom-4 left-4 bg-primary text-white px-4 py-3">
                 <span className="block text-2xl font-bold">25+</span>
-                <span className="block text-xs text-white/70">Années d&apos;expérience</span>
+                <span className="block text-xs text-white/70">{t('years_exp')}</span>
               </div>
             </div>
 
             {/* Right: Content */}
             <div>
               <h2 className="text-2xl md:text-3xl font-semibold text-foreground mb-4 leading-tight">
-                Pourquoi nous sommes axés sur la qualité, inspirés par vous.
+                {t('about_title')}
               </h2>
               <p className="text-muted-foreground mb-8 leading-relaxed">
-                Explorez une plateforme de confiance qui vous connecte avec les meilleures villes et entreprises du Sénégal. Des annonces fiables, faciles à utiliser, pour tous vos besoins.
+                {t('about_desc')}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 {[
-                  { title: 'Annonces complètes', desc: 'Informations détaillées sur chaque entreprise' },
-                  { title: 'Infos fiables', desc: 'Données vérifiées et à jour' },
-                  { title: 'Interface intuitive', desc: 'Navigation simple et efficace' },
-                  { title: 'Villes diversifiées', desc: 'Couverture de tout le Sénégal' },
-                  { title: 'Approuvé localement', desc: 'La confiance des entrepreneurs sénégalais' },
-                  { title: 'Expérience fluide', desc: 'Résultats rapides et précis' },
+                  { title: t('about_complete'), desc: t('about_complete_desc') },
+                  { title: t('about_reliable'), desc: t('about_reliable_desc') },
+                  { title: t('about_intuitive'), desc: t('about_intuitive_desc') },
+                  { title: t('about_cities'), desc: t('about_cities_desc') },
+                  { title: t('about_approved'), desc: t('about_approved_desc') },
+                  { title: t('about_fluent'), desc: t('about_fluent_desc') },
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <div className="mt-0.5 h-5 w-5 shrink-0 bg-pebiss-blue/10 flex items-center justify-center">
@@ -643,7 +645,7 @@ export default function HomePage() {
 
               <Link href="/register">
                 <Button className="bg-primary hover:bg-primary/90 text-white text-sm px-6 py-2.5">
-                  En savoir plus <ArrowRight className="h-4 w-4 ml-2" />
+                  {t('learn_more')} <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
             </div>
@@ -659,25 +661,25 @@ export default function HomePage() {
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                 {animStats.businesses}+
               </div>
-              <p className="text-sm text-white/80 font-medium">Entreprises référencées</p>
+              <p className="text-sm text-white/80 font-medium">{t('stats_businesses')}</p>
             </div>
             <div className="kpi-gradient-purple rounded-2xl p-6 md:p-8 text-center shadow-lg">
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                 {animStats.categories}+
               </div>
-              <p className="text-sm text-white/80 font-medium">Catégories</p>
+              <p className="text-sm text-white/80 font-medium">{t('stats_categories')}</p>
             </div>
             <div className="kpi-gradient-cyan rounded-2xl p-6 md:p-8 text-center shadow-lg">
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                 {animStats.cities}+
               </div>
-              <p className="text-sm text-white/80 font-medium">Villes couvertes</p>
+              <p className="text-sm text-white/80 font-medium">{t('stats_cities')}</p>
             </div>
             <div className="kpi-gradient-pink rounded-2xl p-6 md:p-8 text-center shadow-lg">
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                 {animStats.reviews}+
               </div>
-              <p className="text-sm text-white/80 font-medium">Avis clients</p>
+              <p className="text-sm text-white/80 font-medium">{t('stats_reviews')}</p>
             </div>
           </div>
         </div>
@@ -696,29 +698,28 @@ export default function HomePage() {
         </div>
         <div className="relative container mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-4xl font-bold text-white mb-4">
-            Inscrivez votre entreprise
+            {t('cta_title')}
           </h2>
           <p className="text-base text-white/70 mb-8 max-w-2xl mx-auto">
-            Rejoignez des centaines d&apos;entreprises sénégalaises sur Pebiss.
-            Attirez de nouveaux clients et développez votre activité.
+            {t('cta_desc')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/register">
               <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold px-8 h-12 text-sm">
                 <UserPlus className="h-5 w-5 mr-2" />
-                Créer mon compte gratuitement
+                {t('cta_button')}
               </Button>
             </Link>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm text-white/60">
             <span className="flex items-center gap-1.5">
-              <CheckIcon /> Inscription gratuite
+              <CheckIcon /> {t('cta_free')}
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckIcon /> Visible immédiatement
+              <CheckIcon /> {t('cta_visible')}
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckIcon /> Aucune carte requise
+              <CheckIcon /> {t('cta_no_card')}
             </span>
           </div>
         </div>
@@ -729,13 +730,13 @@ export default function HomePage() {
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#1DA851] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
-        title="Contacter sur WhatsApp"
+        title={t('whatsapp_contact')}
       >
         <svg viewBox="0 0 32 32" className="w-7 h-7 fill-current">
           <path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.5 1.128 6.744 3.046 9.378L1.052 31.29l6.128-1.962c2.504 1.624 5.474 2.572 8.652 2.672h.044C24.826 32 32 24.824 32 16.004S24.826 0 16.004 0zm9.348 22.614c-.39 1.1-1.932 2.014-3.168 2.28-.846.18-1.95.324-5.668-1.218-4.76-2.466-7.824-7.284-8.064-7.604-.228-.32-1.892-2.52-1.892-4.804s1.196-3.404 1.618-3.868c.422-.462.92-.58 1.228-.58.306 0 .612.002.88.014.284.014.664-.108 1.04.796.39.94 1.326 3.234 1.444 3.472.118.236.196.514.04.828-.158.314-.236.508-.472.784-.236.274-.496.614-.708.826-.236.236-.482.49-.206.962.276.472 1.224 2.016 2.628 3.266 1.806 1.6 3.322 2.096 3.796 2.332.474.236.748.196 1.022-.118.276-.314 1.186-1.382 1.502-1.856.316-.472.632-.392 1.064-.236.434.158 2.742 1.292 3.212 1.528.47.236.784.354.902.548.118.196.118 1.116-.272 2.214z"/>
         </svg>
         <span className="absolute right-full mr-3 bg-white text-[#242424] text-sm font-medium px-3 py-2 rounded-lg shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-          Contacter sur WhatsApp
+          {t('whatsapp_contact')}
           <span className="absolute left-full top-1/2 -translate-y-1/2 border-4 border-transparent border-l-white" />
         </span>
       </a>

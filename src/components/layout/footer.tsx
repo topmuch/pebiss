@@ -79,10 +79,10 @@ export function Footer() {
                 {t('restaurants')}
               </Link>
               <Link href="/annuaire?category=tourisme-hotellerie" className="text-sm text-white/60 hover:text-white transition-colors">
-                Tourisme & Hôtellerie
+                {t('footer_tourism')}
               </Link>
               <Link href="/annuaire?category=services-financiers" className="text-sm text-white/60 hover:text-white transition-colors">
-                Services Financiers
+                {t('footer_finance')}
               </Link>
             </nav>
           </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBusinessSlug } from '@/hooks/use-business-slug';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,6 +19,7 @@ import { Star, MessageSquare, Reply, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ReviewsPage() {
+  const { t, locale } = useTranslation();
   const { slug, isLoading } = useBusinessSlug();
   const queryClient = useQueryClient();
   const [responseText, setResponseText] = useState('');
@@ -47,12 +49,12 @@ export default function ReviewsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-reviews', slug] });
-      toast.success('Réponse envoyée avec succès');
+      toast.success(t('dash_reviews_response_sent'));
       setResponseText('');
       setRespondingReview(null);
       setEditingResponse(null);
     },
-    onError: () => toast.error("Erreur lors de l'envoi"),
+    onError: () => toast.error(t('dash_reviews_response_error')),
   });
 
   const handleRespond = (reviewId: string) => {
@@ -85,8 +87,8 @@ export default function ReviewsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Avis</h1>
-        <p className="text-muted-foreground">Consultez et répondez aux avis de vos clients</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('dash_reviews_title')}</h1>
+        <p className="text-muted-foreground">{t('dash_reviews_subtitle')}</p>
       </div>
 
       {/* Summary */}
@@ -129,8 +131,8 @@ export default function ReviewsPage() {
       {reviews.length === 0 ? (
         <div className="text-center py-16">
           <MessageSquare className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold">Aucun avis</h3>
-          <p className="text-muted-foreground mt-1">Les avis de vos clients apparaîtront ici</p>
+          <h3 className="text-lg font-semibold">{t('dash_no_reviews')}</h3>
+          <p className="text-muted-foreground mt-1">{t('dash_recent_reviews_desc')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -143,9 +145,9 @@ export default function ReviewsPage() {
                       {(review.user?.name || 'U').charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{review.user?.name || 'Utilisateur'}</p>
+                      <p className="font-medium text-sm">{review.user?.name || t('dash_user_fallback')}</p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(review.createdAt).toLocaleDateString('fr-FR', {
+                        {new Date(review.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
@@ -170,7 +172,7 @@ export default function ReviewsPage() {
                 {/* Response */}
                 {review.response ? (
                   <div className="ml-[52px] pl-4 border-l-2 border-primary/30 bg-primary/5 rounded-r-lg p-3 space-y-2">
-                    <p className="text-xs font-medium text-primary">Votre réponse</p>
+                    <p className="text-xs font-medium text-primary">{t('dash_reviews_your_response')}</p>
                     <p className="text-sm">{review.response}</p>
                     <Button
                       variant="ghost"
@@ -181,7 +183,7 @@ export default function ReviewsPage() {
                       }}
                     >
                       <Pencil className="mr-1 h-3 w-3" />
-                      Modifier
+                      {t('dash_reviews_edit')}
                     </Button>
                   </div>
                 ) : (
@@ -192,7 +194,7 @@ export default function ReviewsPage() {
                       onClick={() => setRespondingReview(review.id)}
                     >
                       <Reply className="mr-1 h-3 w-3" />
-                      Répondre
+                      {t('dash_reviews_reply')}
                     </Button>
                   </div>
                 )}
@@ -206,24 +208,24 @@ export default function ReviewsPage() {
       <Dialog open={!!respondingReview} onOpenChange={(open) => { if (!open) { setRespondingReview(null); setResponseText(''); } }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Répondre à l&apos;avis</DialogTitle>
+            <DialogTitle>{t('dash_reviews_reply_title')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Textarea
-              placeholder="Votre réponse..."
+              placeholder={t('dash_response_placeholder')}
               value={responseText}
               onChange={(e) => setResponseText(e.target.value)}
               rows={4}
             />
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={() => { setRespondingReview(null); setResponseText(''); }}>
-                Annuler
+                {t('common_cancel')}
               </Button>
               <Button
                 onClick={() => respondingReview && handleRespond(respondingReview)}
                 disabled={!responseText.trim() || respondMutation.isPending}
               >
-                {respondMutation.isPending ? 'Envoi...' : 'Envoyer'}
+                {respondMutation.isPending ? t('dash_sending') : t('common_save')}
               </Button>
             </div>
           </div>
@@ -234,24 +236,24 @@ export default function ReviewsPage() {
       <Dialog open={!!editingResponse} onOpenChange={(open) => { if (!open) { setEditingResponse(null); setEditResponseText(''); } }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Modifier votre réponse</DialogTitle>
+            <DialogTitle>{t('dash_reviews_edit_title')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Textarea
-              placeholder="Votre réponse..."
+              placeholder={t('dash_response_placeholder')}
               value={editResponseText}
               onChange={(e) => setEditResponseText(e.target.value)}
               rows={4}
             />
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={() => { setEditingResponse(null); setEditResponseText(''); }}>
-                Annuler
+                {t('common_cancel')}
               </Button>
               <Button
                 onClick={handleEditResponse}
                 disabled={!editResponseText.trim() || respondMutation.isPending}
               >
-                {respondMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                {respondMutation.isPending ? t('common_saving') : t('common_save')}
               </Button>
             </div>
           </div>

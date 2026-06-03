@@ -15,6 +15,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { useTranslation } from '@/lib/i18n';
 import {
   LayoutDashboard,
   Building2,
@@ -46,6 +47,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useTranslation();
+
+  const navItems = [
+    { href: '/dashboard', label: t('nav_dashboard'), icon: LayoutDashboard },
+    { href: '/dashboard/mon-entreprise', label: t('nav_my_business'), icon: Building2 },
+    { href: '/dashboard/photos', label: t('nav_photos'), icon: Camera },
+    { href: '/dashboard/products', label: t('nav_products_services'), icon: Package },
+    { href: '/dashboard/ads', label: t('nav_ads'), icon: Megaphone },
+    { href: '/dashboard/reviews', label: t('nav_reviews'), icon: Star },
+    { href: '/dashboard/settings', label: t('nav_settings'), icon: Settings },
+  ];
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -134,7 +146,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             )}
           >
             <ArrowLeft className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>Retour au site</span>}
+            {!collapsed && <span>{t('nav_back_to_site')}</span>}
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
@@ -144,7 +156,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             )}
           >
             <LogOut className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>Déconnexion</span>}
+            {!collapsed && <span>{t('disconnect')}</span>}
           </button>
         </div>
       </div>

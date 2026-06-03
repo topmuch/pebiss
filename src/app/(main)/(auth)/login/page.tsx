@@ -10,10 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { LogIn, Mail, Lock, Building2, Loader2 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,16 +33,16 @@ export default function LoginPage() {
 
       if (result?.error) {
         toast({
-          title: 'Erreur de connexion',
-          description: 'Email ou mot de passe incorrect.',
+          title: t('login_error_title'),
+          description: t('login_error_msg'),
           variant: 'destructive',
         });
       } else {
         // Fetch session to get user role for redirect
         const session = await getSession();
         toast({
-          title: 'Connexion réussie',
-          description: 'Bienvenue !',
+          title: t('login_success_title'),
+          description: t('login_success_msg'),
         });
         if (session?.user?.role === 'ADMIN') {
           router.push('/admin');
@@ -52,8 +54,8 @@ export default function LoginPage() {
       }
     } catch {
       toast({
-        title: 'Erreur',
-        description: 'Une erreur inattendue est survenue.',
+        title: t('login_error_title'),
+        description: t('login_error_unexpected'),
         variant: 'destructive',
       });
     } finally {
@@ -71,9 +73,9 @@ export default function LoginPage() {
               P
             </div>
           </Link>
-          <h1 className="text-2xl font-bold text-foreground">Connexion</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('login_title')}</h1>
           <p className="text-muted-foreground mt-1">
-            Connectez-vous à votre compte Pebiss
+            {t('login_subtitle')}
           </p>
         </div>
 
@@ -81,7 +83,7 @@ export default function LoginPage() {
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="email">Adresse email</Label>
+                <Label htmlFor="email">{t('login_email')}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -97,7 +99,7 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
+                <Label htmlFor="password">{t('login_password')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -120,12 +122,12 @@ export default function LoginPage() {
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                    Connexion...
+                    {t('login_loading')}
                   </div>
                 ) : (
                   <>
                     <LogIn className="h-4 w-4" />
-                    Se connecter
+                    {t('login_button')}
                   </>
                 )}
               </Button>
@@ -135,9 +137,9 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground">
-            Pas encore de compte ?{' '}
+            {t('login_no_account')}{' '}
             <Link href="/register" className="text-primary hover:underline font-medium">
-              Créer un compte
+              {t('login_create_account')}
             </Link>
           </p>
         </div>

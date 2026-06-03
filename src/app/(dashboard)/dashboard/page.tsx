@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useBusinessSlug } from '@/hooks/use-business-slug';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 export default function DashboardPage() {
+  const { t, locale } = useTranslation();
   const { slug, business, isLoading } = useBusinessSlug();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
@@ -68,12 +70,12 @@ export default function DashboardPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-reviews', slug] });
-      toast.success('Réponse envoyée avec succès');
+      toast.success(t('dash_review_response_sent'));
       setResponseText('');
       setRespondingReview(null);
     },
     onError: () => {
-      toast.error("Erreur lors de l'envoi de la réponse");
+      toast.error(t('dash_review_response_error'));
     },
   });
 
@@ -97,12 +99,12 @@ export default function DashboardPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
         <Building2 className="h-16 w-16 text-muted-foreground" />
-        <h2 className="text-2xl font-bold">Aucune entreprise trouvée</h2>
-        <p className="text-muted-foreground">Vous n&apos;avez pas encore créé votre entreprise.</p>
+        <h2 className="text-2xl font-bold">{t('dash_no_business')}</h2>
+        <p className="text-muted-foreground">{t('dash_no_business_desc')}</p>
         <Link href="/register">
           <Button className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
             <Plus className="mr-2 h-4 w-4" />
-            Créer mon entreprise
+            {t('dash_create_business')}
           </Button>
         </Link>
       </div>
@@ -110,10 +112,10 @@ export default function DashboardPage() {
   }
 
   const stats = [
-    { label: 'Vues de la fiche', value: business.views || 0, icon: Eye, color: 'text-primary' },
-    { label: 'Nombre d\'avis', value: business._count?.reviews || 0, icon: Star, color: 'text-pebiss-orange' },
-    { label: 'Note moyenne', value: business._avgRating || 0, icon: Star, color: 'text-yellow-500' },
-    { label: 'Annonces actives', value: business._count?.ads || 0, icon: Megaphone, color: 'text-green-600' },
+    { label: t('dash_stat_views'), value: business.views || 0, icon: Eye, color: 'text-primary' },
+    { label: t('dash_stat_reviews'), value: business._count?.reviews || 0, icon: Star, color: 'text-pebiss-orange' },
+    { label: t('dash_stat_rating'), value: business._avgRating || 0, icon: Star, color: 'text-yellow-500' },
+    { label: t('dash_stat_ads'), value: business._count?.ads || 0, icon: Megaphone, color: 'text-green-600' },
   ];
 
   const adTypeColors: Record<string, string> = {
@@ -127,9 +129,9 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Tableau de bord</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t('dash_title')}</h1>
         <p className="text-muted-foreground">
-          Bienvenue, {session?.user?.name}. Voici un aperçu de votre entreprise.
+          {t('dash_welcome', { name: session?.user?.name || t('dash_user_fallback') })}
         </p>
       </div>
 
@@ -161,14 +163,14 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
-              Avis récents
+              {t('dash_recent_reviews')}
             </CardTitle>
-            <CardDescription>Les derniers avis sur votre entreprise</CardDescription>
+            <CardDescription>{t('dash_recent_reviews_desc')}</CardDescription>
           </CardHeader>
           <CardContent>
             {reviewsData?.reviews?.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                Aucun avis pour le moment.
+                {t('dash_no_reviews')}
               </p>
             ) : (
               <div className="space-y-4">
@@ -176,7 +178,7 @@ export default function DashboardPage() {
                   <div key={review.id} className="flex flex-col gap-2 p-3 rounded-lg bg-muted/50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">{review.user?.name || 'Utilisateur'}</span>
+                        <span className="font-medium text-sm">{review.user?.name || t('dash_user_fallback')}</span>
                         <div className="flex gap-0.5">
                           {[...Array(5)].map((_, i) => (
                             <Star
@@ -187,7 +189,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(review.createdAt).toLocaleDateString('fr-FR')}
+                        {new Date(review.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT')}
                       </span>
                     </div>
                     {review.comment && (
@@ -195,7 +197,7 @@ export default function DashboardPage() {
                     )}
                     {review.response ? (
                       <div className="ml-4 pl-4 border-l-2 border-primary/30 bg-primary/5 rounded-r-lg p-2">
-                        <p className="text-xs font-medium text-primary mb-1">Votre réponse :</p>
+                        <p className="text-xs font-medium text-primary mb-1">{t('dash_your_response')}</p>
                         <p className="text-sm">{review.response}</p>
                       </div>
                     ) : (
@@ -206,19 +208,19 @@ export default function DashboardPage() {
                         <DialogTrigger asChild>
                           <Button variant="outline" size="sm" className="self-start mt-1">
                             <Reply className="mr-1 h-3 w-3" />
-                            Répondre
+                            {t('dash_reply_review')}
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
-                            <DialogTitle>Répondre à l&apos;avis</DialogTitle>
+                            <DialogTitle>{t('dash_reply_review')}</DialogTitle>
                           </DialogHeader>
                           <div className="space-y-4">
                             <p className="text-sm text-muted-foreground">
                               &quot;{review.comment}&quot;
                             </p>
                             <Textarea
-                              placeholder="Votre réponse..."
+                              placeholder={t('dash_response_placeholder')}
                               value={responseText}
                               onChange={(e) => setResponseText(e.target.value)}
                               rows={4}
@@ -228,7 +230,7 @@ export default function DashboardPage() {
                               disabled={!responseText.trim() || respondMutation.isPending}
                               className="w-full"
                             >
-                              {respondMutation.isPending ? 'Envoi...' : 'Envoyer la réponse'}
+                              {respondMutation.isPending ? t('dash_sending') : t('dash_send_response')}
                             </Button>
                           </div>
                         </DialogContent>
@@ -241,7 +243,7 @@ export default function DashboardPage() {
             {reviewsData?.reviews?.length > 0 && (
               <Link href="/dashboard/reviews">
                 <Button variant="ghost" size="sm" className="mt-4 w-full">
-                  Voir tous les avis →
+                  {t('dash_view_all_reviews')}
                 </Button>
               </Link>
             )}
@@ -252,25 +254,25 @@ export default function DashboardPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Actions rapides</CardTitle>
+              <CardTitle>{t('dash_quick_actions')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Link href="/dashboard/photos" className="block">
                 <Button variant="outline" className="w-full justify-start gap-2">
                   <Camera className="h-4 w-4" />
-                  Ajouter des photos
+                  {t('dash_add_photos')}
                 </Button>
               </Link>
               <Link href="/dashboard/products" className="block">
                 <Button variant="outline" className="w-full justify-start gap-2">
                   <Package className="h-4 w-4" />
-                  Ajouter un produit
+                  {t('dash_add_product')}
                 </Button>
               </Link>
               <Link href="/dashboard/ads" className="block">
                 <Button variant="outline" className="w-full justify-start gap-2">
                   <Megaphone className="h-4 w-4" />
-                  Créer une annonce
+                  {t('dash_create_ad')}
                 </Button>
               </Link>
             </CardContent>
@@ -278,12 +280,12 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Annonces récentes</CardTitle>
+              <CardTitle>{t('dash_recent_ads')}</CardTitle>
             </CardHeader>
             <CardContent>
               {adsData?.ads?.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-2">
-                  Aucune annonce pour le moment.
+                  {t('dash_no_ads')}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -308,7 +310,7 @@ export default function DashboardPage() {
               )}
               <Link href="/dashboard/ads">
                 <Button variant="ghost" size="sm" className="mt-3 w-full">
-                  Gérer mes annonces →
+                  {t('dash_manage_ads')}
                 </Button>
               </Link>
             </CardContent>

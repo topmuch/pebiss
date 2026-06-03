@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,6 +53,7 @@ const AD_TYPES: Record<string, string> = {
 };
 
 export default function AdminAnnoncesPage() {
+  const { t, locale } = useTranslation();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -106,10 +108,10 @@ export default function AdminAnnoncesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-ads'] });
-      toast.success('Annonce supprimée');
+      toast.success(t('admin_ads_deleted_msg'));
       setDeleteId(null);
     },
-    onError: () => toast.error('Erreur lors de la suppression'),
+    onError: () => toast.error(t('admin_ads_error_delete')),
   });
 
   const uploadMutation = useMutation({
@@ -120,7 +122,7 @@ export default function AdminAnnoncesPage() {
         method: 'POST',
         body: formData,
       });
-      if (!res.ok) throw new Error('Erreur lors du téléchargement');
+      if (!res.ok) throw new Error(t('admin_settings_upload_error'));
       return res.json();
     },
   });
@@ -140,10 +142,10 @@ export default function AdminAnnoncesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-ads'] });
-      toast.success('Annonce créée avec succès');
+      toast.success(t('admin_ads_created_msg'));
       closeDialog();
     },
-    onError: (err) => toast.error(err.message || 'Erreur lors de la création'),
+    onError: (err) => toast.error(err.message || t('admin_ads_error_create')),
   });
 
   const closeDialog = () => {
@@ -166,9 +168,9 @@ export default function AdminAnnoncesPage() {
     try {
       const result = await uploadMutation.mutateAsync(file);
       updateField('image', result.url);
-      toast.success('Image téléchargée avec succès');
+      toast.success(t('admin_settings_image_uploaded'));
     } catch {
-      toast.error('Erreur lors du téléchargement');
+      toast.error(t('admin_settings_upload_error'));
     }
   };
 
@@ -180,12 +182,12 @@ export default function AdminAnnoncesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Annonces</h1>
-          <p className="text-muted-foreground">Modérez les annonces de la plateforme</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('admin_ads_title')}</h1>
+          <p className="text-muted-foreground">{t('admin_ads_subtitle')}</p>
         </div>
         <Button onClick={() => setDialogOpen(true)} className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
           <Plus className="mr-2 h-4 w-4" />
-          Créer une annonce
+          {t('dash_ads_create')}
         </Button>
       </div>
 
@@ -196,7 +198,7 @@ export default function AdminAnnoncesPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Rechercher une annonce..."
+                placeholder={t('admin_ads_search')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -204,10 +206,10 @@ export default function AdminAnnoncesPage() {
             </div>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
               <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Type" />
+                <SelectValue placeholder={t('dash_ads_field_type')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les types</SelectItem>
+                <SelectItem value="all">{t('admin_ads_all_types')}</SelectItem>
                 <SelectItem value="SERVICE">Service</SelectItem>
                 <SelectItem value="PROMOTION">Promotion</SelectItem>
                 <SelectItem value="PRODUCT">Produit</SelectItem>
@@ -225,12 +227,12 @@ export default function AdminAnnoncesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Titre</TableHead>
-                  <TableHead>Entreprise</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t('dash_ads_field_title')}</TableHead>
+                  <TableHead>{t('admin_ent_col_business')}</TableHead>
+                  <TableHead>{t('dash_ads_field_type')}</TableHead>
+                  <TableHead>{t('dash_ads_field_category')}</TableHead>
+                  <TableHead>{t('admin_dash_col_date')}</TableHead>
+                  <TableHead className="text-right">{t('admin_ent_col_actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -243,7 +245,7 @@ export default function AdminAnnoncesPage() {
                 ) : ads.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      Aucune annonce trouvée
+                      {t('admin_ads_no_results')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -269,7 +271,7 @@ export default function AdminAnnoncesPage() {
                       </TableCell>
                       <TableCell className="text-sm">{ad.category?.name || '-'}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {new Date(ad.createdAt).toLocaleDateString('fr-FR')}
+                        {new Date(ad.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT')}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end">
@@ -286,15 +288,15 @@ export default function AdminAnnoncesPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Supprimer cette annonce ?</AlertDialogTitle>
+                                <AlertDialogTitle>{t('admin_ads_delete_confirm')}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Cette action est irréversible.
+                                  {t('dash_ads_delete_desc')}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogCancel>{t('common_cancel')}</AlertDialogCancel>
                                 <AlertDialogAction onClick={() => deleteMutation.mutate(ad.id)}>
-                                  Supprimer
+                                  {t('common_delete')}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -308,7 +310,7 @@ export default function AdminAnnoncesPage() {
             </Table>
           </div>
           <div className="p-4 border-t text-sm text-muted-foreground">
-            {ads.length} annonce{ads.length !== 1 ? 's' : ''}
+            {ads.length} {t('admin_ads_title').toLowerCase()}{ads.length !== 1 ? 's' : ''}
           </div>
         </CardContent>
       </Card>
@@ -317,32 +319,32 @@ export default function AdminAnnoncesPage() {
       <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog(); }}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Créer une annonce</DialogTitle>
+            <DialogTitle>{t('dash_ads_create')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Titre *</Label>
+              <Label>{t('dash_ads_field_title')} *</Label>
               <Input
                 value={form.title}
                 onChange={(e) => updateField('title', e.target.value)}
-                placeholder="Titre de l'annonce"
+                placeholder={t('dash_ads_title_placeholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>{t('dash_ads_field_desc')}</Label>
               <Textarea
                 value={form.description}
                 onChange={(e) => updateField('description', e.target.value)}
-                placeholder="Description de l'annonce"
+                placeholder={t('dash_ads_desc_placeholder')}
                 rows={3}
               />
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Type</Label>
+                <Label>{t('dash_ads_field_type')}</Label>
                 <Select value={form.type} onValueChange={(v) => updateField('type', v)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un type" />
+                    <SelectValue placeholder={t('dash_ads_select')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="SERVICE">Service</SelectItem>
@@ -353,10 +355,10 @@ export default function AdminAnnoncesPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Catégorie</Label>
+                <Label>{t('dash_ads_field_category')}</Label>
                 <Select value={form.categoryId} onValueChange={(v) => updateField('categoryId', v)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une catégorie" />
+                    <SelectValue placeholder={t('dash_ads_select')} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat: any) => (
@@ -369,10 +371,10 @@ export default function AdminAnnoncesPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Entreprise *</Label>
+              <Label>{t('admin_ent_col_business')} *</Label>
               <Select value={form.businessId} onValueChange={(v) => updateField('businessId', v)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une entreprise" />
+                  <SelectValue placeholder={t('dash_ads_select')} />
                 </SelectTrigger>
                 <SelectContent>
                   {businesses.map((b: any) => (
@@ -384,7 +386,7 @@ export default function AdminAnnoncesPage() {
               </Select>
             </div>
             <div className="space-y-3">
-              <Label>Image</Label>
+              <Label>{t('dash_ads_field_image')}</Label>
               {form.image && (
                 <div className="relative inline-block">
                   <img
@@ -402,11 +404,11 @@ export default function AdminAnnoncesPage() {
                   type="button"
                 >
                   <Upload className="mr-2 h-4 w-4" />
-                  {uploadMutation.isPending ? 'Téléchargement...' : 'Télécharger une image'}
+                  {uploadMutation.isPending ? t('dash_photos_uploading') : t('admin_ads_download_image')}
                 </Button>
                 {form.image && (
                   <Button variant="ghost" onClick={() => updateField('image', '')} type="button">
-                    Supprimer
+                    {t('common_delete')}
                   </Button>
                 )}
                 <input
@@ -422,7 +424,7 @@ export default function AdminAnnoncesPage() {
               </div>
             </div>
             <div className="flex gap-2 justify-end pt-2">
-              <Button variant="outline" onClick={closeDialog}>Annuler</Button>
+              <Button variant="outline" onClick={closeDialog}>{t('common_cancel')}</Button>
               <Button
                 onClick={() => createMutation.mutate(form)}
                 disabled={
@@ -432,7 +434,7 @@ export default function AdminAnnoncesPage() {
                 }
                 className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"
               >
-                {createMutation.isPending ? 'Création...' : 'Créer l\'annonce'}
+                {createMutation.isPending ? t('admin_ads_creating') : t('dash_ads_create')}
               </Button>
             </div>
           </div>

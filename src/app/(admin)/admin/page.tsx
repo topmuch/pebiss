@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +34,8 @@ import {
 } from 'recharts';
 
 export default function AdminDashboardPage() {
+  const { t, locale } = useTranslation();
+
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
@@ -57,28 +60,28 @@ export default function AdminDashboardPage() {
 
   const statCards = [
     {
-      label: 'Total entreprises',
+      label: t('admin_dash_total_businesses'),
       value: stats?.totals?.businesses || 0,
       icon: Building2,
       color: 'bg-primary text-primary-foreground',
       bgColor: 'bg-primary/10',
     },
     {
-      label: 'Total utilisateurs',
+      label: t('admin_dash_total_users'),
       value: stats?.totals?.users || 0,
       icon: Users,
       color: 'bg-pebiss-orange text-white',
       bgColor: 'bg-pebiss-orange/10',
     },
     {
-      label: 'Total avis',
+      label: t('admin_dash_total_reviews'),
       value: stats?.totals?.reviews || 0,
       icon: Star,
       color: 'bg-yellow-500 text-white',
       bgColor: 'bg-yellow-500/10',
     },
     {
-      label: 'Total annonces',
+      label: t('admin_dash_total_ads'),
       value: stats?.totals?.ads || 0,
       icon: Megaphone,
       color: 'bg-green-600 text-white',
@@ -96,7 +99,7 @@ export default function AdminDashboardPage() {
   const recentBusinesses = stats?.recentBusinesses || [];
   const monthlyMap: Record<string, number> = {};
   recentBusinesses.forEach((b: any) => {
-    const month = new Date(b.createdAt).toLocaleDateString('fr-FR', { year: '2-digit', month: 'short' });
+    const month = new Date(b.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT', { year: '2-digit', month: 'short' });
     monthlyMap[month] = (monthlyMap[month] || 0) + 1;
   });
   // Generate some baseline data
@@ -104,7 +107,7 @@ export default function AdminDashboardPage() {
   const months = [];
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const key = d.toLocaleDateString('fr-FR', { year: '2-digit', month: 'short' });
+    const key = d.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT', { year: '2-digit', month: 'short' });
     months.push({ month: key, inscriptions: monthlyMap[key] || 0 });
   }
 
@@ -115,8 +118,8 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Tableau de bord</h1>
-        <p className="text-muted-foreground">Vue d&apos;ensemble de la plateforme Pebiss</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('admin_dash_title')}</h1>
+        <p className="text-muted-foreground">{t('admin_dash_subtitle')}</p>
       </div>
 
       {/* Stats Cards */}
@@ -149,7 +152,7 @@ export default function AdminDashboardPage() {
               <TrendingUp className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Note moyenne</p>
+              <p className="text-xs text-muted-foreground">{t('admin_dash_avg_rating')}</p>
               <p className="text-lg font-bold">{(stats?.totals?.avgRating || 0).toFixed(1)} / 5</p>
             </div>
           </CardContent>
@@ -160,7 +163,7 @@ export default function AdminDashboardPage() {
               <Building2 className="h-4 w-4 text-pebiss-orange" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Total catégories</p>
+              <p className="text-xs text-muted-foreground">{t('admin_dash_total_categories')}</p>
               <p className="text-lg font-bold">{stats?.totals?.categories || 0}</p>
             </div>
           </CardContent>
@@ -171,7 +174,7 @@ export default function AdminDashboardPage() {
               <Users className="h-4 w-4 text-yellow-600" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Entreprises actives</p>
+              <p className="text-xs text-muted-foreground">{t('admin_dash_active_businesses')}</p>
               <p className="text-lg font-bold">{stats?.totals?.businesses || 0}</p>
             </div>
           </CardContent>
@@ -182,8 +185,8 @@ export default function AdminDashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Entreprises par catégorie</CardTitle>
-            <CardDescription>Répartition des entreprises par secteur</CardDescription>
+            <CardTitle>{t('admin_dash_chart_categories')}</CardTitle>
+            <CardDescription>{t('admin_dash_chart_categories_desc')}</CardDescription>
           </CardHeader>
           <CardContent>
             {categoryData.length > 0 ? (
@@ -204,7 +207,7 @@ export default function AdminDashboardPage() {
               </ResponsiveContainer>
             ) : (
               <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                Aucune donnée disponible
+                {t('admin_dash_no_data')}
               </div>
             )}
           </CardContent>
@@ -212,8 +215,8 @@ export default function AdminDashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Inscriptions mensuelles</CardTitle>
-            <CardDescription>Nouveaux utilisateurs au cours des 6 derniers mois</CardDescription>
+            <CardTitle>{t('admin_dash_chart_inscriptions')}</CardTitle>
+            <CardDescription>{t('admin_dash_chart_inscriptions_desc')}</CardDescription>
           </CardHeader>
           <CardContent>
             {months.some((m) => m.inscriptions > 0) ? (
@@ -234,7 +237,7 @@ export default function AdminDashboardPage() {
               </ResponsiveContainer>
             ) : (
               <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                Aucune donnée disponible
+                {t('admin_dash_no_data')}
               </div>
             )}
           </CardContent>
@@ -248,7 +251,7 @@ export default function AdminDashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Eye className="h-5 w-5" />
-              Entreprises les plus vues
+              {t('admin_dash_top_viewed')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -256,8 +259,8 @@ export default function AdminDashboardPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Entreprise</TableHead>
-                    <TableHead className="text-right">Vues</TableHead>
+                    <TableHead>{t('admin_dash_col_business')}</TableHead>
+                    <TableHead className="text-right">{t('admin_dash_col_views')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -277,7 +280,7 @@ export default function AdminDashboardPage() {
                 </TableBody>
               </Table>
             ) : (
-              <p className="text-sm text-muted-foreground text-center py-4">Aucune donnée</p>
+              <p className="text-sm text-muted-foreground text-center py-4">{t('admin_dash_no_data')}</p>
             )}
           </CardContent>
         </Card>
@@ -287,7 +290,7 @@ export default function AdminDashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
-              Inscriptions récentes
+              {t('admin_dash_recent_signups')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -295,8 +298,8 @@ export default function AdminDashboardPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Entreprise</TableHead>
-                    <TableHead>Date</TableHead>
+                    <TableHead>{t('admin_dash_col_business')}</TableHead>
+                    <TableHead>{t('admin_dash_col_date')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -304,14 +307,14 @@ export default function AdminDashboardPage() {
                     <TableRow key={b.id}>
                       <TableCell className="font-medium text-sm truncate max-w-[180px]">{b.name}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {new Date(b.createdAt).toLocaleDateString('fr-FR')}
+                        {new Date(b.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT')}
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
-              <p className="text-sm text-muted-foreground text-center py-4">Aucune donnée</p>
+              <p className="text-sm text-muted-foreground text-center py-4">{t('admin_dash_no_data')}</p>
             )}
           </CardContent>
         </Card>

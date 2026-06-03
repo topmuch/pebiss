@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useTranslation } from '@/lib/i18n';
 import {
   Megaphone,
   Building2,
@@ -48,11 +49,11 @@ interface Ad {
   category?: { id: string; name: string; slug: string } | null;
 }
 
-const adTypeLabels: Record<string, string> = {
-  SERVICE: 'Service',
-  PROMOTION: 'Promotion',
-  PRODUCT: 'Produit',
-  EVENT: 'Événement',
+const adTypeKeys: Record<string, string> = {
+  SERVICE: 'ads_type_service',
+  PROMOTION: 'ads_type_promotion',
+  PRODUCT: 'ads_type_product',
+  EVENT: 'ads_type_event',
 };
 
 const adTypeColors: Record<string, string> = {
@@ -63,6 +64,7 @@ const adTypeColors: Record<string, string> = {
 };
 
 export default function AnnoncesPage() {
+  const { t, locale } = useTranslation();
   const [type, setType] = useState('');
   const [category, setCategory] = useState('');
   const [page, setPage] = useState(1);
@@ -105,10 +107,10 @@ export default function AnnoncesPage() {
       <div className="pebiss-gradient py-12 md:py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-            Annonces professionnelles
+            {t('ads_page_list_title')}
           </h1>
           <p className="text-white/80 text-lg">
-            Découvrez les dernières offres, promotions et services
+            {t('ads_page_list_subtitle')}
           </p>
         </div>
       </div>
@@ -119,17 +121,17 @@ export default function AnnoncesPage() {
           <CardContent className="p-4 md:p-6">
             <div className="flex flex-col sm:flex-row gap-4 items-end">
               <div className="flex-1 w-full">
-                <label className="text-sm font-medium mb-1.5 block">Type d&apos;annonce</label>
+                <label className="text-sm font-medium mb-1.5 block">{t('ads_page_list_type')}</label>
                 <Select value={type} onValueChange={(v) => { setType(v === 'all' ? '' : v); setPage(1); }}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Tous les types" />
+                    <SelectValue placeholder={t('ads_page_list_all_types')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tous les types</SelectItem>
-                    <SelectItem value="SERVICE">Service</SelectItem>
-                    <SelectItem value="PROMOTION">Promotion</SelectItem>
-                    <SelectItem value="PRODUCT">Produit</SelectItem>
-                    <SelectItem value="EVENT">Événement</SelectItem>
+                    <SelectItem value="all">{t('ads_page_list_all_types')}</SelectItem>
+                    <SelectItem value="SERVICE">{t('ads_type_service')}</SelectItem>
+                    <SelectItem value="PROMOTION">{t('ads_type_promotion')}</SelectItem>
+                    <SelectItem value="PRODUCT">{t('ads_type_product')}</SelectItem>
+                    <SelectItem value="EVENT">{t('ads_type_event')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -137,10 +139,10 @@ export default function AnnoncesPage() {
                 <label className="text-sm font-medium mb-1.5 block">Catégorie</label>
                 <Select value={category} onValueChange={(v) => { setCategory(v === 'all' ? '' : v); setPage(1); }}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Toutes les catégories" />
+                    <SelectValue placeholder={t('annuaire_all_categories')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Toutes les catégories</SelectItem>
+                    <SelectItem value="all">{t('annuaire_all_categories')}</SelectItem>
                     {categories?.map((cat) => (
                       <SelectItem key={cat.id} value={cat.slug}>
                         {cat.name}
@@ -156,7 +158,7 @@ export default function AnnoncesPage() {
         {/* Results Count */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-sm text-muted-foreground">
-            {pagination?.total || 0} annonce{(pagination?.total || 0) > 1 ? 's' : ''} trouvée{(pagination?.total || 0) > 1 ? 's' : ''}
+            {t('ads_page_list_count', { count: pagination?.total || 0 })}
           </p>
           {(type || category) && (
             <Button
@@ -199,10 +201,10 @@ export default function AnnoncesPage() {
             <CardContent className="py-16 px-6 text-center">
               <Megaphone className="h-16 w-16 text-muted-foreground/20 mx-auto mb-6" />
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                Aucune annonce trouvée
+                {t('ads_page_list_no_results')}
               </h3>
               <p className="text-muted-foreground">
-                Aucune annonce ne correspond à vos critères de recherche.
+                {t('ads_page_list_no_results_desc')}
               </p>
             </CardContent>
           </Card>
@@ -231,11 +233,11 @@ export default function AnnoncesPage() {
                           className={`text-xs ${adTypeColors[ad.type] || 'bg-muted text-muted-foreground'}`}
                           variant="outline"
                         >
-                          {adTypeLabels[ad.type] || ad.type}
+                          {t(adTypeKeys[ad.type] || ad.type) || ad.type}
                         </Badge>
                         <span className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Calendar className="h-3 w-3" />
-                          {new Date(ad.createdAt).toLocaleDateString('fr-FR', {
+                          {new Date(ad.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT', {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric',
@@ -296,7 +298,7 @@ export default function AnnoncesPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Précédent
+                  {t('annuaire_previous')}
                 </Button>
 
                 <div className="flex items-center gap-1">
@@ -345,7 +347,7 @@ export default function AnnoncesPage() {
                   disabled={!pagination.hasNext}
                   onClick={() => setPage((p) => p + 1)}
                 >
-                  Suivant
+                  {t('annuaire_next')}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>

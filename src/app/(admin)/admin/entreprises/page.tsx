@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +47,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 
 export default function AdminEntreprisesPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -110,15 +112,15 @@ export default function AdminEntreprisesPage() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin-businesses'] });
       const messages: Record<string, string> = {
-        suspend: 'Entreprise suspendue',
-        activate: 'Entreprise activée',
-        delete: 'Entreprise supprimée',
+        suspend: t('admin_ent_suspended_msg'),
+        activate: t('admin_ent_activated_msg'),
+        delete: t('admin_ent_deleted_msg'),
       };
-      toast.success(messages[variables.action] || 'Action effectuée');
+      toast.success(messages[variables.action] || 'OK');
       setActionTarget(null);
     },
     onError: () => {
-      toast.error('Erreur lors de l\'action');
+      toast.error(t('admin_ent_error'));
     },
   });
 
@@ -137,10 +139,10 @@ export default function AdminEntreprisesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-businesses'] });
-      toast.success('Entreprise créée avec succès');
+      toast.success(t('admin_ent_created_msg'));
       closeDialog();
     },
-    onError: (err) => toast.error(err.message || 'Erreur lors de la création'),
+    onError: (err) => toast.error(err.message || t('admin_ent_error')),
   });
 
   const closeDialog = () => {
@@ -171,12 +173,12 @@ export default function AdminEntreprisesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Entreprises</h1>
-          <p className="text-muted-foreground">Gérez toutes les entreprises de la plateforme</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('admin_ent_title')}</h1>
+          <p className="text-muted-foreground">{t('admin_ent_subtitle')}</p>
         </div>
         <Button onClick={() => setDialogOpen(true)} className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
           <Plus className="mr-2 h-4 w-4" />
-          Ajouter une entreprise
+          {t('admin_ent_add')}
         </Button>
       </div>
 
@@ -187,7 +189,7 @@ export default function AdminEntreprisesPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Rechercher une entreprise..."
+                placeholder={t('admin_ent_search')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -198,9 +200,9 @@ export default function AdminEntreprisesPage() {
                 <SelectValue placeholder="Statut" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les statuts</SelectItem>
-                <SelectItem value="active">Actives</SelectItem>
-                <SelectItem value="suspended">Suspendues</SelectItem>
+                <SelectItem value="all">{t('admin_ent_all_status')}</SelectItem>
+                <SelectItem value="active">{t('admin_ent_active')}</SelectItem>
+                <SelectItem value="suspended">{t('admin_ent_suspended')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -214,12 +216,12 @@ export default function AdminEntreprisesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Entreprise</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Ville</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead className="text-right">Vues</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t('admin_ent_col_business')}</TableHead>
+                  <TableHead>{t('admin_ent_col_category')}</TableHead>
+                  <TableHead>{t('admin_ent_col_city')}</TableHead>
+                  <TableHead>{t('admin_ent_col_status')}</TableHead>
+                  <TableHead className="text-right">{t('admin_dash_col_views')}</TableHead>
+                  <TableHead className="text-right">{t('admin_ent_col_actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -232,7 +234,7 @@ export default function AdminEntreprisesPage() {
                 ) : businesses.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      Aucune entreprise trouvée
+                      {t('admin_ent_no_results')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -257,9 +259,9 @@ export default function AdminEntreprisesPage() {
                       <TableCell className="text-sm">{b.city || '-'}</TableCell>
                       <TableCell>
                         {b.isSuspended ? (
-                          <Badge variant="destructive" className="text-[10px]">Suspendue</Badge>
+                          <Badge variant="destructive" className="text-[10px]">{t('admin_ent_suspended')}</Badge>
                         ) : (
-                          <Badge variant="default" className="bg-green-100 text-green-800 text-[10px]">Active</Badge>
+                          <Badge variant="default" className="bg-green-100 text-green-800 text-[10px]">{t('admin_ent_active')}</Badge>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
@@ -304,15 +306,15 @@ export default function AdminEntreprisesPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Supprimer {b.name} ?</AlertDialogTitle>
+                                <AlertDialogTitle>{t('admin_ent_delete_confirm', { name: b.name })}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Cette action supprimera définitivement l&apos;entreprise et toutes ses données associées.
+                                  {t('admin_ent_delete_desc')}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogCancel>{t('common_cancel')}</AlertDialogCancel>
                                 <AlertDialogAction onClick={() => actionMutation.mutate({ id: b.id, action: 'delete' })}>
-                                  Supprimer
+                                  {t('common_delete')}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -326,7 +328,7 @@ export default function AdminEntreprisesPage() {
             </Table>
           </div>
           <div className="p-4 border-t text-sm text-muted-foreground">
-            {businesses.length} entreprise{businesses.length !== 1 ? 's' : ''}
+            {businesses.length} {t('admin_ent_title').toLowerCase()}{businesses.length !== 1 ? 's' : ''}
           </div>
         </CardContent>
       </Card>
@@ -335,26 +337,26 @@ export default function AdminEntreprisesPage() {
       <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog(); }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Ajouter une entreprise</DialogTitle>
+            <DialogTitle>{t('admin_ent_dialog_add_title')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
             {/* Business Info */}
             <div>
-              <h3 className="text-sm font-semibold mb-3">Informations de l&apos;entreprise</h3>
+              <h3 className="text-sm font-semibold mb-3">{t('admin_ent_dialog_info')}</h3>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2 md:col-span-2">
-                  <Label>Nom de l&apos;entreprise *</Label>
+                  <Label>{t('biz_name')} *</Label>
                   <Input
                     value={form.businessName}
                     onChange={(e) => updateField('businessName', e.target.value)}
-                    placeholder="Nom de l'entreprise"
+                    placeholder={t('biz_name')}
                   />
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <Label>Catégorie</Label>
+                  <Label>{t('biz_category')}</Label>
                   <Select value={form.categoryId} onValueChange={(v) => updateField('categoryId', v)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une catégorie" />
+                      <SelectValue placeholder={t('search_select_category')} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((cat: any) => (
@@ -366,92 +368,92 @@ export default function AdminEntreprisesPage() {
                   </Select>
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <Label>Description</Label>
+                  <Label>{t('dash_ads_field_desc')}</Label>
                   <Textarea
                     value={form.description}
                     onChange={(e) => updateField('description', e.target.value)}
-                    placeholder="Description de l'entreprise"
+                    placeholder={t('biz_desc_placeholder')}
                     rows={3}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Adresse</Label>
+                  <Label>{t('biz_address')}</Label>
                   <Input
                     value={form.address}
                     onChange={(e) => updateField('address', e.target.value)}
-                    placeholder="Adresse"
+                    placeholder={t('biz_address')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Ville</Label>
+                  <Label>{t('biz_city')}</Label>
                   <Input
                     value={form.city}
                     onChange={(e) => updateField('city', e.target.value)}
-                    placeholder="Ville"
+                    placeholder={t('biz_city')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Téléphone</Label>
+                  <Label>{t('biz_phone')}</Label>
                   <Input
                     value={form.businessPhone}
                     onChange={(e) => updateField('businessPhone', e.target.value)}
-                    placeholder="+221 XX XXX XXXX"
+                    placeholder="+245 XX XXX XXXX"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Email</Label>
+                  <Label>{t('biz_email')}</Label>
                   <Input
                     type="email"
                     value={form.businessEmail}
                     onChange={(e) => updateField('businessEmail', e.target.value)}
-                    placeholder="email@entreprise.com"
+                    placeholder="email@empresa.com"
                   />
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <Label>Site web</Label>
+                  <Label>{t('biz_website')}</Label>
                   <Input
                     value={form.website}
                     onChange={(e) => updateField('website', e.target.value)}
-                    placeholder="https://www.entreprise.com"
+                    placeholder="https://www.empresa.com"
                   />
                 </div>
               </div>
             </div>
 
             <div className="border-t pt-6">
-              <h3 className="text-sm font-semibold mb-3">Propriétaire</h3>
+              <h3 className="text-sm font-semibold mb-3">{t('admin_ent_owner_info')}</h3>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Nom du propriétaire *</Label>
+                  <Label>{t('admin_ent_owner_name')} *</Label>
                   <Input
                     value={form.ownerName}
                     onChange={(e) => updateField('ownerName', e.target.value)}
-                    placeholder="Nom complet"
+                    placeholder={t('dash_settings_fullname')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Email du propriétaire *</Label>
+                  <Label>{t('admin_ent_owner_email')} *</Label>
                   <Input
                     type="email"
                     value={form.ownerEmail}
                     onChange={(e) => updateField('ownerEmail', e.target.value)}
-                    placeholder="email@exemple.com"
+                    placeholder="email@exemplo.com"
                   />
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <Label>Mot de passe *</Label>
+                  <Label>{t('dash_settings_new_password')} *</Label>
                   <Input
                     type="password"
                     value={form.ownerPassword}
                     onChange={(e) => updateField('ownerPassword', e.target.value)}
-                    placeholder="Minimum 6 caractères"
+                    placeholder={t('dash_settings_password_short')}
                   />
                 </div>
               </div>
             </div>
 
             <div className="flex gap-2 justify-end pt-2">
-              <Button variant="outline" onClick={closeDialog}>Annuler</Button>
+              <Button variant="outline" onClick={closeDialog}>{t('common_cancel')}</Button>
               <Button
                 onClick={() => createMutation.mutate(form)}
                 disabled={
@@ -464,7 +466,7 @@ export default function AdminEntreprisesPage() {
                 }
                 className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"
               >
-                {createMutation.isPending ? 'Création...' : 'Créer l\'entreprise'}
+                {createMutation.isPending ? t('admin_ent_creating') : t('admin_ent_create_button')}
               </Button>
             </div>
           </div>

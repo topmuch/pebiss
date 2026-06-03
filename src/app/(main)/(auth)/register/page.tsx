@@ -33,6 +33,7 @@ import {
   MessageCircle,
   CheckCircle2,
 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface Category {
   id: string;
@@ -43,6 +44,7 @@ interface Category {
 export default function RegisterPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
   // Business fields
@@ -80,8 +82,8 @@ export default function RegisterPage() {
 
     if (password !== confirmPassword) {
       toast({
-        title: 'Erreur',
-        description: 'Les mots de passe ne correspondent pas.',
+        title: t('register_error'),
+        description: t('register_password_mismatch'),
         variant: 'destructive',
       });
       return;
@@ -89,8 +91,8 @@ export default function RegisterPage() {
 
     if (password.length < 6) {
       toast({
-        title: 'Erreur',
-        description: 'Le mot de passe doit contenir au moins 6 caractères.',
+        title: t('register_error'),
+        description: t('register_password_short'),
         variant: 'destructive',
       });
       return;
@@ -126,12 +128,12 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Erreur lors de l\'inscription');
+        throw new Error(data.error || t('register_error_generic'));
       }
 
       toast({
-        title: 'Compte créé avec succès !',
-        description: 'Bienvenue sur Pebiss ! Votre entreprise est déjà visible.',
+        title: t('register_success_title'),
+        description: t('register_success_msg'),
       });
 
       // Auto-login
@@ -148,8 +150,8 @@ export default function RegisterPage() {
       }
     } catch (error) {
       toast({
-        title: 'Erreur',
-        description: error instanceof Error ? error.message : 'Une erreur est survenue.',
+        title: t('register_error_generic'),
+        description: error instanceof Error ? error.message : t('register_error_msg'),
         variant: 'destructive',
       });
     } finally {
@@ -168,10 +170,10 @@ export default function RegisterPage() {
             </div>
           </Link>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-            Créer votre compte
+            {t('register_title')}
           </h1>
           <p className="text-muted-foreground mt-2">
-            Inscrivez votre entreprise gratuitement sur Pebiss
+            {t('register_subtitle')}
           </p>
         </div>
 
@@ -181,26 +183,26 @@ export default function RegisterPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Building2 className="h-5 w-5 text-primary" />
-                Informations de l&apos;entreprise
+                {t('register_business_info')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="businessName">Nom de l&apos;entreprise *</Label>
+                  <Label htmlFor="businessName">{t('register_business_name')} *</Label>
                   <Input
                     id="businessName"
-                    placeholder="Ex: Supermarché Diallo"
+                    placeholder={t('register_business_name_placeholder')}
                     value={businessName}
                     onChange={(e) => setBusinessName(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="category">Catégorie</Label>
+                  <Label htmlFor="category">{t('register_category')}</Label>
                   <Select value={categoryId} onValueChange={setCategoryId}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Sélectionner une catégorie" />
+                      <SelectValue placeholder={t('search_select_category')} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories?.map((cat) => (
@@ -214,10 +216,10 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t('register_description')}</Label>
                 <Textarea
                   id="description"
-                  placeholder="Décrivez votre entreprise, vos activités..."
+                  placeholder={t('register_description_placeholder')}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
@@ -226,12 +228,12 @@ export default function RegisterPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="address">Adresse</Label>
+                  <Label htmlFor="address">{t('register_address')}</Label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="address"
-                      placeholder="Ex: Rue 10, Médina"
+                      placeholder={t('register_address_placeholder')}
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       className="pl-10"
@@ -239,10 +241,10 @@ export default function RegisterPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="city">Ville *</Label>
+                  <Label htmlFor="city">{t('register_city')} *</Label>
                   <Input
                     id="city"
-                    placeholder="Ex: Dakar"
+                    placeholder={t('register_city_placeholder')}
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     required
@@ -252,16 +254,16 @@ export default function RegisterPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="country">Pays</Label>
+                  <Label htmlFor="country">{t('register_country')}</Label>
                   <Input id="country" value={country} disabled className="bg-muted/50" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="businessPhone">Téléphone</Label>
+                  <Label htmlFor="businessPhone">{t('register_phone')}</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="businessPhone"
-                      placeholder="+221 33 XXX XX XX"
+                      placeholder={t('register_phone_placeholder')}
                       value={businessPhone}
                       onChange={(e) => setBusinessPhone(e.target.value)}
                       className="pl-10"
@@ -272,7 +274,7 @@ export default function RegisterPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="businessEmail">Email de l&apos;entreprise</Label>
+                  <Label htmlFor="businessEmail">{t('register_business_email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -286,7 +288,7 @@ export default function RegisterPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="website">Site web</Label>
+                  <Label htmlFor="website">{t('register_website')}</Label>
                   <div className="relative">
                     <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -307,23 +309,23 @@ export default function RegisterPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <User className="h-5 w-5 text-primary" />
-                Informations du responsable
+                {t('register_manager_info')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="ownerName">Nom complet *</Label>
+                  <Label htmlFor="ownerName">{t('register_fullname')} *</Label>
                   <Input
                     id="ownerName"
-                    placeholder="Votre nom complet"
+                    placeholder={t('register_fullname_placeholder')}
                     value={ownerName}
                     onChange={(e) => setOwnerName(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="ownerEmail">Email *</Label>
+                  <Label htmlFor="ownerEmail">{t('register_email')} *</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -341,7 +343,7 @@ export default function RegisterPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="ownerPhone">Téléphone</Label>
+                  <Label htmlFor="ownerPhone">{t('register_phone')}</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -358,7 +360,7 @@ export default function RegisterPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password">Mot de passe *</Label>
+                  <Label htmlFor="password">{t('register_password')} *</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -373,13 +375,13 @@ export default function RegisterPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirmer le mot de passe *</Label>
+                  <Label htmlFor="confirmPassword">{t('register_confirm_password')} *</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="confirmPassword"
                       type="password"
-                      placeholder="Retapez le mot de passe"
+                      placeholder={t('register_confirm_placeholder')}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="pl-10"
@@ -396,8 +398,8 @@ export default function RegisterPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Globe className="h-5 w-5 text-primary" />
-                Réseaux sociaux
-                <span className="text-sm font-normal text-muted-foreground">(optionnel)</span>
+                {t('register_social')}
+                <span className="text-sm font-normal text-muted-foreground">{t('register_optional')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -477,19 +479,19 @@ export default function RegisterPage() {
               {isLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Création en cours...
+                  {t('register_loading')}
                 </div>
               ) : (
                 <>
                   <CheckCircle2 className="h-5 w-5" />
-                  Créer mon compte
+                  {t('register_create_button')}
                 </>
               )}
             </Button>
             <p className="text-sm text-muted-foreground">
-              Déjà un compte ?{' '}
+              {t('register_has_account')}{' '}
               <Link href="/login" className="text-primary hover:underline font-medium">
-                Se connecter
+                {t('register_login_link')}
               </Link>
             </p>
           </div>

@@ -3,6 +3,7 @@
 import { ArrowRight, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 interface AdBannerProps {
   title?: string;
@@ -48,7 +49,7 @@ const variants = {
 export function AdBanner({
   title,
   subtitle,
-  ctaText = 'Découvrir',
+  ctaText,
   ctaLink = '#',
   variant = 'dark',
   className,
@@ -56,6 +57,7 @@ export function AdBanner({
   overlayGradient,
 }: AdBannerProps) {
   const [dismissed, setDismissed] = useState(false);
+  const { t } = useTranslation();
   const v = variants[variant];
 
   if (dismissed) return null;
@@ -73,7 +75,7 @@ export function AdBanner({
         {/* Background image */}
         <img
           src={image}
-          alt={title || 'Publicité'}
+          alt={title || t('ad_badge')}
           className="absolute inset-0 w-full h-full object-cover"
         />
 
@@ -92,7 +94,7 @@ export function AdBanner({
             setDismissed(true);
           }}
           className="absolute top-2 right-2 z-20 w-7 h-7 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-black/60 transition-colors"
-          aria-label="Fermer la publicité"
+          aria-label={t('ad_close_label')}
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -100,7 +102,7 @@ export function AdBanner({
         {/* Top badge */}
         <div className="absolute top-3 left-3 z-10">
           <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-            Annonce
+            {t('ad_badge')}
           </span>
         </div>
 
@@ -145,7 +147,7 @@ export function AdBanner({
           'absolute top-2 right-2 z-10 w-6 h-6 flex items-center justify-center transition-colors',
           v.close
         )}
-        aria-label="Fermer la publicité"
+        aria-label={t('ad_close_label')}
       >
         <X className="h-3.5 w-3.5" />
       </button>
@@ -153,7 +155,7 @@ export function AdBanner({
       {/* Top: Accent badge */}
       <div className={cn('mx-4 mt-4 px-3 py-1 rounded-full w-fit', v.badge)}>
         <span className={cn('text-[10px] font-bold uppercase tracking-wider', v.text)}>
-          Annonce
+          {t('ad_badge')}
         </span>
       </div>
 

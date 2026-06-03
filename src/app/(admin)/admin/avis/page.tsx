@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,10 +34,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Search, Trash2, Star, MessageSquare } from 'lucide-react';
+import { Search, Trash2, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminAvisPage() {
+  const { t, locale } = useTranslation();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [ratingFilter, setRatingFilter] = useState('all');
@@ -66,10 +68,10 @@ export default function AdminAvisPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-reviews'] });
-      toast.success('Avis supprimé');
+      toast.success(t('admin_avis_deleted_msg'));
       setDeleteId(null);
     },
-    onError: () => toast.error('Erreur lors de la suppression'),
+    onError: () => toast.error(t('admin_avis_delete_error')),
   });
 
   const reviews = data?.reviews || [];
@@ -77,8 +79,8 @@ export default function AdminAvisPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Avis</h1>
-        <p className="text-muted-foreground">Modérez les avis de la plateforme</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('admin_avis_title')}</h1>
+        <p className="text-muted-foreground">{t('admin_avis_subtitle')}</p>
       </div>
 
       {/* Filters */}
@@ -88,7 +90,7 @@ export default function AdminAvisPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Rechercher un avis..."
+                placeholder={t('admin_avis_search')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -96,15 +98,15 @@ export default function AdminAvisPage() {
             </div>
             <Select value={ratingFilter} onValueChange={setRatingFilter}>
               <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Note" />
+                <SelectValue placeholder={t('admin_dash_avg_rating')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Toutes les notes</SelectItem>
-                <SelectItem value="5">5 étoiles</SelectItem>
-                <SelectItem value="4">4 étoiles</SelectItem>
-                <SelectItem value="3">3 étoiles</SelectItem>
-                <SelectItem value="2">2 étoiles</SelectItem>
-                <SelectItem value="1">1 étoile</SelectItem>
+                <SelectItem value="all">{t('admin_avis_all_ratings')}</SelectItem>
+                <SelectItem value="5">5 ★</SelectItem>
+                <SelectItem value="4">4 ★</SelectItem>
+                <SelectItem value="3">3 ★</SelectItem>
+                <SelectItem value="2">2 ★</SelectItem>
+                <SelectItem value="1">1 ★</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -118,12 +120,12 @@ export default function AdminAvisPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Entreprise</TableHead>
-                  <TableHead>Utilisateur</TableHead>
-                  <TableHead>Note</TableHead>
-                  <TableHead>Commentaire</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t('admin_ent_col_business')}</TableHead>
+                  <TableHead>{t('admin_avis_col_user')}</TableHead>
+                  <TableHead>{t('admin_dash_avg_rating')}</TableHead>
+                  <TableHead>{t('admin_avis_col_comment')}</TableHead>
+                  <TableHead>{t('admin_dash_col_date')}</TableHead>
+                  <TableHead className="text-right">{t('admin_ent_col_actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -136,7 +138,7 @@ export default function AdminAvisPage() {
                 ) : reviews.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      Aucun avis trouvé
+                      {t('admin_avis_no_results')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -158,12 +160,12 @@ export default function AdminAvisPage() {
                         {r.comment || '-'}
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {new Date(r.createdAt).toLocaleDateString('fr-FR')}
+                        {new Date(r.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT')}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end">
                           {r.response && (
-                            <Badge variant="outline" className="mr-2 text-[10px]">Répondu</Badge>
+                            <Badge variant="outline" className="mr-2 text-[10px]">{t('admin_avis_replied_badge')}</Badge>
                           )}
                           <AlertDialog open={deleteId === r.id} onOpenChange={(open) => !open && setDeleteId(null)}>
                             <AlertDialogTrigger asChild>
@@ -178,15 +180,15 @@ export default function AdminAvisPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Supprimer cet avis ?</AlertDialogTitle>
+                                <AlertDialogTitle>{t('dash_photos_delete_confirm')}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Cette action est irréversible.
+                                  {t('dash_ads_delete_desc')}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogCancel>{t('common_cancel')}</AlertDialogCancel>
                                 <AlertDialogAction onClick={() => deleteMutation.mutate(r.id)}>
-                                  Supprimer
+                                  {t('common_delete')}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -200,7 +202,7 @@ export default function AdminAvisPage() {
             </Table>
           </div>
           <div className="p-4 border-t text-sm text-muted-foreground">
-            {reviews.length} avis
+            {reviews.length} {t('admin_avis_title').toLowerCase()}{reviews.length !== 1 ? 's' : ''}
           </div>
         </CardContent>
       </Card>

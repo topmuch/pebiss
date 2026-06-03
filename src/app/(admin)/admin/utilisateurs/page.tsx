@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,6 +45,7 @@ import { Search, Ban, CheckCircle2, Users, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminUtilisateursPage() {
+  const { t, locale } = useTranslation();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
@@ -84,13 +86,13 @@ export default function AdminUtilisateursPage() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       const messages: Record<string, string> = {
-        block: 'Utilisateur bloqué',
-        unblock: 'Utilisateur débloqué',
+        block: t('admin_users_blocked_msg'),
+        unblock: t('admin_users_unblocked_msg'),
       };
-      toast.success(messages[variables.action] || 'Action effectuée');
+      toast.success(messages[variables.action] || 'OK');
       setActionTarget(null);
     },
-    onError: () => toast.error('Erreur lors de l\'action'),
+    onError: () => toast.error(t('admin_users_error')),
   });
 
   const createMutation = useMutation({
@@ -108,10 +110,10 @@ export default function AdminUtilisateursPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      toast.success('Utilisateur créé avec succès');
+      toast.success(t('admin_users_created_msg'));
       closeDialog();
     },
-    onError: (err) => toast.error(err.message || 'Erreur lors de la création'),
+    onError: (err) => toast.error(err.message || t('admin_users_error')),
   });
 
   const closeDialog = () => {
@@ -139,16 +141,24 @@ export default function AdminUtilisateursPage() {
     }
   };
 
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'ADMIN': return t('admin_users_admin_role');
+      case 'ENTERPRISE': return t('admin_users_enterprise_role');
+      default: return role;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Utilisateurs</h1>
-          <p className="text-muted-foreground">Gérez les utilisateurs de la plateforme</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('admin_users_title')}</h1>
+          <p className="text-muted-foreground">{t('admin_users_subtitle')}</p>
         </div>
         <Button onClick={() => setDialogOpen(true)} className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
           <Plus className="mr-2 h-4 w-4" />
-          Ajouter un utilisateur
+          {t('admin_users_add')}
         </Button>
       </div>
 
@@ -159,7 +169,7 @@ export default function AdminUtilisateursPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Rechercher un utilisateur..."
+                placeholder={t('admin_users_search')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -167,12 +177,12 @@ export default function AdminUtilisateursPage() {
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
               <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Rôle" />
+                <SelectValue placeholder={t('admin_users_role')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les rôles</SelectItem>
-                <SelectItem value="ADMIN">Admin</SelectItem>
-                <SelectItem value="ENTERPRISE">Entreprise</SelectItem>
+                <SelectItem value="all">{t('admin_users_all_roles')}</SelectItem>
+                <SelectItem value="ADMIN">{t('admin_users_admin_role')}</SelectItem>
+                <SelectItem value="ENTERPRISE">{t('admin_users_enterprise_role')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -186,12 +196,12 @@ export default function AdminUtilisateursPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Utilisateur</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Rôle</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Inscription</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t('admin_users_title').slice(0, -1)}</TableHead>
+                  <TableHead>{t('admin_users_col_email')}</TableHead>
+                  <TableHead>{t('admin_users_role')}</TableHead>
+                  <TableHead>{t('admin_ent_col_status')}</TableHead>
+                  <TableHead>{t('admin_users_col_signup')}</TableHead>
+                  <TableHead className="text-right">{t('admin_ent_col_actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -204,7 +214,7 @@ export default function AdminUtilisateursPage() {
                 ) : users.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      Aucun utilisateur trouvé
+                      {t('admin_users_no_results')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -221,17 +231,17 @@ export default function AdminUtilisateursPage() {
                       </TableCell>
                       <TableCell className="text-sm">{u.email}</TableCell>
                       <TableCell>
-                        <Badge className={`text-[10px] ${getRoleColor(u.role)}`}>{u.role}</Badge>
+                        <Badge className={`text-[10px] ${getRoleColor(u.role)}`}>{getRoleLabel(u.role)}</Badge>
                       </TableCell>
                       <TableCell>
                         {u.isBlocked ? (
-                          <Badge variant="destructive" className="text-[10px]">Bloqué</Badge>
+                          <Badge variant="destructive" className="text-[10px]">{t('admin_users_blocked_badge')}</Badge>
                         ) : (
-                          <Badge variant="default" className="bg-green-100 text-green-800 text-[10px]">Actif</Badge>
+                          <Badge variant="default" className="bg-green-100 text-green-800 text-[10px]">{t('admin_users_active_badge')}</Badge>
                         )}
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {new Date(u.createdAt).toLocaleDateString('fr-FR')}
+                        {new Date(u.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT')}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end">
@@ -263,7 +273,7 @@ export default function AdminUtilisateursPage() {
             </Table>
           </div>
           <div className="p-4 border-t text-sm text-muted-foreground">
-            {users.length} utilisateur{users.length !== 1 ? 's' : ''}
+            {users.length} {t('admin_users_title').toLowerCase()}{users.length !== 1 ? 's' : ''}
           </div>
         </CardContent>
       </Card>
@@ -273,16 +283,18 @@ export default function AdminUtilisateursPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {actionTarget?.action === 'block' ? 'Bloquer' : 'Débloquer'} {actionTarget?.name} ?
+              {actionTarget?.action === 'block'
+                ? t('admin_users_block_confirm', { name: actionTarget?.name })
+                : t('admin_users_unblock_confirm', { name: actionTarget?.name })}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {actionTarget?.action === 'block'
-                ? 'L\'utilisateur ne pourra plus se connecter à la plateforme.'
-                : 'L\'utilisateur pourra de nouveau se connecter à la plateforme.'}
+                ? t('admin_users_block_desc')
+                : t('admin_users_unblock_desc')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t('common_cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={() => {
               if (actionTarget) {
                 actionMutation.mutate({
@@ -292,7 +304,7 @@ export default function AdminUtilisateursPage() {
                 });
               }
             }}>
-              Confirmer
+              {t('common_confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -302,57 +314,57 @@ export default function AdminUtilisateursPage() {
       <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog(); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Ajouter un utilisateur</DialogTitle>
+            <DialogTitle>{t('admin_users_dialog_add_title')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Nom *</Label>
+              <Label>{t('biz_name')} *</Label>
               <Input
                 value={form.name}
                 onChange={(e) => updateField('name', e.target.value)}
-                placeholder="Nom complet"
+                placeholder={t('dash_settings_fullname')}
               />
             </div>
             <div className="space-y-2">
-              <Label>Email *</Label>
+              <Label>{t('admin_users_col_email')} *</Label>
               <Input
                 type="email"
                 value={form.email}
                 onChange={(e) => updateField('email', e.target.value)}
-                placeholder="email@exemple.com"
+                placeholder="email@exemplo.com"
               />
             </div>
             <div className="space-y-2">
-              <Label>Mot de passe *</Label>
+              <Label>{t('dash_settings_new_password')} *</Label>
               <Input
                 type="password"
                 value={form.password}
                 onChange={(e) => updateField('password', e.target.value)}
-                placeholder="Minimum 6 caractères"
+                placeholder={t('dash_settings_password_short')}
               />
             </div>
             <div className="space-y-2">
-              <Label>Téléphone</Label>
+              <Label>{t('biz_phone')}</Label>
               <Input
                 value={form.phone}
                 onChange={(e) => updateField('phone', e.target.value)}
-                placeholder="+221 XX XXX XXXX"
+                placeholder="+245 XX XXX XXXX"
               />
             </div>
             <div className="space-y-2">
-              <Label>Rôle</Label>
+              <Label>{t('admin_users_role')}</Label>
               <Select value={form.role} onValueChange={(v) => updateField('role', v)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un rôle" />
+                  <SelectValue placeholder={t('dash_ads_select')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ADMIN">Administrateur</SelectItem>
-                  <SelectItem value="ENTERPRISE">Entreprise</SelectItem>
+                  <SelectItem value="ADMIN">{t('admin_users_admin_role')}</SelectItem>
+                  <SelectItem value="ENTERPRISE">{t('admin_users_enterprise_role')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex gap-2 justify-end pt-2">
-              <Button variant="outline" onClick={closeDialog}>Annuler</Button>
+              <Button variant="outline" onClick={closeDialog}>{t('common_cancel')}</Button>
               <Button
                 onClick={() => createMutation.mutate(form)}
                 disabled={
@@ -364,7 +376,7 @@ export default function AdminUtilisateursPage() {
                 }
                 className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"
               >
-                {createMutation.isPending ? 'Création...' : 'Créer l\'utilisateur'}
+                {createMutation.isPending ? t('admin_ent_creating') : t('admin_ent_create_button')}
               </Button>
             </div>
           </div>

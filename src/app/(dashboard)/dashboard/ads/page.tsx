@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBusinessSlug } from '@/hooks/use-business-slug';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,6 +46,7 @@ const AD_TYPES = [
 ];
 
 export default function AdsPage() {
+  const { t, locale } = useTranslation();
   const { slug, business, isLoading } = useBusinessSlug();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -97,10 +99,10 @@ export default function AdsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-ads', business?.id] });
-      toast.success('Annonce créée avec succès');
+      toast.success(t('dash_ads_created'));
       closeDialog();
     },
-    onError: () => toast.error('Erreur lors de la création'),
+    onError: () => toast.error(t('dash_ads_error_create')),
   });
 
   const updateMutation = useMutation({
@@ -115,10 +117,10 @@ export default function AdsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-ads', business?.id] });
-      toast.success('Annonce mise à jour');
+      toast.success(t('dash_ads_updated'));
       closeDialog();
     },
-    onError: () => toast.error('Erreur lors de la mise à jour'),
+    onError: () => toast.error(t('dash_ads_error_update')),
   });
 
   const deleteMutation = useMutation({
@@ -128,10 +130,10 @@ export default function AdsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-ads', business?.id] });
-      toast.success('Annonce supprimée');
+      toast.success(t('dash_ads_deleted'));
       setDeleteId(null);
     },
-    onError: () => toast.error('Erreur lors de la suppression'),
+    onError: () => toast.error(t('dash_ads_error_delete')),
   });
 
   const openDialog = (ad?: any) => {
@@ -163,7 +165,7 @@ export default function AdsPage() {
         const result = await uploadMutation.mutateAsync(imageFile);
         imageUrl = result.urls?.[0] || result.url;
       } catch {
-        toast.error('Erreur lors du téléchargement');
+        toast.error(t('dash_ads_error_upload'));
         return;
       }
     }
@@ -211,23 +213,23 @@ export default function AdsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Annonces</h1>
-          <p className="text-muted-foreground">Gérez vos annonces publicitaires</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('dash_ads_title')}</h1>
+          <p className="text-muted-foreground">{t('dash_ads_subtitle')}</p>
         </div>
         <Button onClick={() => openDialog()} className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
           <Plus className="mr-2 h-4 w-4" />
-          Créer une annonce
+          {t('dash_ads_create')}
         </Button>
       </div>
 
       {ads.length === 0 ? (
         <div className="text-center py-16">
           <Megaphone className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold">Aucune annonce</h3>
-          <p className="text-muted-foreground mt-1">Créez votre première annonce pour promouvoir votre entreprise</p>
+          <h3 className="text-lg font-semibold">{t('dash_ads_empty')}</h3>
+          <p className="text-muted-foreground mt-1">{t('dash_ads_empty_desc')}</p>
           <Button onClick={() => openDialog()} className="mt-4 bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
             <Plus className="mr-2 h-4 w-4" />
-            Créer une annonce
+            {t('dash_ads_create')}
           </Button>
         </div>
       ) : (
@@ -256,7 +258,7 @@ export default function AdsPage() {
                           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ad.description}</p>
                         )}
                         <p className="text-xs text-muted-foreground mt-2">
-                          {new Date(ad.createdAt).toLocaleDateString('fr-FR')}
+                          {new Date(ad.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT')}
                         </p>
                       </div>
                       <div className="flex gap-1 shrink-0">
@@ -271,12 +273,12 @@ export default function AdsPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Supprimer cette annonce ?</AlertDialogTitle>
-                              <AlertDialogDescription>Cette action est irréversible.</AlertDialogDescription>
+                              <AlertDialogTitle>{t('dash_ads_delete_confirm')}</AlertDialogTitle>
+                              <AlertDialogDescription>{t('dash_ads_delete_desc')}</AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteMutation.mutate(ad.id)}>Supprimer</AlertDialogAction>
+                              <AlertDialogCancel>{t('common_cancel')}</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => deleteMutation.mutate(ad.id)}>{t('common_delete')}</AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
@@ -294,29 +296,29 @@ export default function AdsPage() {
       <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog(); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingAd?.id ? 'Modifier l\'annonce' : 'Créer une annonce'}</DialogTitle>
+            <DialogTitle>{editingAd?.id ? t('dash_ads_edit') : t('dash_ads_create')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Titre</Label>
+              <Label>{t('dash_ads_field_title')}</Label>
               <Input
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="Titre de l'annonce"
+                placeholder={t('dash_ads_title_placeholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>{t('dash_ads_field_desc')}</Label>
               <Textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="Description de l'annonce..."
+                placeholder={t('dash_ads_desc_placeholder')}
                 rows={3}
               />
             </div>
             <div className="grid gap-4 grid-cols-2">
               <div className="space-y-2">
-                <Label>Type</Label>
+                <Label>{t('dash_ads_field_type')}</Label>
                 <Select value={form.type} onValueChange={(val) => setForm({ ...form, type: val })}>
                   <SelectTrigger>
                     <SelectValue />
@@ -329,10 +331,10 @@ export default function AdsPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Catégorie</Label>
+                <Label>{t('dash_ads_field_category')}</Label>
                 <Select value={form.categoryId} onValueChange={(val) => setForm({ ...form, categoryId: val })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner" />
+                    <SelectValue placeholder={t('dash_ads_select')} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories?.categories?.map((cat: any) => (
@@ -343,7 +345,7 @@ export default function AdsPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Image</Label>
+              <Label>{t('dash_ads_field_image')}</Label>
               <div
                 className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50"
                 onClick={() => document.getElementById('ad-image-input')?.click()}
@@ -353,7 +355,7 @@ export default function AdsPage() {
                 ) : (
                   <div className="text-center">
                     <Upload className="h-6 w-6 mx-auto text-muted-foreground mb-1" />
-                    <p className="text-xs text-muted-foreground">Cliquer pour ajouter une image</p>
+                    <p className="text-xs text-muted-foreground">{t('dash_ads_add_image')}</p>
                   </div>
                 )}
               </div>
@@ -366,13 +368,13 @@ export default function AdsPage() {
               />
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={closeDialog}>Annuler</Button>
+              <Button variant="outline" onClick={closeDialog}>{t('dash_ads_cancel')}</Button>
               <Button
                 onClick={handleSubmit}
                 disabled={!form.title.trim() || createMutation.isPending || updateMutation.isPending}
                 className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"
               >
-                {(createMutation.isPending || updateMutation.isPending) ? 'Enregistrement...' : 'Enregistrer'}
+                {(createMutation.isPending || updateMutation.isPending) ? t('dash_ads_saving') : t('common_save')}
               </Button>
             </div>
           </div>

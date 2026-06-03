@@ -17,6 +17,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { BusinessCard } from '@/components/shared/business-card';
 import { BusinessCardSkeleton } from '@/components/shared/business-card-skeleton';
+import { useTranslation } from '@/lib/i18n';
 import {
   Search,
   MapPin,
@@ -66,6 +67,7 @@ const SENEGAL_REGIONS = [
 ];
 
 export default function AnnuairePage() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('query') || '');
   const [city, setCity] = useState(searchParams.get('city') || '');
@@ -129,10 +131,10 @@ export default function AnnuairePage() {
       <div className="pebiss-gradient py-12 md:py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-            Annuaire des entreprises
+            {t('annuaire_title')}
           </h1>
           <p className="text-white/80 text-lg">
-            Trouvez l&apos;entreprise idéale parmi notre vaste répertoire
+            {t('annuaire_subtitle')}
           </p>
         </div>
       </div>
@@ -146,7 +148,7 @@ export default function AnnuairePage() {
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher une entreprise..."
+                    placeholder={t('annuaire_search_placeholder')}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     className="pl-10"
@@ -155,7 +157,7 @@ export default function AnnuairePage() {
                 <div className="flex-1 relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Ville..."
+                    placeholder={t('annuaire_city_placeholder')}
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     className="pl-10"
@@ -163,10 +165,10 @@ export default function AnnuairePage() {
                 </div>
                 <Select value={category} onValueChange={(v) => { setCategory(v === 'all' ? '' : v); setPage(1); }}>
                   <SelectTrigger className="w-full md:w-48">
-                    <SelectValue placeholder="Catégorie" />
+                    <SelectValue placeholder={t('search_category')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Toutes les catégories</SelectItem>
+                    <SelectItem value="all">{t('annuaire_all_categories')}</SelectItem>
                     {categories?.map((cat) => (
                       <SelectItem key={cat.id} value={cat.slug}>
                         {cat.name}
@@ -176,10 +178,10 @@ export default function AnnuairePage() {
                 </Select>
                 <Select value={region} onValueChange={(v) => { setRegion(v === 'all' ? '' : v); setPage(1); }}>
                   <SelectTrigger className="w-full md:w-48">
-                    <SelectValue placeholder="Région" />
+                    <SelectValue placeholder={t('annuaire_region')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Toutes les régions</SelectItem>
+                    <SelectItem value="all">{t('annuaire_all_regions')}</SelectItem>
                     {SENEGAL_REGIONS.map((r) => (
                       <SelectItem key={r} value={r}>
                         {r}
@@ -189,7 +191,7 @@ export default function AnnuairePage() {
                 </Select>
                 <Button type="submit" className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
                   <Search className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2">Rechercher</span>
+                  <span className="hidden sm:inline ml-2">{t('annuaire_search_button')}</span>
                 </Button>
               </div>
             </form>
@@ -202,7 +204,7 @@ export default function AnnuairePage() {
             {hasActiveFilters && (
               <Button variant="ghost" size="sm" onClick={clearFilters} className="text-destructive">
                 <X className="h-3.5 w-3.5 mr-1" />
-                Effacer tout
+                {t('annuaire_clear')}
               </Button>
             )}
             {query && (
@@ -242,7 +244,7 @@ export default function AnnuairePage() {
 
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground mr-1">
-              {pagination?.total || 0} entreprise{pagination && pagination.total !== 1 ? 's' : ''} trouvée{pagination && pagination.total !== 1 ? 's' : ''}
+              {t('annuaire_count', { count: pagination?.total || 0 })}
             </span>
             <div className="flex border rounded-lg overflow-hidden">
               <button
@@ -276,16 +278,15 @@ export default function AnnuairePage() {
             <CardContent className="py-16 px-6 text-center">
               <Building2 className="h-16 w-16 text-muted-foreground/20 mx-auto mb-6" />
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                Aucune entreprise trouvée
+                {t('annuaire_no_results')}
               </h3>
               <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                Essayez de modifier vos critères de recherche ou d&apos;utiliser des termes
-                plus généraux.
+                {t('annuaire_no_results_desc')}
               </p>
               {hasActiveFilters && (
                 <Button variant="outline" onClick={clearFilters}>
                   <SlidersHorizontal className="h-4 w-4 mr-2" />
-                  Réinitialiser les filtres
+                  {t('annuaire_reset')}
                 </Button>
               )}
             </CardContent>
@@ -311,7 +312,7 @@ export default function AnnuairePage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Précédent
+                  {t('annuaire_previous')}
                 </Button>
 
                 <div className="flex items-center gap-1">
@@ -360,7 +361,7 @@ export default function AnnuairePage() {
                   disabled={!pagination.hasNext}
                   onClick={() => setPage((p) => p + 1)}
                 >
-                  Suivant
+                  {t('annuaire_next')}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>

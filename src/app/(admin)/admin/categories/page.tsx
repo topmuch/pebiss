@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +37,7 @@ import { Tag, Plus, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminCategoriesPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
@@ -67,10 +69,10 @@ export default function AdminCategoriesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success('Catégorie créée');
+      toast.success(t('admin_cats_created_msg'));
       closeDialog();
     },
-    onError: (err) => toast.error(err.message || 'Erreur'),
+    onError: (err) => toast.error(err.message || t('admin_ent_error')),
   });
 
   const updateMutation = useMutation({
@@ -88,10 +90,10 @@ export default function AdminCategoriesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success('Catégorie mise à jour');
+      toast.success(t('admin_cats_updated_msg'));
       closeDialog();
     },
-    onError: (err) => toast.error(err.message || 'Erreur'),
+    onError: (err) => toast.error(err.message || t('admin_ent_error')),
   });
 
   const deleteMutation = useMutation({
@@ -109,10 +111,10 @@ export default function AdminCategoriesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success('Catégorie supprimée');
+      toast.success(t('admin_cats_deleted_msg'));
       setDeleteId(null);
     },
-    onError: (err) => toast.error(err.message || 'Erreur'),
+    onError: (err) => toast.error(err.message || t('admin_ent_error')),
   });
 
   const openDialog = (cat?: any) => {
@@ -147,12 +149,12 @@ export default function AdminCategoriesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Catégories</h1>
-          <p className="text-muted-foreground">Gérez les catégories d&apos;entreprises</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('admin_cats_title')}</h1>
+          <p className="text-muted-foreground">{t('admin_cats_subtitle')}</p>
         </div>
         <Button onClick={() => openDialog()} className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
           <Plus className="mr-2 h-4 w-4" />
-          Ajouter une catégorie
+          {t('admin_cats_add')}
         </Button>
       </div>
 
@@ -162,11 +164,11 @@ export default function AdminCategoriesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Icône</TableHead>
-                  <TableHead>Nom</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead className="text-center">Entreprises</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t('admin_cats_col_icon')}</TableHead>
+                  <TableHead>{t('admin_cats_name_label')}</TableHead>
+                  <TableHead>{t('admin_cats_col_slug')}</TableHead>
+                  <TableHead className="text-center">{t('admin_cats_col_businesses')}</TableHead>
+                  <TableHead className="text-right">{t('admin_ent_col_actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -179,7 +181,7 @@ export default function AdminCategoriesPage() {
                 ) : categories.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                      Aucune catégorie trouvée
+                      {t('admin_cats_no_results')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -217,20 +219,20 @@ export default function AdminCategoriesPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Supprimer &quot;{cat.name}&quot; ?</AlertDialogTitle>
+                                <AlertDialogTitle>{t('admin_cats_delete_confirm', { name: cat.name })}</AlertDialogTitle>
                                 <AlertDialogDescription>
                                   {deleteInfo.hasBusinesses
-                                    ? 'Impossible de supprimer cette catégorie car elle contient des entreprises.'
-                                    : 'Cette action est irréversible.'}
+                                    ? t('admin_cats_delete_desc')
+                                    : t('dash_ads_delete_desc')}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogCancel>{t('common_cancel')}</AlertDialogCancel>
                                 {deleteInfo.hasBusinesses ? (
-                                  <AlertDialogAction disabled>Supprimer</AlertDialogAction>
+                                  <AlertDialogAction disabled>{t('common_delete')}</AlertDialogAction>
                                 ) : (
                                   <AlertDialogAction onClick={() => deleteMutation.mutate(cat.id)}>
-                                    Supprimer
+                                    {t('common_delete')}
                                   </AlertDialogAction>
                                 )}
                               </AlertDialogFooter>
@@ -252,20 +254,20 @@ export default function AdminCategoriesPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {editingCategory?.id ? 'Modifier la catégorie' : 'Ajouter une catégorie'}
+              {editingCategory?.id ? t('admin_cats_edit_title') : t('admin_cats_add')}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Nom</Label>
+              <Label>{t('admin_cats_name_label')}</Label>
               <Input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Nom de la catégorie"
+                placeholder={t('admin_cats_name_label')}
               />
             </div>
             <div className="space-y-2">
-              <Label>Icône (emoji)</Label>
+              <Label>{t('admin_cats_icon_label')}</Label>
               <Input
                 value={form.icon}
                 onChange={(e) => setForm({ ...form, icon: e.target.value })}
@@ -273,21 +275,21 @@ export default function AdminCategoriesPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>{t('dash_products_description')}</Label>
               <Input
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="Description de la catégorie"
+                placeholder={t('dash_products_description')}
               />
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={closeDialog}>Annuler</Button>
+              <Button variant="outline" onClick={closeDialog}>{t('common_cancel')}</Button>
               <Button
                 onClick={handleSubmit}
                 disabled={!form.name.trim() || createMutation.isPending || updateMutation.isPending}
                 className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"
               >
-                {(createMutation.isPending || updateMutation.isPending) ? 'Enregistrement...' : 'Enregistrer'}
+                {(createMutation.isPending || updateMutation.isPending) ? t('common_saving') : t('common_save')}
               </Button>
             </div>
           </div>

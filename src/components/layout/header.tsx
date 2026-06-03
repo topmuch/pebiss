@@ -227,7 +227,7 @@ export function Header() {
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                   >
                     {theme === 'dark' ? <Sun className="h-3 w-3 mr-1" /> : <Moon className="h-3 w-3 mr-1" />}
-                    {theme === 'dark' ? 'Clair' : 'Sombre'}
+                    {theme === 'dark' ? t('theme_light') : t('theme_dark')}
                   </Button>
                 </div>
 

@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBusinessSlug } from '@/hooks/use-business-slug';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -27,6 +28,7 @@ import {
 import { toast } from 'sonner';
 
 export default function PhotosPage() {
+  const { t } = useTranslation();
   const { slug, business, isLoading } = useBusinessSlug();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -65,10 +67,10 @@ export default function PhotosPage() {
       }
       queryClient.invalidateQueries({ queryKey: ['business-detail', slug] });
       queryClient.invalidateQueries({ queryKey: ['my-business'] });
-      toast.success(`${urls.length} photo(s) ajoutée(s) avec succès`);
+      toast.success(`${urls.length} ${t('dash_photos_added')}`);
     },
     onError: () => {
-      toast.error('Erreur lors du téléchargement');
+      toast.error(t('dash_photos_upload_error'));
     },
   });
 
@@ -84,22 +86,22 @@ export default function PhotosPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-detail', slug] });
-      toast.success('Photo supprimée');
+      toast.success(t('dash_photos_deleted'));
       setDeleting(null);
     },
     onError: () => {
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('dash_photos_delete_error'));
     },
   });
 
   const handleFiles = useCallback((files: File[]) => {
     const validFiles = files.filter((f) => f.type.startsWith('image/'));
     if (validFiles.length === 0) {
-      toast.error('Veuillez sélectionner des fichiers image');
+      toast.error(t('dash_photos_select_files'));
       return;
     }
     uploadMutation.mutate(validFiles);
-  }, [uploadMutation]);
+  }, [uploadMutation, t]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -135,12 +137,12 @@ export default function PhotosPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Photos</h1>
-          <p className="text-muted-foreground">Gérez les photos de votre entreprise ({photos.length} photo{photos.length !== 1 ? 's' : ''})</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('dash_photos_title')}</h1>
+          <p className="text-muted-foreground">{t('dash_photos_subtitle')} ({photos.length})</p>
         </div>
         <Button onClick={() => fileInputRef.current?.click()} disabled={uploadMutation.isPending}>
           <ImagePlus className="mr-2 h-4 w-4" />
-          {uploadMutation.isPending ? 'Téléchargement...' : 'Ajouter des photos'}
+          {uploadMutation.isPending ? t('dash_photos_uploading') : t('dash_photos_add')}
         </Button>
       </div>
 
@@ -156,10 +158,10 @@ export default function PhotosPage() {
       >
         <Upload className={`h-10 w-10 mb-3 ${isDragging ? 'text-primary' : 'text-muted-foreground'}`} />
         <p className="font-medium">
-          {isDragging ? 'Déposez les fichiers ici' : 'Glissez et déposez vos photos'}
+          {isDragging ? t('dash_photos_dropzone_hint') : t('dash_photos_dropzone')}
         </p>
-        <p className="text-sm text-muted-foreground mt-1">ou cliquez pour sélectionner des fichiers</p>
-        <p className="text-xs text-muted-foreground mt-2">JPG, PNG, GIF, WebP — Max 5 Mo</p>
+        <p className="text-sm text-muted-foreground mt-1">{t('dash_photos_or_click')}</p>
+        <p className="text-xs text-muted-foreground mt-2">{t('dash_photos_format')}</p>
       </div>
       <input
         ref={fileInputRef}
@@ -193,15 +195,15 @@ export default function PhotosPage() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Supprimer cette photo ?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('dash_photos_delete_confirm')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Cette action est irréversible.
+                          {t('dash_ads_delete_desc')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogCancel>{t('common_cancel')}</AlertDialogCancel>
                         <AlertDialogAction onClick={() => deleteMutation.mutate({ photoId: photo.id, photoUrl: photo.url })}>
-                          Supprimer
+                          {t('common_delete')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -214,8 +216,8 @@ export default function PhotosPage() {
       ) : (
         <div className="text-center py-16">
           <Camera className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold">Aucune photo</h3>
-          <p className="text-muted-foreground mt-1">Commencez par ajouter des photos de votre entreprise</p>
+          <h3 className="text-lg font-semibold">{t('dash_photos_empty')}</h3>
+          <p className="text-muted-foreground mt-1">{t('dash_photos_empty_desc')}</p>
         </div>
       )}
     </div>

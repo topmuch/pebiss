@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,11 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Settings, Globe, Search, Share2, ImageIcon, Upload } from 'lucide-react';
+import { Settings, Globe, Search, Share2, Mail, Bell, ImageIcon, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminParametresPage() {
+  const { t, locale } = useTranslation();
   const queryClient = useQueryClient();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const seoImageInputRef = useRef<HTMLInputElement>(null);
@@ -50,6 +53,20 @@ export default function AdminParametresPage() {
     twitter: '',
     linkedin: '',
     whatsapp: '',
+    // SMTP
+    smtpHost: '',
+    smtpPort: '',
+    smtpUser: '',
+    smtpPassword: '',
+    smtpFromName: '',
+    smtpFromEmail: '',
+    smtpEncryption: 'none',
+    // Notifications
+    notifNewAd: true,
+    notifNewReview: true,
+    notifWeeklyReport: false,
+    notifAdApproved: true,
+    notifWelcome: true,
   });
 
   const [initialized, setInitialized] = useState(false);
@@ -72,11 +89,23 @@ export default function AdminParametresPage() {
       twitter: config.twitter || '',
       linkedin: config.linkedin || '',
       whatsapp: config.whatsapp || '',
+      smtpHost: config.smtpHost || '',
+      smtpPort: config.smtpPort || '',
+      smtpUser: config.smtpUser || '',
+      smtpPassword: config.smtpPassword || '',
+      smtpFromName: config.smtpFromName || '',
+      smtpFromEmail: config.smtpFromEmail || '',
+      smtpEncryption: config.smtpEncryption || 'none',
+      notifNewAd: config.notifNewAd ?? true,
+      notifNewReview: config.notifNewReview ?? true,
+      notifWeeklyReport: config.notifWeeklyReport ?? false,
+      notifAdApproved: config.notifAdApproved ?? true,
+      notifWelcome: config.notifWelcome ?? true,
     });
     setInitialized(true);
   }
 
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: string, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -88,7 +117,7 @@ export default function AdminParametresPage() {
         method: 'POST',
         body: formData,
       });
-      if (!res.ok) throw new Error('Erreur lors du téléchargement');
+      if (!res.ok) throw new Error(t('admin_settings_upload_error'));
       return res.json();
     },
   });
@@ -97,9 +126,9 @@ export default function AdminParametresPage() {
     try {
       const result = await uploadMutation.mutateAsync(file);
       updateField(field, result.url);
-      toast.success('Image téléchargée avec succès');
+      toast.success(t('admin_settings_image_uploaded'));
     } catch {
-      toast.error('Erreur lors du téléchargement');
+      toast.error(t('admin_settings_upload_error'));
     }
   };
 
@@ -118,13 +147,30 @@ export default function AdminParametresPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['site-config'] });
-      toast.success('Configuration enregistrée avec succès');
+      toast.success(t('admin_settings_saved'));
     },
-    onError: (err) => toast.error(err.message || 'Erreur lors de l\'enregistrement'),
+    onError: (err) => toast.error(err.message || t('admin_settings_save_error')),
   });
 
   const handleSave = () => {
     saveMutation.mutate(form);
+  };
+
+  const handleTestEmail = async () => {
+    try {
+      const res = await fetch('/api/settings/test-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.smtpFromEmail }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Erreur');
+      }
+      toast.success(t('admin_settings_test_email_success'));
+    } catch {
+      toast.error(t('admin_settings_test_email_error'));
+    }
   };
 
   if (isLoading) {
@@ -142,23 +188,31 @@ export default function AdminParametresPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Paramètres</h1>
-        <p className="text-muted-foreground">Configurez les paramètres généraux du site</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('admin_settings_title')}</h1>
+        <p className="text-muted-foreground">{t('admin_settings_subtitle')}</p>
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList>
+        <TabsList className="flex-wrap h-auto gap-1">
           <TabsTrigger value="general" className="gap-2">
             <Globe className="h-4 w-4" />
-            Général
+            {t('admin_settings_tab_general')}
           </TabsTrigger>
           <TabsTrigger value="seo" className="gap-2">
             <Search className="h-4 w-4" />
-            SEO
+            {t('admin_settings_tab_seo')}
           </TabsTrigger>
           <TabsTrigger value="social" className="gap-2">
             <Share2 className="h-4 w-4" />
-            Réseaux sociaux
+            {t('admin_settings_tab_social')}
+          </TabsTrigger>
+          <TabsTrigger value="email" className="gap-2">
+            <Mail className="h-4 w-4" />
+            {t('admin_settings_tab_email')}
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="gap-2">
+            <Bell className="h-4 w-4" />
+            {t('admin_settings_tab_notifications')}
           </TabsTrigger>
         </TabsList>
 
@@ -166,28 +220,28 @@ export default function AdminParametresPage() {
         <TabsContent value="general" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Informations du site</CardTitle>
-              <CardDescription>Nom, logo et coordonnées de la plateforme</CardDescription>
+              <CardTitle className="text-lg">{t('admin_settings_site_info')}</CardTitle>
+              <CardDescription>{t('admin_settings_subtitle')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Nom du site</Label>
+                  <Label>{t('admin_settings_site_name')}</Label>
                   <Input
                     value={form.siteName}
                     onChange={(e) => updateField('siteName', e.target.value)}
-                    placeholder="Nom du site"
+                    placeholder={t('admin_settings_site_name')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Langue par défaut</Label>
+                  <Label>{t('admin_settings_default_lang')}</Label>
                   <Select value={form.defaultLang} onValueChange={(v) => updateField('defaultLang', v)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner la langue" />
+                      <SelectValue placeholder={t('admin_settings_select_lang')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pt">Portugais (PT)</SelectItem>
-                      <SelectItem value="fr">Français (FR)</SelectItem>
+                      <SelectItem value="pt">{t('admin_settings_lang_pt')}</SelectItem>
+                      <SelectItem value="fr">{t('admin_settings_lang_fr')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -197,12 +251,12 @@ export default function AdminParametresPage() {
 
               {/* Logo */}
               <div className="space-y-3">
-                <Label>Logo du site</Label>
+                <Label>{t('admin_settings_logo')}</Label>
                 {form.logo && (
                   <div className="relative inline-block">
                     <img
                       src={form.logo}
-                      alt="Logo du site"
+                      alt="Logo"
                       className="h-16 w-auto rounded-lg border object-contain bg-white p-1"
                     />
                   </div>
@@ -214,11 +268,11 @@ export default function AdminParametresPage() {
                     disabled={uploadMutation.isPending}
                   >
                     <Upload className="mr-2 h-4 w-4" />
-                    {uploadMutation.isPending ? 'Téléchargement...' : 'Télécharger le logo'}
+                    {uploadMutation.isPending ? t('dash_photos_uploading') : t('admin_settings_upload_logo')}
                   </Button>
                   {form.logo && (
                     <Button variant="ghost" onClick={() => updateField('logo', '')}>
-                      Supprimer
+                      {t('common_delete')}
                     </Button>
                   )}
                   <input
@@ -238,26 +292,26 @@ export default function AdminParametresPage() {
 
               {/* Contact Info */}
               <div>
-                <h3 className="text-sm font-semibold mb-4">Coordonnées</h3>
+                <h3 className="text-sm font-semibold mb-4">{t('admin_settings_contact_info')}</h3>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label>Adresse</Label>
+                    <Label>{t('admin_settings_address')}</Label>
                     <Input
                       value={form.address}
                       onChange={(e) => updateField('address', e.target.value)}
-                      placeholder="Adresse de l'entreprise"
+                      placeholder={t('admin_settings_address')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Téléphone</Label>
+                    <Label>{t('admin_settings_phone')}</Label>
                     <Input
                       value={form.phone}
                       onChange={(e) => updateField('phone', e.target.value)}
-                      placeholder="+221 XX XXX XXXX"
+                      placeholder="+245 XX XXX XXXX"
                     />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>Email</Label>
+                    <Label>{t('admin_settings_email')}</Label>
                     <Input
                       type="email"
                       value={form.email}
@@ -275,31 +329,31 @@ export default function AdminParametresPage() {
         <TabsContent value="seo" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Optimisation SEO</CardTitle>
-              <CardDescription>Configurez le référencement naturel de votre site</CardDescription>
+              <CardTitle className="text-lg">{t('admin_settings_seo_title')}</CardTitle>
+              <CardDescription>{t('admin_settings_seo_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label>Titre SEO</Label>
+                <Label>{t('admin_settings_seo_title_label')}</Label>
                 <Input
                   value={form.seoTitle}
                   onChange={(e) => updateField('seoTitle', e.target.value)}
-                  placeholder="Titre affiché dans les moteurs de recherche"
+                  placeholder={t('admin_settings_seo_title_label')}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Ce titre apparaît dans les résultats de recherche. Recommandé : 50-60 caractères.
+                  {locale === 'fr' ? 'Ce titre apparaît dans les résultats de recherche. Recommandé : 50-60 caractères.' : 'Este título aparece nos resultados de pesquisa. Recomendado: 50-60 caracteres.'}
                 </p>
               </div>
               <div className="space-y-2">
-                <Label>Description SEO</Label>
+                <Label>{t('admin_settings_seo_desc_label')}</Label>
                 <Textarea
                   value={form.seoDescription}
                   onChange={(e) => updateField('seoDescription', e.target.value)}
-                  placeholder="Description affichée dans les moteurs de recherche"
+                  placeholder={t('admin_settings_seo_desc_label')}
                   rows={3}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Cette description apparaît sous le titre dans les résultats. Recommandé : 150-160 caractères.
+                  {locale === 'fr' ? 'Cette description apparaît sous le titre dans les résultats. Recommandé : 150-160 caractères.' : 'Esta descrição aparece sob o título nos resultados. Recomendado: 150-160 caracteres.'}
                 </p>
               </div>
 
@@ -307,12 +361,12 @@ export default function AdminParametresPage() {
 
               {/* SEO Image */}
               <div className="space-y-3">
-                <Label>Image SEO (Open Graph)</Label>
+                <Label>{t('admin_settings_seo_image')}</Label>
                 {form.seoImage && (
                   <div className="relative inline-block">
                     <img
                       src={form.seoImage}
-                      alt="Image SEO"
+                      alt="SEO"
                       className="h-24 w-40 rounded-lg border object-cover"
                     />
                   </div>
@@ -324,11 +378,11 @@ export default function AdminParametresPage() {
                     disabled={uploadMutation.isPending}
                   >
                     <ImageIcon className="mr-2 h-4 w-4" />
-                    {uploadMutation.isPending ? 'Téléchargement...' : 'Télécharger l\'image'}
+                    {uploadMutation.isPending ? t('dash_photos_uploading') : t('admin_settings_upload_seo_image')}
                   </Button>
                   {form.seoImage && (
                     <Button variant="ghost" onClick={() => updateField('seoImage', '')}>
-                      Supprimer
+                      {t('common_delete')}
                     </Button>
                   )}
                   <input
@@ -343,7 +397,7 @@ export default function AdminParametresPage() {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Image affichée lors du partage sur les réseaux sociaux. Recommandé : 1200x630px.
+                  {t('admin_settings_seo_image_desc')}
                 </p>
               </div>
             </CardContent>
@@ -354,8 +408,8 @@ export default function AdminParametresPage() {
         <TabsContent value="social" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Réseaux sociaux</CardTitle>
-              <CardDescription>Liens vers les profils de la plateforme</CardDescription>
+              <CardTitle className="text-lg">{t('admin_settings_tab_social')}</CardTitle>
+              <CardDescription>{t('biz_social_info')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -395,8 +449,166 @@ export default function AdminParametresPage() {
                 <Input
                   value={form.whatsapp}
                   onChange={(e) => updateField('whatsapp', e.target.value)}
-                  placeholder="+221 XX XXX XXXX"
+                  placeholder="+245 XX XXX XXXX"
                 />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Email Tab */}
+        <TabsContent value="email" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">{t('admin_settings_email_config')}</CardTitle>
+              <CardDescription>{t('admin_settings_email_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2 md:col-span-2">
+                  <Label>{t('admin_settings_smtp_host')}</Label>
+                  <Input
+                    value={form.smtpHost}
+                    onChange={(e) => updateField('smtpHost', e.target.value)}
+                    placeholder="smtp.example.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('admin_settings_smtp_port')}</Label>
+                  <Input
+                    value={form.smtpPort}
+                    onChange={(e) => updateField('smtpPort', e.target.value)}
+                    placeholder="587"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('admin_settings_smtp_encryption')}</Label>
+                  <Select value={form.smtpEncryption} onValueChange={(v) => updateField('smtpEncryption', v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">{t('admin_settings_smtp_encryption_none')}</SelectItem>
+                      <SelectItem value="tls">{t('admin_settings_smtp_encryption_tls')}</SelectItem>
+                      <SelectItem value="ssl">{t('admin_settings_smtp_encryption_ssl')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('admin_settings_smtp_user')}</Label>
+                  <Input
+                    value={form.smtpUser}
+                    onChange={(e) => updateField('smtpUser', e.target.value)}
+                    placeholder="user@example.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('admin_settings_smtp_password')}</Label>
+                  <Input
+                    type="password"
+                    value={form.smtpPassword}
+                    onChange={(e) => updateField('smtpPassword', e.target.value)}
+                    placeholder="•••••••"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('admin_settings_smtp_from_name')}</Label>
+                  <Input
+                    value={form.smtpFromName}
+                    onChange={(e) => updateField('smtpFromName', e.target.value)}
+                    placeholder={t('admin_settings_site_name')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('admin_settings_smtp_from_email')}</Label>
+                  <Input
+                    type="email"
+                    value={form.smtpFromEmail}
+                    onChange={(e) => updateField('smtpFromEmail', e.target.value)}
+                    placeholder="noreply@pebiss.com"
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div>
+                <Button
+                  variant="outline"
+                  onClick={handleTestEmail}
+                  disabled={!form.smtpHost || !form.smtpUser || !form.smtpPassword}
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  {t('admin_settings_test_email')}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Notifications Tab */}
+        <TabsContent value="notifications" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">{t('admin_settings_notifications_config')}</CardTitle>
+              <CardDescription>{t('admin_settings_notifications_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <div className="space-y-0.5">
+                    <p className="font-medium text-sm">{t('admin_settings_notif_new_ad')}</p>
+                    <p className="text-xs text-muted-foreground">{t('admin_settings_notif_new_ad_desc')}</p>
+                  </div>
+                  <Switch
+                    checked={form.notifNewAd}
+                    onCheckedChange={(checked) => updateField('notifNewAd', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <div className="space-y-0.5">
+                    <p className="font-medium text-sm">{t('admin_settings_notif_new_review')}</p>
+                    <p className="text-xs text-muted-foreground">{t('admin_settings_notif_new_review_desc')}</p>
+                  </div>
+                  <Switch
+                    checked={form.notifNewReview}
+                    onCheckedChange={(checked) => updateField('notifNewReview', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <div className="space-y-0.5">
+                    <p className="font-medium text-sm">{t('admin_settings_notif_weekly_report')}</p>
+                    <p className="text-xs text-muted-foreground">{t('admin_settings_notif_weekly_report_desc')}</p>
+                  </div>
+                  <Switch
+                    checked={form.notifWeeklyReport}
+                    onCheckedChange={(checked) => updateField('notifWeeklyReport', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <div className="space-y-0.5">
+                    <p className="font-medium text-sm">{t('admin_settings_notif_ad_approved')}</p>
+                    <p className="text-xs text-muted-foreground">{t('admin_settings_notif_ad_approved_desc')}</p>
+                  </div>
+                  <Switch
+                    checked={form.notifAdApproved}
+                    onCheckedChange={(checked) => updateField('notifAdApproved', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <div className="space-y-0.5">
+                    <p className="font-medium text-sm">{t('admin_settings_notif_welcome')}</p>
+                    <p className="text-xs text-muted-foreground">{t('admin_settings_notif_welcome_desc')}</p>
+                  </div>
+                  <Switch
+                    checked={form.notifWelcome}
+                    onCheckedChange={(checked) => updateField('notifWelcome', checked)}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -412,7 +624,7 @@ export default function AdminParametresPage() {
           size="lg"
         >
           <Settings className="mr-2 h-4 w-4" />
-          {saveMutation.isPending ? 'Enregistrement...' : 'Enregistrer les modifications'}
+          {saveMutation.isPending ? t('admin_settings_saving') : t('admin_settings_save')}
         </Button>
       </div>
     </div>

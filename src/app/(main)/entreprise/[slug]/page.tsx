@@ -25,6 +25,7 @@ import { RatingStars } from '@/components/shared/rating-stars';
 import { BusinessCard } from '@/components/shared/business-card';
 import { AdBanner1, AdBanner2, AdBanner3, AdBanner4, AdBanner5, AdBannerImmobilier, AdBannerTechnologie, AdBannerRestaurant, AdBannerMode } from '@/components/shared/ad-banner';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from '@/lib/i18n';
 import {
   Building2,
   MapPin,
@@ -113,12 +114,16 @@ interface SimilarBusiness {
 
 const DAY_NAMES = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
+const DAY_KEYS = ['day_sunday', 'day_monday', 'day_tuesday', 'day_wednesday', 'day_thursday', 'day_friday', 'day_saturday'];
+
 export default function BusinessDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
   const { data: session } = useSession();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t, locale } = useTranslation();
+  const dayNames = DAY_KEYS.map((k) => t(k));
 
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
@@ -178,7 +183,7 @@ export default function BusinessDetailPage() {
       return res.json();
     },
     onSuccess: () => {
-      toast({ title: 'Avis publié', description: 'Merci pour votre avis !' });
+      toast({ title: t('entreprise_review_posted'), description: t('entreprise_review_thanks') });
       setReviewComment('');
       setReviewRating(5);
       queryClient.invalidateQueries({ queryKey: ['business', slug] });
@@ -227,14 +232,14 @@ export default function BusinessDetailPage() {
       <div className="min-h-[60vh] flex items-center justify-center bg-[#F6F6F6]">
         <div className="text-center">
           <Building2 className="h-16 w-16 text-muted-foreground/20 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Entreprise non trouvée</h2>
+          <h2 className="text-2xl font-bold mb-2">{t('entreprise_not_found')}</h2>
           <p className="text-muted-foreground mb-6">
-            L&apos;entreprise que vous recherchez n&apos;existe pas ou a été supprimée.
+            {t('entreprise_not_found_desc')}
           </p>
           <Link href="/annuaire">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour à l&apos;annuaire
+              {t('entreprise_back')}
             </Button>
           </Link>
         </div>
@@ -253,13 +258,13 @@ export default function BusinessDetailPage() {
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="/" className="text-[#242424] hover:text-primary text-sm">Accueil</Link>
+                  <Link href="/" className="text-[#242424] hover:text-primary text-sm">{t('entreprise_breadcrumb_home')}</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="/annuaire" className="text-[#242424] hover:text-primary text-sm">Annuaire</Link>
+                  <Link href="/annuaire" className="text-[#242424] hover:text-primary text-sm">{t('entreprise_breadcrumb_directory')}</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               {business.category && (
@@ -381,7 +386,7 @@ export default function BusinessDetailPage() {
                 )}
                 <span className="flex items-center gap-1">
                   <Eye className="h-3.5 w-3.5" />
-                  {business.views} vues
+                  {t('entreprise_views', { count: business.views })}
                 </span>
               </div>
             </div>
@@ -397,13 +402,13 @@ export default function BusinessDetailPage() {
             {/* Description Section */}
             <div className="bg-white border border-[#F0F0F0] rounded">
               <div className="px-5 py-4">
-                <h4 className="text-lg font-medium text-[#242424] mb-3">Description :</h4>
+                <h4 className="text-lg font-medium text-[#242424] mb-3">{t('entreprise_description_label')}</h4>
                 {business.description ? (
                   <p className="text-[#242424] text-[15px] leading-relaxed whitespace-pre-wrap">
                     {business.description}
                   </p>
                 ) : (
-                  <p className="text-[#777] italic">Aucune description disponible.</p>
+                  <p className="text-[#777] italic">{t('entreprise_no_description')}</p>
                 )}
                 {business.keywords && (
                   <div className="flex flex-wrap gap-2 mt-4">
@@ -422,7 +427,7 @@ export default function BusinessDetailPage() {
                   {business.products.length > 0 && (
                     <div className="mb-6">
                       <h4 className="text-lg font-medium text-[#242424] mb-3 flex items-center gap-2">
-                        <Package className="h-5 w-5" /> Produits ({business.products.length})
+                        <Package className="h-5 w-5" /> {t('entreprise_products')} ({business.products.length})
                       </h4>
                       <div className="divide-y divide-[#DDDDDD]">
                         {business.products.map((product) => (
@@ -453,7 +458,7 @@ export default function BusinessDetailPage() {
                   {business.services.length > 0 && (
                     <div>
                       <h4 className="text-lg font-medium text-[#242424] mb-3 flex items-center gap-2">
-                        <Wrench className="h-5 w-5" /> Services ({business.services.length})
+                        <Wrench className="h-5 w-5" /> {t('entreprise_services')} ({business.services.length})
                       </h4>
                       <div className="divide-y divide-[#DDDDDD]">
                         {business.services.map((service) => (
@@ -481,7 +486,7 @@ export default function BusinessDetailPage() {
               <div className="bg-white border border-[#F0F0F0] rounded">
                 <div className="px-5 py-4">
                   <h4 className="text-lg font-medium text-[#242424] mb-3 flex items-center gap-2">
-                    <ImageIcon className="h-5 w-5" /> Photos ({business.photos.length})
+                    <ImageIcon className="h-5 w-5" /> {t('entreprise_photos_section')} ({business.photos.length})
                   </h4>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {business.photos.map((photo) => (
@@ -510,7 +515,7 @@ export default function BusinessDetailPage() {
               <div className="bg-white border border-[#F0F0F0] rounded">
                 <div className="px-5 py-4">
                   <h4 className="text-lg font-medium text-[#242424] mb-3 flex items-center gap-2">
-                    <Clock className="h-5 w-5" /> Horaires d&apos;ouverture
+                    <Clock className="h-5 w-5" /> {t('entreprise_opening_hours')}
                   </h4>
                   <div className="divide-y divide-[#DDDDDD]">
                     {[0, 1, 2, 3, 4, 5, 6].map((day) => {
@@ -519,10 +524,10 @@ export default function BusinessDetailPage() {
                       return (
                         <div key={day} className="flex items-center justify-between py-2.5">
                           <span className={`text-sm font-medium ${isClosed ? 'text-[#777]' : 'text-[#242424]'}`}>
-                            {DAY_NAMES[day]}
+                            {dayNames[day]}
                           </span>
                           <span className={`text-sm ${isClosed ? 'text-[#777] italic' : 'text-[#242424]'}`}>
-                            {isClosed ? 'Fermé' : `${hour!.openTime} - ${hour!.closeTime}`}
+                            {isClosed ? t('entreprise_closed') : `${hour!.openTime} - ${hour!.closeTime}`}
                           </span>
                         </div>
                       );
@@ -537,7 +542,7 @@ export default function BusinessDetailPage() {
               <div className="bg-white border border-[#F0F0F0] rounded">
                 <div className="px-5 py-4">
                   <h4 className="text-lg font-medium text-[#242424] mb-3 flex items-center gap-2">
-                    <MapPin className="h-5 w-5" /> Adresse
+                    <MapPin className="h-5 w-5" /> {t('entreprise_address_label')}
                   </h4>
                   <p className="text-[#242424] text-[15px] mb-4">
                     {business.address && `${business.address}, `}
@@ -557,7 +562,7 @@ export default function BusinessDetailPage() {
                         allowFullScreen
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
-                        title="Localisation de l'entreprise"
+                        title={t('entreprise_location_title')}
                       />
                     );
                   })()}
@@ -571,7 +576,7 @@ export default function BusinessDetailPage() {
                 <div className="flex items-center gap-2 mb-4">
                   <Star className="h-5 w-5" />
                   <h4 className="text-lg font-medium text-[#242424]">
-                    Avis ({business._count.reviews})
+                    {t('entreprise_reviews_title', { count: business._count.reviews })}
                   </h4>
                 </div>
 
@@ -580,7 +585,7 @@ export default function BusinessDetailPage() {
                   <div className="text-center shrink-0">
                     <p className="text-4xl font-semibold text-primary">{business.avgRating.toFixed(1)}</p>
                     <RatingStars rating={business.avgRating} showValue={false} size="md" />
-                    <p className="text-xs text-[#777] mt-1">{business._count.reviews} avis</p>
+                    <p className="text-xs text-[#777] mt-1">{t('entreprise_reviews_count', { count: business._count.reviews })}</p>
                   </div>
                   <div className="flex-1 space-y-1.5">
                     {[5, 4, 3, 2, 1].map((stars) => {
@@ -603,7 +608,7 @@ export default function BusinessDetailPage() {
                 {/* Leave Review */}
                 {session && !hasAlreadyReviewed && (
                   <div className="mb-6 p-4 bg-[#F6F6F6] rounded">
-                    <h5 className="text-sm font-medium text-[#242424] mb-3">Laisser un avis</h5>
+                    <h5 className="text-sm font-medium text-[#242424] mb-3">{t('entreprise_leave_review')}</h5>
                     <div className="flex gap-0.5 mb-3">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button key={star} onClick={() => setReviewRating(star)} className="focus:outline-none">
@@ -616,7 +621,7 @@ export default function BusinessDetailPage() {
                       ))}
                     </div>
                     <Textarea
-                      placeholder="Partagez votre expérience..."
+                      placeholder={t('entreprise_review_placeholder')}
                       value={reviewComment}
                       onChange={(e) => setReviewComment(e.target.value)}
                       rows={3}
@@ -627,22 +632,22 @@ export default function BusinessDetailPage() {
                       disabled={isSubmitting}
                       className="bg-primary hover:bg-primary/90 text-white text-sm"
                     >
-                      {isSubmitting ? 'Envoi en cours...' : "Publier l'avis"}
+                      {isSubmitting ? t('entreprise_review_loading') : t('entreprise_review_submit')}
                     </Button>
                   </div>
                 )}
 
                 {session && hasAlreadyReviewed && (
                   <p className="text-sm text-[#777] mb-6 p-3 bg-[#F6F6F6] rounded text-center">
-                    Vous avez déjà laissé un avis pour cette entreprise.
+                    {t('entreprise_already_reviewed')}
                   </p>
                 )}
 
                 {!session && (
                   <div className="mb-6 p-3 bg-[#F6F6F6] rounded text-center">
-                    <p className="text-sm text-[#777] mb-2">Connectez-vous pour laisser un avis</p>
+                    <p className="text-sm text-[#777] mb-2">{t('entreprise_login_to_review')}</p>
                     <Link href="/login">
-                      <Button size="sm" variant="outline" className="text-sm">Se connecter</Button>
+                      <Button size="sm" variant="outline" className="text-sm">{t('entreprise_login_button')}</Button>
                     </Link>
                   </div>
                 )}
@@ -651,7 +656,7 @@ export default function BusinessDetailPage() {
                 {business.reviews.length === 0 ? (
                   <div className="py-8 text-center">
                     <Star className="h-8 w-8 text-gray-200 mx-auto mb-2" />
-                    <p className="text-[#777] text-sm">Aucun avis pour le moment.</p>
+                    <p className="text-[#777] text-sm">{t('entreprise_no_reviews')}</p>
                   </div>
                 ) : (
                   <div className="divide-y divide-[#F0F0F0]">
@@ -668,7 +673,7 @@ export default function BusinessDetailPage() {
                             <div className="flex items-center gap-2">
                               <RatingStars rating={review.rating} showValue={false} size="sm" />
                               <span className="text-xs text-[#6D6D6D]">
-                                {new Date(review.createdAt).toLocaleDateString('fr-FR', {
+                                {new Date(review.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT', {
                                   day: 'numeric',
                                   month: 'long',
                                   year: 'numeric',
@@ -682,7 +687,7 @@ export default function BusinessDetailPage() {
                         )}
                         {review.response && (
                           <div className="ml-12 mt-2 pl-3 border-l-2 border-primary/20 bg-primary/5 rounded-r p-2.5">
-                            <p className="text-xs font-medium text-primary mb-1">Réponse de l&apos;entreprise</p>
+                            <p className="text-xs font-medium text-primary mb-1">{t('entreprise_owner_response')}</p>
                             <p className="text-xs text-[#777]">{review.response}</p>
                           </div>
                         )}
@@ -700,7 +705,7 @@ export default function BusinessDetailPage() {
             <div className="bg-white border border-[#F0F0F0] rounded">
               {/* Views row */}
               <div className="bg-[#F6F6F6] px-5 py-2.5 flex items-center justify-between text-sm">
-                <span className="text-[#777]">Vues</span>
+                <span className="text-[#777]">{t('entreprise_views_label')}</span>
                 <span className="font-medium text-primary">{business.views}</span>
               </div>
 
@@ -737,7 +742,7 @@ export default function BusinessDetailPage() {
                 {/* Posted date */}
                 <div className="flex items-center gap-1.5 text-sm text-[#6D6D6D] mb-5">
                   <Calendar className="h-3.5 w-3.5" />
-                  Publié le {new Date(business.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  {t('entreprise_published')} {new Date(business.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
 
                 {/* Action Buttons */}
@@ -746,21 +751,21 @@ export default function BusinessDetailPage() {
                     <a href={`tel:${business.phone}`} className="flex-1">
                       <Button className="w-full bg-[#242424] hover:bg-[#242424]/90 text-white text-sm py-2.5 rounded justify-center gap-2">
                         <Phone className="h-3.5 w-3.5" />
-                        Appeler
+                        {t('entreprise_call')}
                       </Button>
                     </a>
                   )}
                   <button
                     onClick={handleCopyLink}
                     className="w-9 h-9 bg-white border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-[#F6F6F6] transition-colors"
-                    title="Copier le lien"
+                    title={t('entreprise_copy_link')}
                   >
                     {copied ? <CheckCircle2 className="h-4 w-4 text-green-600" /> : <Share2 className="h-4 w-4 text-[#242424]" />}
                   </button>
-                  <button className="w-9 h-9 bg-white border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-[#F6F6F6] transition-colors" title="Favoris">
+                  <button className="w-9 h-9 bg-white border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-[#F6F6F6] transition-colors" title={t('entreprise_favorite')}>
                     <Heart className="h-4 w-4 text-[#242424]" />
                   </button>
-                  <button className="w-9 h-9 bg-white border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-[#F6F6F6] transition-colors" title="Signaler">
+                  <button className="w-9 h-9 bg-white border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-[#F6F6F6] transition-colors" title={t('entreprise_report')}>
                     <Flag className="h-4 w-4 text-[#242424]" />
                   </button>
                 </div>
@@ -779,9 +784,9 @@ export default function BusinessDetailPage() {
                     </div>
                   )}
                   <div>
-                    <p className="text-lg font-medium text-[#242424]">{business.owner?.name || 'Propriétaire'}</p>
+                    <p className="text-lg font-medium text-[#242424]">{business.owner?.name || t('entreprise_owner_label')}</p>
                     <div className="flex items-center gap-2">
-                      <span className="bg-[#F6F6F6] text-[#555] text-xs px-2 py-0.5 rounded-sm">Propriétaire</span>
+                      <span className="bg-[#F6F6F6] text-[#555] text-xs px-2 py-0.5 rounded-sm">{t('entreprise_owner_label')}</span>
                       <span className="flex items-center gap-1 bg-[#00BA00] text-white text-[10px] w-4 h-4 rounded-full items-center justify-center">
                         <CheckCircle2 className="h-2.5 w-2.5" />
                       </span>
@@ -789,7 +794,7 @@ export default function BusinessDetailPage() {
                   </div>
                 </div>
                 <p className="text-xs text-[#6D6D6D]">
-                  Membre depuis {new Date(business.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  {t('entreprise_member_since')} {new Date(business.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'pt-PT', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
             </div>
@@ -801,14 +806,14 @@ export default function BusinessDetailPage() {
                 {business.hours.length > 0 && (
                   <div className="mb-4">
                     <div className="bg-[#F6F6F6] px-4 py-3 flex items-center justify-between mb-3">
-                      <span className="text-sm font-semibold text-[#242424]">Heures d&apos;ouverture</span>
+                      <span className="text-sm font-semibold text-[#242424]">{t('entreprise_opening_hours')}</span>
                       {(() => {
                         const today = new Date().getDay();
                         const todayHour = business.hours.find((h) => h.dayOfWeek === today);
                         const isOpen = todayHour && !todayHour.isClosed;
                         return (
                           <span className={`text-sm font-semibold ${isOpen ? 'text-green-600' : 'text-red-500'}`}>
-                            {isOpen ? 'Ouvert' : 'Fermé'}
+                            {isOpen ? t('entreprise_open') : t('entreprise_closed')}
                           </span>
                         );
                       })()}
@@ -816,8 +821,8 @@ export default function BusinessDetailPage() {
                     <div className="space-y-0">
                       {business.hours.slice(0, 3).map((hour) => (
                         <div key={hour.id} className="flex items-center justify-between py-1 text-xs text-[#7F7F7F]">
-                          <span className="font-medium">{DAY_NAMES[hour.dayOfWeek]}</span>
-                          <span>{hour.isClosed ? 'Fermé' : `${hour.openTime} - ${hour.closeTime}`}</span>
+                          <span className="font-medium">{dayNames[hour.dayOfWeek]}</span>
+                          <span>{hour.isClosed ? t('entreprise_closed') : `${hour.openTime} - ${hour.closeTime}`}</span>
                         </div>
                       ))}
                     </div>
@@ -830,7 +835,7 @@ export default function BusinessDetailPage() {
                     <div className="bg-[#F6FBF6] p-4 flex items-center gap-3 rounded">
                       <Phone className="h-5 w-5 text-green-600 shrink-0" />
                       <div>
-                        <p className="text-xs text-[#777] mb-0.5">Téléphone</p>
+                        <p className="text-xs text-[#777] mb-0.5">{t('entreprise_phone_label')}</p>
                         <a href={`tel:${business.phone}`} className="text-sm font-medium text-[#242424] hover:text-primary">
                           {business.phone}
                         </a>
@@ -845,7 +850,7 @@ export default function BusinessDetailPage() {
                     <div className="p-4 flex items-center gap-3">
                       <Mail className="h-5 w-5 text-primary shrink-0" />
                       <div>
-                        <p className="text-xs text-[#777] mb-0.5">Email</p>
+                        <p className="text-xs text-[#777] mb-0.5">{t('entreprise_email_label')}</p>
                         <a href={`mailto:${business.email}`} className="text-sm font-medium text-[#242424] hover:text-primary">
                           {business.email}
                         </a>
@@ -860,7 +865,7 @@ export default function BusinessDetailPage() {
                     <div className="p-4 flex items-center gap-3">
                       <Globe className="h-5 w-5 text-primary shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-xs text-[#777] mb-0.5">Site web</p>
+                        <p className="text-xs text-[#777] mb-0.5">{t('entreprise_website_label')}</p>
                         <a href={business.website} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-[#242424] hover:text-primary flex items-center gap-1 truncate">
                           {business.website.replace(/^https?:\/\//, '')}
                           <ExternalLink className="h-3 w-3 shrink-0" />

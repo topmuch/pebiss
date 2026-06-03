@@ -15,6 +15,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { useTranslation } from '@/lib/i18n';
 import {
   LayoutDashboard,
   Building2,
@@ -46,6 +47,17 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useTranslation();
+
+  const navItems = [
+    { href: '/admin', label: t('nav_dashboard'), icon: LayoutDashboard },
+    { href: '/admin/entreprises', label: t('nav_enterprises'), icon: Building2 },
+    { href: '/admin/categories', label: t('nav_categories'), icon: Tag },
+    { href: '/admin/utilisateurs', label: t('nav_users'), icon: Users },
+    { href: '/admin/annonces', label: t('nav_ads'), icon: Megaphone },
+    { href: '/admin/avis', label: t('nav_reviews'), icon: Star },
+    { href: '/admin/parametres', label: t('nav_settings'), icon: Settings },
+  ];
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -80,7 +92,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         {!collapsed && (
           <div className="flex flex-col">
             <span className="text-lg font-bold text-primary whitespace-nowrap">Pebiss</span>
-            <span className="text-[10px] text-muted-foreground leading-none">Administration</span>
+            <span className="text-[10px] text-muted-foreground leading-none">{t('nav_admin_section')}</span>
           </div>
         )}
       </div>
@@ -124,7 +136,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{session.user.name}</p>
-              <p className="text-xs text-muted-foreground truncate">Administrateur</p>
+              <p className="text-xs text-muted-foreground truncate">{t('nav_admin_label')}</p>
             </div>
           )}
         </div>
@@ -133,14 +145,14 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           className={cn('flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-3', collapsed ? 'justify-center' : '')}
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
-          {!collapsed && <span>Retour au site</span>}
+          {!collapsed && <span>{t('nav_back_to_site')}</span>}
         </Link>
         <button
           onClick={() => signOut({ callbackUrl: '/' })}
           className={cn('flex items-center gap-2 text-sm text-destructive hover:text-destructive/80 transition-colors mt-2', collapsed ? 'justify-center' : '')}
         >
           <LogOut className="h-4 w-4 shrink-0" />
-          {!collapsed && <span>Déconnexion</span>}
+          {!collapsed && <span>{t('disconnect')}</span>}
         </button>
       </div>
     </div>
