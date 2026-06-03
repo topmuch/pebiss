@@ -370,37 +370,129 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {!businessesData ? (
-            <div className="flex flex-wrap justify-center gap-4">
-              {Array.from({ length: 4 }, (_, i) => (
-                <BusinessCardSkeleton key={i} />
-              ))}
-            </div>
-          ) : businesses.length === 0 ? (
-            <Card className="border-border">
-              <CardContent className="p-12 text-center">
-                <Building2 className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground mb-2">
-                  Aucune annonce disponible
-                </h3>
-                <p className="text-sm text-muted-foreground mb-6">
-                  Soyez le premier à inscrire votre entreprise sur Pebiss !
-                </p>
-                <Link href="/register">
-                  <Button className="bg-primary hover:bg-primary/90 text-white text-sm">
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Inscrire mon entreprise
-                  </Button>
+          {/* Listing promo cards data */}
+          {(() => {
+            const listingPromos = [
+              { title: 'Services Financiers', desc: 'Banques, microfinance et assurances', image: '/listing-banners/listing-finance.png', link: '/annuaire?category=services-financiers', icon: Landmark },
+              { title: 'Tourisme', desc: 'Hôtels, voyages et excursions', image: '/listing-banners/listing-tourisme.png', link: '/annuaire?category=tourisme-hotellerie', icon: Plane },
+              { title: 'Agriculture', desc: 'Produits frais et agroalimentaire', image: '/listing-banners/listing-agriculture.png', link: '/annuaire?category=agriculture-agroalimentaire', icon: Sprout },
+              { title: 'Santé & Bien-être', desc: 'Cliniques, pharmacies et centres de santé', image: '/listing-banners/listing-sante.png', link: '/annuaire?category=sante-bien-etre', icon: Stethoscope },
+            ];
+
+            if (!businessesData) {
+              return (
+                <div className="flex flex-wrap justify-center gap-4">
+                  {Array.from({ length: 4 }, (_, i) => (
+                    <BusinessCardSkeleton key={i} />
+                  ))}
+                </div>
+              );
+            }
+
+            if (businesses.length === 0) {
+              return (
+                <Card className="border-border">
+                  <CardContent className="p-12 text-center">
+                    <Building2 className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-foreground mb-2">
+                      Aucune annonce disponible
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-6">
+                      Soyez le premier à inscrire votre entreprise sur Pebiss !
+                    </p>
+                    <Link href="/register">
+                      <Button className="bg-primary hover:bg-primary/90 text-white text-sm">
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Inscrire mon entreprise
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              );
+            }
+
+            /* Interleave business cards + promo cards: 2 businesses, 1 promo, 2 businesses, 1 promo, … */
+            const items: React.ReactNode[] = [];
+            const biz = businesses.slice(0, 8);
+            let promoIdx = 0;
+            biz.forEach((business, i) => {
+              items.push(<BusinessCard key={`biz-${business.id}`} business={business} variant="grid" />);
+              /* Insert a promo card after every 2nd business card */
+              if ((i + 1) % 2 === 0 && promoIdx < listingPromos.length) {
+                const p = listingPromos[promoIdx];
+                items.push(
+                  <Link key={`promo-${promoIdx}`} href={p.link} className="group block shrink-0">
+                    <div className="relative overflow-hidden rounded-lg cursor-pointer hover:shadow-lg transition-all duration-300" style={{ width: '251px' }}>
+                      {/* Image */}
+                      <div className="relative" style={{ width: '251px', height: '517px' }}>
+                        <img src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+                        {/* Badge */}
+                        <div className="absolute top-3 left-3">
+                          <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                            Promu
+                          </span>
+                        </div>
+                        {/* Content */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-9 h-9 bg-white/15 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                              <p.icon className="h-4.5 w-4.5 text-white" />
+                            </div>
+                            <h3 className="text-white font-bold text-sm leading-tight">{p.title}</h3>
+                          </div>
+                          <p className="text-white/70 text-xs leading-relaxed mb-3">{p.desc}</p>
+                          <span className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-semibold px-4 py-2 rounded shadow-md group-hover:bg-white/90 transition-colors">
+                            Explorer <ArrowRight className="h-3.5 w-3.5" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+                promoIdx++;
+              }
+            });
+            /* Append any remaining promo cards that weren't interleaved */
+            while (promoIdx < listingPromos.length) {
+              const p = listingPromos[promoIdx];
+              items.push(
+                <Link key={`promo-${promoIdx}`} href={p.link} className="group block shrink-0">
+                  <div className="relative overflow-hidden rounded-lg cursor-pointer hover:shadow-lg transition-all duration-300" style={{ width: '251px' }}>
+                    <div className="relative" style={{ width: '251px', height: '517px' }}>
+                      <img src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                          Promu
+                        </span>
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-9 h-9 bg-white/15 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                            <p.icon className="h-4.5 w-4.5 text-white" />
+                          </div>
+                          <h3 className="text-white font-bold text-sm leading-tight">{p.title}</h3>
+                        </div>
+                        <p className="text-white/70 text-xs leading-relaxed mb-3">{p.desc}</p>
+                        <span className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-semibold px-4 py-2 rounded shadow-md group-hover:bg-white/90 transition-colors">
+                          Explorer <ArrowRight className="h-3.5 w-3.5" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </Link>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="flex flex-wrap justify-center gap-4">
-              {businesses.slice(0, 8).map((business) => (
-                <BusinessCard key={business.id} business={business} variant="grid" />
-              ))}
-            </div>
-          )}
+              );
+              promoIdx++;
+            }
+
+            return (
+              <div className="flex flex-wrap justify-center gap-4">
+                {items}
+              </div>
+            );
+          })()}
 
           <div className="mt-6 text-center sm:hidden">
             <Link href="/annuaire">

@@ -734,3 +734,27 @@ Stage Summary:
 - Responsive grid layout with hover animations
 - Section positioned between "Annonces récentes" and "About" sections
 - Zero broken images, zero console errors
+
+---
+Task ID: 14
+Agent: Main Orchestrator
+Task: Add 4 promotional images in Annonces récentes section
+
+Work Log:
+- Generated 4 high-quality AI images (768x1344 portrait) for listing promo cards:
+  1. listing-finance.png — Financial services / banking scene
+  2. listing-tourisme.png — Senegal beach / tourism scene
+  3. listing-agriculture.png — Green farmland / agriculture scene
+  4. listing-sante.png — Medical clinic / healthcare scene
+- All images saved to /public/listing-banners/
+- Updated "Annonces récentes" section to interleave promo cards with business cards
+- Pattern: 2 business cards, 1 promo, 2 business, 1 promo, etc.
+- Each promo card: 251x517px, dark gradient overlay, "Promu" badge, icon+title+desc, white "Explorer" CTA
+- Added fallback loop to append remaining promos when not enough business cards
+- Verified: 6 business cards + 4 promo cards = 10 total, all images load correctly
+
+Stage Summary:
+- 4 promotional image cards interleaved in Annonces récentes grid
+- All 4 images load at correct 251x517px dimensions
+- Cards are: Services Financiers, Tourisme, Agriculture, Santé & Bien-être
+- Zero errors in console or dev log
