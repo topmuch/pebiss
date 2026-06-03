@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { RatingStars } from '@/components/shared/rating-stars';
 import { BusinessCard } from '@/components/shared/business-card';
+import { AdBanner1, AdBanner2, AdBanner3 } from '@/components/shared/ad-banner';
 import { useToast } from '@/hooks/use-toast';
 import {
   Building2,
@@ -385,6 +386,9 @@ export default function BusinessDetailPage() {
               </div>
             </div>
 
+            {/* Ad Banner 1 - After Meta Row */}
+            <AdBanner1 />
+
             {/* Description Section */}
             <div className="bg-white border border-[#F0F0F0] rounded">
               <div className="px-5 py-4">
@@ -489,6 +493,9 @@ export default function BusinessDetailPage() {
               </div>
             )}
 
+            {/* Ad Banner 2 - After Products/Photos */}
+            <AdBanner2 />
+
             {/* Opening Hours */}
             {business.hours.length > 0 && (
               <div className="bg-white border border-[#F0F0F0] rounded">
@@ -548,6 +555,9 @@ export default function BusinessDetailPage() {
                 </div>
               </div>
             )}
+
+            {/* Ad Banner 3 - After Location */}
+            <AdBanner3 />
 
             {/* Reviews Section */}
             <div className="bg-white border border-[#F0F0F0] rounded">
