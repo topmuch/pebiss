@@ -27,9 +27,9 @@ export function BusinessCardSkeleton({ variant = 'grid' }: { variant?: 'grid' | 
   }
 
   return (
-    <Card className="border-border/50 overflow-hidden">
-      {/* Image skeleton */}
-      <Skeleton className="w-full aspect-[2/3]" />
+    <Card className="border-border/50 overflow-hidden" style={{ width: '251px' }}>
+      {/* Image skeleton — 251×517px */}
+      <Skeleton className="w-[251px] h-[517px]" />
       {/* Content skeleton — compact */}
       <div className="px-3 py-2.5 flex items-center justify-between gap-2">
         <div className="flex-1 space-y-1.5">

@@ -371,7 +371,7 @@ export default function HomePage() {
           </div>
 
           {!businessesData ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               {Array.from({ length: 4 }, (_, i) => (
                 <BusinessCardSkeleton key={i} />
               ))}
@@ -395,7 +395,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               {businesses.slice(0, 8).map((business) => (
                 <BusinessCard key={business.id} business={business} variant="grid" />
               ))}

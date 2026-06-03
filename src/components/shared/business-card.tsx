@@ -106,20 +106,20 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
 
   return (
     <Link href={`/entreprise/${business.slug}`} className="group block">
-      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-border bg-white">
-        {/* Cover Image — fixed portrait aspect ratio, all images same size */}
-        <div className="relative aspect-[2/3] overflow-hidden">
+      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-border bg-white" style={{ width: '251px' }}>
+        {/* Cover Image — fixed 251×517px portrait */}
+        <div className="relative overflow-hidden" style={{ width: '251px', height: '517px' }}>
           {business.coverImage ? (
             <Image
               src={business.coverImage}
               alt={business.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              sizes="251px"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center">
-              <Building2 className="h-16 w-16 text-primary/30" />
+              <Building2 className="h-20 w-20 text-primary/30" />
             </div>
           )}
           {/* Category badge */}
