@@ -107,18 +107,19 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
   return (
     <Link href={`/entreprise/${business.slug}`} className="group block">
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-border bg-white">
-        {/* Cover Image — large, full width */}
-        <div className="relative aspect-[16/10] overflow-hidden">
+        {/* Cover Image — large, full width (~85% of card) */}
+        <div className="relative overflow-hidden">
           {business.coverImage ? (
             <Image
               src={business.coverImage}
               alt={business.name}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              width={600}
+              height={400}
+              className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center">
+            <div className="w-full aspect-[3/2] bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center">
               <Building2 className="h-16 w-16 text-primary/30" />
             </div>
           )}
@@ -137,24 +138,22 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
           </div>
         </div>
 
-        {/* Text area — white section below image */}
-        <div className="p-4 flex items-start justify-between gap-3">
+        {/* Text area — compact white section below image (~15% of card) */}
+        <div className="px-3 py-2.5 flex items-center justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-foreground text-base leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-1">
+            <h3 className="font-bold text-foreground text-sm leading-snug group-hover:text-primary transition-colors line-clamp-1">
               {business.name}
             </h3>
             {business.description && (
-              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-1 mt-0.5">
                 {business.description}
               </p>
             )}
           </div>
           {/* Green circular + button */}
-          <div className="shrink-0 mt-1">
-            <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors shadow-sm">
-              <Plus className="h-4 w-4" />
-            </span>
-          </div>
+          <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors shadow-sm shrink-0">
+            <Plus className="h-3.5 w-3.5" />
+          </span>
         </div>
       </Card>
     </Link>

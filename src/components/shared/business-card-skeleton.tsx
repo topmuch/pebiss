@@ -29,16 +29,15 @@ export function BusinessCardSkeleton({ variant = 'grid' }: { variant?: 'grid' | 
   return (
     <Card className="border-border/50 overflow-hidden">
       {/* Image skeleton */}
-      <Skeleton className="aspect-[16/10] w-full" />
-      {/* Content skeleton */}
-      <div className="p-4 flex items-start justify-between gap-3">
-        <div className="flex-1 space-y-2">
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
+      <Skeleton className="w-full aspect-[3/2]" />
+      {/* Content skeleton — compact */}
+      <div className="px-3 py-2.5 flex items-center justify-between gap-2">
+        <div className="flex-1 space-y-1.5">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-3 w-full" />
         </div>
         {/* Circular button skeleton */}
-        <Skeleton className="h-8 w-8 rounded-full shrink-0 mt-1" />
+        <Skeleton className="h-7 w-7 rounded-full shrink-0" />
       </div>
     </Card>
   );
