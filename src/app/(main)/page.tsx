@@ -31,11 +31,22 @@ import {
   Stethoscope,
   GraduationCap,
   Home,
+  Briefcase,
+  Car,
+  Layers,
+  Monitor,
+  Music,
+  Camera,
+  Flame,
+  Zap,
+  Truck,
+  type LucideIcon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-const categoryIcons: Record<string, React.ElementType> = {
+// Dynamic icon mapping for categories
+const categoryIconMap: Record<string, LucideIcon> = {
   'mode-textile': Palette,
   'restaurants-alimentation': Utensils,
   'tourisme-hotellerie': Plane,
@@ -48,34 +59,45 @@ const categoryIcons: Record<string, React.ElementType> = {
   'immobilier': Home,
 };
 
-const categoryImages: Record<string, string> = {
-  'mode-textile': '/categories/mode-textile.png',
-  'restaurants-alimentation': '/categories/restaurants-alimentation.png',
-  'tourisme-hotellerie': '/categories/tourisme-hotellerie.png',
-  'services-financiers': '/categories/services-financiers.png',
-  'agriculture-agroalimentaire': '/categories/agriculture-agroalimentaire.png',
-  'commerce-distribution': '/categories/commerce-distribution.png',
-  'btp-construction': '/categories/btp-construction.png',
-};
-
-const allowedCategories = [
-  'mode-textile',
-  'restaurants-alimentation',
-  'tourisme-hotellerie',
-  'services-financiers',
-  'agriculture-agroalimentaire',
-  'commerce-distribution',
-  'btp-construction',
-  'sante-bien-etre',
-  'education-formation',
-  'immobilier',
+// Fallback icons to cycle through for categories not in the map
+const fallbackIcons: LucideIcon[] = [
+  Briefcase, Car, Layers, Monitor, Music, Camera, Flame, Zap, Truck, Megaphone, Calendar, Heart, Eye, Star,
 ];
 
-const defaultIcon = Building2;
+// Dynamic gradient assignment based on category index
+const gradientPalette = [
+  'from-pink-500 to-rose-600',
+  'from-orange-400 to-red-500',
+  'from-cyan-400 to-blue-500',
+  'from-emerald-400 to-green-600',
+  'from-lime-400 to-green-500',
+  'from-violet-500 to-purple-700',
+  'from-amber-400 to-orange-600',
+  'from-teal-400 to-emerald-600',
+  'from-sky-400 to-indigo-500',
+  'from-fuchsia-400 to-pink-600',
+  'from-red-400 to-rose-700',
+  'from-green-400 to-teal-600',
+  'from-yellow-400 to-amber-600',
+  'from-indigo-400 to-blue-600',
+  'from-rose-400 to-red-600',
+  'from-emerald-500 to-cyan-600',
+];
 
-function getCategoryIcon(slug: string | undefined): React.ElementType {
-  if (!slug) return defaultIcon;
-  return categoryIcons[slug] || defaultIcon;
+function getCategoryIcon(slug: string | undefined, index: number): LucideIcon {
+  if (!slug) return Building2;
+  return categoryIconMap[slug] || fallbackIcons[index % fallbackIcons.length];
+}
+
+function getCategoryGradient(slug: string | undefined, index: number): string {
+  if (slug && categoryIconMap[slug]) {
+    // For known categories, use a fixed gradient based on their position in the icon map
+    const keys = Object.keys(categoryIconMap);
+    const idx = keys.indexOf(slug);
+    if (idx >= 0) return gradientPalette[idx % gradientPalette.length];
+  }
+  // For new/unknown categories, use index-based gradient
+  return gradientPalette[index % gradientPalette.length];
 }
 
 interface Category {
@@ -114,14 +136,16 @@ export default function HomePage() {
 
   const { data: businessesData } = useQuery<{ businesses: Business[] }>({
     queryKey: ['businesses-featured'],
-    queryFn: () => fetch('/api/businesses?limit=6&sortBy=createdAt&sortOrder=desc').then((r) => r.json()),
+    queryFn: () => fetch('/api/businesses?limit=8&sortBy=createdAt&sortOrder=desc').then((r) => r.json()),
   });
 
   const businesses = businessesData?.businesses || [];
 
-  const totalBusinesses = businesses.length > 0 ? Math.max(...categories?.map((c) => c._count.businesses) || [0]) * 5 + businesses.length : 0;
+  // Stats from real data
   const totalCategories = categories?.length || 0;
+  const totalBusinessesCount = categories?.reduce((sum, c) => sum + c._count.businesses, 0) || 0;
   const totalReviews = businesses.reduce((sum, b) => sum + (b._count?.reviews || 0), 0);
+  const uniqueCities = new Set(businesses.map((b) => b.city).filter(Boolean)).size;
 
   function handleHeroSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -134,9 +158,9 @@ export default function HomePage() {
 
   const [animStats, setAnimStats] = useState({ businesses: 0, categories: 0, cities: 0, reviews: 0 });
   const statsTarget = {
-    businesses: Math.max(totalBusinesses, 150),
+    businesses: Math.max(totalBusinessesCount, 150),
     categories: Math.max(totalCategories, 7),
-    cities: 12,
+    cities: Math.max(uniqueCities, 12),
     reviews: Math.max(totalReviews + 120, 340),
   };
 
@@ -158,13 +182,22 @@ export default function HomePage() {
       if (step >= steps) clearInterval(timer);
     }, interval);
     return () => clearInterval(timer);
-  }, []);
+  }, [totalBusinessesCount, totalCategories, uniqueCities, totalReviews]);
 
   const scrollContainer = (ref: React.RefObject<HTMLDivElement | null>, direction: 'left' | 'right') => {
     if (ref.current) {
       const amount = direction === 'left' ? -300 : 300;
       ref.current.scrollBy({ left: amount, behavior: 'smooth' });
     }
+  };
+
+  // Build a slug->index map for consistent gradient/icon assignment
+  const categoryIndexMap = useRef<Record<string, number>>({});
+  const getCategoryIndex = (slug: string) => {
+    if (!(slug in categoryIndexMap.current)) {
+      categoryIndexMap.current[slug] = Object.keys(categoryIndexMap.current).length;
+    }
+    return categoryIndexMap.current[slug];
   };
 
   return (
@@ -226,16 +259,11 @@ export default function HomePage() {
                     className="w-full px-3 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 appearance-none pr-8"
                   >
                     <option value="">Sélectionner une catégorie</option>
-                    <option value="mode-textile">Mode & Textile</option>
-                    <option value="restaurants-alimentation">Restaurants & Alimentation</option>
-                    <option value="tourisme-hotellerie">Tourisme & Hôtellerie</option>
-                    <option value="services-financiers">Services Financiers</option>
-                    <option value="agriculture-agroalimentaire">Agriculture & Agroalimentaire</option>
-                    <option value="commerce-distribution">Commerce & Distribution</option>
-                    <option value="btp-construction">BTP & Construction</option>
-                      <option value="sante-bien-etre">Santé & Bien-être</option>
-                      <option value="education-formation">Éducation & Formation</option>
-                      <option value="immobilier">Immobilier</option>
+                    {categories?.map((cat) => (
+                      <option key={cat.id} value={cat.slug}>
+                        {cat.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex-1">
@@ -263,21 +291,17 @@ export default function HomePage() {
               </div>
             </form>
 
-            {/* Popular Categories */}
+            {/* Popular Categories — dynamic from DB */}
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
               <span className="text-white/60 font-medium text-xs uppercase tracking-wide">Populaire :</span>
-              <Link href="/annuaire?category=mode-textile" className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
-                <Palette className="h-3.5 w-3.5" /> Mode & Textile
-              </Link>
-              <Link href="/annuaire?category=restaurants-alimentation" className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
-                <Utensils className="h-3.5 w-3.5" /> Restaurants
-              </Link>
-              <Link href="/annuaire?category=tourisme-hotellerie" className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
-                <Plane className="h-3.5 w-3.5" /> Tourisme
-              </Link>
-              <Link href="/annuaire?category=btp-construction" className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
-                <Wrench className="h-3.5 w-3.5" /> BTP
-              </Link>
+              {categories?.slice(0, 5).map((cat) => {
+                const Icon = getCategoryIcon(cat.slug, getCategoryIndex(cat.slug));
+                return (
+                  <Link key={cat.id} href={`/annuaire?category=${cat.slug}`} className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
+                    <Icon className="h-3.5 w-3.5" /> {cat.name}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -313,22 +337,11 @@ export default function HomePage() {
         ) : (
           <div className="group relative">
             <div className="flex gap-4 animate-slide-categories">
-              {[...categories.filter((cat) => allowedCategories.includes(cat.slug)), ...categories.filter((cat) => allowedCategories.includes(cat.slug)), ...categories.filter((cat) => allowedCategories.includes(cat.slug))]
+              {[...categories, ...categories, ...categories]
                 .map((cat, idx) => {
-                  const Icon = getCategoryIcon(cat.slug);
-                  const gradients: Record<string, string> = {
-                    'mode-textile': 'from-pink-500 to-rose-600',
-                    'restaurants-alimentation': 'from-orange-400 to-red-500',
-                    'tourisme-hotellerie': 'from-cyan-400 to-blue-500',
-                    'services-financiers': 'from-emerald-400 to-green-600',
-                    'agriculture-agroalimentaire': 'from-lime-400 to-green-500',
-                    'commerce-distribution': 'from-violet-500 to-purple-700',
-                    'btp-construction': 'from-amber-400 to-orange-600',
-                    'sante-bien-etre': 'from-teal-400 to-emerald-600',
-                    'education-formation': 'from-sky-400 to-indigo-500',
-                    'immobilier': 'from-fuchsia-400 to-pink-600',
-                  };
-                  const gradient = gradients[cat.slug] || 'from-gray-400 to-gray-600';
+                  const catIdx = getCategoryIndex(cat.slug);
+                  const Icon = getCategoryIcon(cat.slug, catIdx);
+                  const gradient = getCategoryGradient(cat.slug, catIdx);
                   return (
                     <Link key={`${cat.id}-${idx}`} href={`/annuaire?category=${cat.slug}`} className="shrink-0 group/card">
                       <div className={`w-[130px] md:w-[150px] h-[130px] md:h-[150px] rounded-2xl bg-gradient-to-br ${gradient} flex flex-col items-center justify-center gap-2 transition-all duration-300 group-hover/card:scale-105 group-hover/card:shadow-xl`}>

@@ -2,11 +2,29 @@ import bcrypt from 'bcryptjs';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
-// POST /api/auth/register - Register a new enterprise account
+// POST /api/auth/register - Register a new enterprise account with full business data
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, password, phone, businessName } = body;
+    const {
+      name,
+      email,
+      password,
+      phone,
+      businessName,
+      description,
+      categoryId,
+      address,
+      city,
+      businessPhone,
+      businessEmail,
+      website,
+      facebook,
+      instagram,
+      twitter,
+      linkedin,
+      whatsapp,
+    } = body;
 
     // Validation
     if (!name || !email || !password) {
@@ -61,13 +79,25 @@ export async function POST(request: NextRequest) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
 
-    // Create the business linked to the user
+    // Create the business linked to the user with all provided fields
     const business = await db.business.create({
       data: {
         name: businessName,
         slug,
         ownerId: user.id,
         isActive: true,
+        ...(description && { description }),
+        ...(categoryId && { categoryId }),
+        ...(address && { address }),
+        ...(city && { city }),
+        ...(businessPhone && { phone: businessPhone }),
+        ...(businessEmail && { email: businessEmail }),
+        ...(website && { website }),
+        ...(facebook && { facebook }),
+        ...(instagram && { instagram }),
+        ...(twitter && { twitter }),
+        ...(linkedin && { linkedin }),
+        ...(whatsapp && { whatsapp }),
       },
     });
 
@@ -83,6 +113,8 @@ export async function POST(request: NextRequest) {
           id: business.id,
           name: business.name,
           slug: business.slug,
+          city: business.city,
+          categoryId: business.categoryId,
         },
       },
       { status: 201 }

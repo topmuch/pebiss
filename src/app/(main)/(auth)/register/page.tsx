@@ -108,6 +108,18 @@ export default function RegisterPage() {
           password,
           phone: ownerPhone,
           businessName,
+          description,
+          categoryId: categoryId || undefined,
+          address,
+          city: city || undefined,
+          businessPhone,
+          businessEmail,
+          website,
+          facebook: facebook || undefined,
+          instagram: instagram || undefined,
+          twitter: twitter || undefined,
+          linkedin: linkedin || undefined,
+          whatsapp: whatsapp || undefined,
         }),
       });
 
@@ -119,7 +131,7 @@ export default function RegisterPage() {
 
       toast({
         title: 'Compte créé avec succès !',
-        description: 'Vous pouvez maintenant vous connecter.',
+        description: 'Bienvenue sur Pebiss ! Votre entreprise est déjà visible.',
       });
 
       // Auto-login
@@ -130,7 +142,7 @@ export default function RegisterPage() {
       });
 
       if (result?.ok) {
-        router.push('/');
+        router.push('/dashboard');
       } else {
         router.push('/login');
       }
