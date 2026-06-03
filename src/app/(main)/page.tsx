@@ -285,7 +285,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ CATEGORIES SECTION ============ */}
+      {/* ============ CATEGORIES SECTION — Multicolor Gradient Squares ============ */}
       <section className="pb-12 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
@@ -305,8 +305,8 @@ export default function HomePage() {
           {!categories ? (
             <div className="flex gap-4 overflow-hidden">
               {Array.from({ length: 7 }, (_, i) => (
-                <div key={i} className="shrink-0 w-[150px] md:w-[170px]">
-                  <Skeleton className="w-[150px] h-[190px] md:w-[170px] md:h-[210px]" />
+                <div key={i} className="shrink-0 w-[130px] md:w-[150px]">
+                  <Skeleton className="w-[130px] h-[130px] md:w-[150px] md:h-[150px] rounded-2xl" />
                 </div>
               ))}
             </div>
@@ -314,31 +314,30 @@ export default function HomePage() {
             <div ref={catScrollRef} className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
               {categories
                 .filter((cat) => allowedCategories.includes(cat.slug))
-                .map((cat) => {
+                .map((cat, idx) => {
                   const Icon = getCategoryIcon(cat.slug);
-                  const imgUrl = categoryImages[cat.slug];
+                  const gradients: Record<string, string> = {
+                    'mode-textile': 'from-pink-500 to-rose-600',
+                    'restaurants-alimentation': 'from-orange-400 to-red-500',
+                    'tourisme-hotellerie': 'from-cyan-400 to-blue-500',
+                    'services-financiers': 'from-emerald-400 to-green-600',
+                    'agriculture-agroalimentaire': 'from-lime-400 to-green-500',
+                    'commerce-distribution': 'from-violet-500 to-purple-700',
+                    'btp-construction': 'from-amber-400 to-orange-600',
+                  };
+                  const gradient = gradients[cat.slug] || 'from-gray-400 to-gray-600';
                   return (
                     <Link key={cat.id} href={`/annuaire?category=${cat.slug}`} className="shrink-0 group">
-                      <div className="w-[150px] md:w-[170px] bg-white border border-border overflow-hidden transition-all duration-300 hover:shadow-md">
-                        <div className="relative h-[130px] md:h-[150px] overflow-hidden">
-                          <Image
-                            src={imgUrl || '/hero.png'}
-                            alt={cat.name}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
+                      <div className={`w-[130px] md:w-[150px] h-[130px] md:h-[150px] rounded-2xl bg-gradient-to-br ${gradient} flex flex-col items-center justify-center gap-2 transition-all duration-300 hover:scale-105 hover:shadow-xl`}>
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                          <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
                         </div>
-                        <div className="p-3 text-center">
-                          <div className="flex items-center justify-center gap-1.5 mb-1">
-                            <Icon className="h-3.5 w-3.5 text-pebiss-blue" />
-                            <h3 className="text-xs font-medium text-foreground truncate">
-                              {cat.name}
-                            </h3>
-                          </div>
-                          <span className="text-[10px] text-muted-foreground">
-                            {cat._count.businesses} annonce{cat._count.businesses > 1 ? 's' : ''}
-                          </span>
-                        </div>
+                        <h3 className="text-white text-xs md:text-sm font-semibold text-center leading-tight px-2">
+                          {cat.name}
+                        </h3>
+                        <span className="text-white/70 text-[10px]">
+                          {cat._count.businesses} annonce{cat._count.businesses > 1 ? 's' : ''}
+                        </span>
                       </div>
                     </Link>
                   );
