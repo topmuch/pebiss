@@ -60,9 +60,9 @@ export function Header() {
           <Image
             src="/pebiss-logo.jpeg"
             alt="Pebiss"
-            width={140}
-            height={44}
-            className="h-10 md:h-11 w-auto object-contain"
+            width={180}
+            height={56}
+            className="h-12 sm:h-14 md:h-16 w-auto object-contain"
           />
         </Link>
 
@@ -187,9 +187,9 @@ export function Header() {
                   <Image
                     src="/pebiss-logo.jpeg"
                     alt="Pebiss"
-                    width={100}
-                    height={32}
-                    className="h-8 w-auto object-contain"
+                    width={140}
+                    height={44}
+                    className="h-10 w-auto object-contain"
                   />
                 </SheetTitle>
               </SheetHeader>

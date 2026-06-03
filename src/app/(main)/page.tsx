@@ -202,12 +202,12 @@ export default function HomePage() {
 
   return (
     <div className="bg-[#F6F6F6] dark:bg-[#0F0F1A]">
-      {/* ============ HERO SECTION — Full-Width Banner 1842x652 ============ */}
-      <section className="relative w-full" style={{ aspectRatio: '1842 / 652' }}>
+      {/* ============ HERO SECTION — Full-Width Banner ============ */}
+      <section className="relative w-full min-h-[520px] md:min-h-0 md:aspect-[1842/652] lg:aspect-[1842/652]">
         {/* Background Image */}
         <Image
           src="/hero-banner.png"
-          alt="Pebiss - Annuaire d'entreprises au Sénégal"
+          alt="Pebiss - Annuaire d'entreprises en Guiné-Bissau"
           fill
           className="object-cover"
           priority
@@ -217,26 +217,26 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-black/50" />
 
         {/* Content */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center py-12 md:py-0">
           <div className="container mx-auto px-4 text-center">
             {/* Badge */}
-            <p className="text-sm md:text-base font-semibold text-white/90 mb-3">
+            <p className="text-xs sm:text-sm md:text-base font-semibold text-white/90 mb-2 sm:mb-3">
               Plus de {animStats.businesses} annonces d&apos;entreprises
             </p>
 
             {/* Heading */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-2 sm:mb-4 px-2">
               Trouvez, Explorez,{' '}
               <span className="text-primary">Découvrez</span>
             </h1>
 
             {/* Description */}
-            <p className="text-sm md:text-base text-white/80 mb-8 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xs sm:text-sm md:text-base text-white/80 mb-4 sm:mb-8 leading-relaxed max-w-2xl mx-auto px-4">
               Découvrez des lieux incroyables près de chez vous en quelques clics. Parcourez les meilleures annonces et connectez-vous avec des entreprises locales de confiance chaque jour.
             </p>
 
             {/* Search Bar */}
-            <form onSubmit={handleHeroSearch} className="bg-white p-3 md:p-4 shadow-lg max-w-4xl mx-auto mb-6">
+            <form onSubmit={handleHeroSearch} className="bg-white p-3 md:p-4 shadow-lg max-w-4xl mx-4 md:mx-auto mb-4 sm:mb-6">
               <div className="flex flex-col sm:flex-row gap-2 items-stretch">
                 <div className="flex-1">
                   <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Ce que vous cherchez</label>
@@ -292,13 +292,13 @@ export default function HomePage() {
             </form>
 
             {/* Popular Categories — dynamic from DB */}
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-4 gap-y-2 text-sm px-4">
               <span className="text-white/60 font-medium text-xs uppercase tracking-wide">Populaire :</span>
               {categories?.slice(0, 5).map((cat) => {
                 const Icon = getCategoryIcon(cat.slug, getCategoryIndex(cat.slug));
                 return (
-                  <Link key={cat.id} href={`/annuaire?category=${cat.slug}`} className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
-                    <Icon className="h-3.5 w-3.5" /> {cat.name}
+                  <Link key={cat.id} href={`/annuaire?category=${cat.slug}`} className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors text-xs sm:text-sm">
+                    <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {cat.name}
                   </Link>
                 );
               })}

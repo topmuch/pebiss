@@ -1,10 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Building2, Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from '@/lib/i18n';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
 
   return (
     <footer className="bg-[#242424] text-white mt-auto">
@@ -22,7 +26,7 @@ export function Footer() {
               />
             </Link>
             <p className="text-sm text-white/60 leading-relaxed">
-              Le premier annuaire professionnel du Sénégal. Référencez votre entreprise et soyez visible par des milliers de clients potentiels.
+              {t('footer_desc')}
             </p>
             <div className="flex gap-3">
               <a href="#" className="p-2.5 bg-white/10 hover:bg-white/20 transition-colors">
@@ -39,32 +43,40 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-5">
-            <h3 className="font-semibold text-white text-lg">Liens rapides</h3>
+            <h3 className="font-semibold text-white text-lg">{t('quick_links')}</h3>
             <nav className="flex flex-col gap-3">
               <Link href="/annuaire" className="text-sm text-white/60 hover:text-white transition-colors">
-                Annuaire des entreprises
+                {t('business_directory')}
               </Link>
               <Link href="/annonces" className="text-sm text-white/60 hover:text-white transition-colors">
-                Annonces professionnelles
+                {t('professional_ads')}
               </Link>
-              <Link href="/register" className="text-sm text-white/60 hover:text-white transition-colors">
-                Inscrire mon entreprise
+              <Link href="/apropos" className="text-sm text-white/60 hover:text-white transition-colors">
+                {t('footer_about')}
               </Link>
-              <Link href="/login" className="text-sm text-white/60 hover:text-white transition-colors">
-                Se connecter
+              <Link href="/contact" className="text-sm text-white/60 hover:text-white transition-colors">
+                {t('contact')}
+              </Link>
+              <Link href="/reseaux-sociaux" className="text-sm text-white/60 hover:text-white transition-colors">
+                {t('footer_social')}
+              </Link>
+              <Link href="/publicite" className="text-sm text-white/60 hover:text-white transition-colors">
+                {t('footer_ads')}
               </Link>
             </nav>
           </div>
 
           {/* Categories */}
           <div className="space-y-5">
-            <h3 className="font-semibold text-white text-lg">Catégories</h3>
+            <h3 className="font-semibold text-white text-lg">
+              {t('stats_categories')}
+            </h3>
             <nav className="flex flex-col gap-3">
               <Link href="/annuaire?category=mode-textile" className="text-sm text-white/60 hover:text-white transition-colors">
-                Mode & Textile
+                {t('mode')}
               </Link>
               <Link href="/annuaire?category=restaurants-alimentation" className="text-sm text-white/60 hover:text-white transition-colors">
-                Restaurants & Alimentation
+                {t('restaurants')}
               </Link>
               <Link href="/annuaire?category=tourisme-hotellerie" className="text-sm text-white/60 hover:text-white transition-colors">
                 Tourisme & Hôtellerie
@@ -77,19 +89,19 @@ export function Footer() {
 
           {/* Contact */}
           <div className="space-y-5">
-            <h3 className="font-semibold text-white text-lg">Contact</h3>
+            <h3 className="font-semibold text-white text-lg">{t('contact')}</h3>
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3 text-sm text-white/60">
-                <MapPin className="h-4 w-4 shrink-0 text-white/40" />
-                <span>Dakar, Sénégal</span>
+              <div className="flex items-start gap-3 text-sm text-white/60">
+                <MapPin className="h-4 w-4 shrink-0 text-white/40 mt-0.5" />
+                <span>{t('contact_page_address')}</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-white/60">
                 <Phone className="h-4 w-4 shrink-0 text-white/40" />
-                <span>+221 33 800 00 00</span>
+                <span>{t('contact_page_phone1')}</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-white/60">
                 <Mail className="h-4 w-4 shrink-0 text-white/40" />
-                <span>contact@pebiss.sn</span>
+                <span>{t('contact_page_email')}</span>
               </div>
             </div>
           </div>
@@ -102,9 +114,9 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/40">
           <p>© {currentYear} Pebiss. Tous droits réservés.</p>
           <div className="flex gap-6">
-            <Link href="#" className="hover:text-white transition-colors">Mentions légales</Link>
-            <Link href="#" className="hover:text-white transition-colors">Politique de confidentialité</Link>
-            <Link href="#" className="hover:text-white transition-colors">CGU</Link>
+            <Link href="#" className="hover:text-white transition-colors">{t('legal')}</Link>
+            <Link href="#" className="hover:text-white transition-colors">{t('privacy')}</Link>
+            <Link href="#" className="hover:text-white transition-colors">{t('terms')}</Link>
           </div>
         </div>
       </div>
