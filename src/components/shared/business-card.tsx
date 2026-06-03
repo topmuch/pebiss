@@ -107,8 +107,8 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
   return (
     <Link href={`/entreprise/${business.slug}`} className="group block">
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-border bg-white">
-        {/* Cover Image — fixed aspect ratio, all images same size */}
-        <div className="relative aspect-[3/2] overflow-hidden">
+        {/* Cover Image — fixed portrait aspect ratio, all images same size */}
+        <div className="relative aspect-[2/3] overflow-hidden">
           {business.coverImage ? (
             <Image
               src={business.coverImage}

@@ -29,7 +29,7 @@ export function BusinessCardSkeleton({ variant = 'grid' }: { variant?: 'grid' | 
   return (
     <Card className="border-border/50 overflow-hidden">
       {/* Image skeleton */}
-      <Skeleton className="w-full aspect-[3/2]" />
+      <Skeleton className="w-full aspect-[2/3]" />
       {/* Content skeleton — compact */}
       <div className="px-3 py-2.5 flex items-center justify-between gap-2">
         <div className="flex-1 space-y-1.5">
