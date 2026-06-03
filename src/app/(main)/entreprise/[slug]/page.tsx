@@ -386,8 +386,12 @@ export default function BusinessDetailPage() {
               </div>
             </div>
 
-            {/* Ad Banner 1 - After Meta Row */}
-            <AdBanner1 />
+            {/* Ad Banners 1-3 - After Meta Row */}
+            <div className="flex flex-wrap gap-4 justify-center">
+              <AdBanner1 />
+              <AdBanner2 />
+              <AdBanner3 />
+            </div>
 
             {/* Description Section */}
             <div className="bg-white border border-[#F0F0F0] rounded">
@@ -493,11 +497,11 @@ export default function BusinessDetailPage() {
               </div>
             )}
 
-            {/* Ad Banner 2 - After Products/Photos */}
-            <AdBanner2 />
-
-            {/* Ad Banner 3 - After Products, before Hours */}
-            <AdBanner3 />
+            {/* Ad Banners 4-5 - After Products/Photos */}
+            <div className="flex flex-wrap gap-4 justify-center">
+              <AdBanner4 />
+              <AdBanner5 />
+            </div>
 
             {/* Opening Hours */}
             {business.hours.length > 0 && (
@@ -558,12 +562,6 @@ export default function BusinessDetailPage() {
                 </div>
               </div>
             )}
-
-            {/* Ad Banner 4 - After Location */}
-            <AdBanner4 />
-
-            {/* Ad Banner 5 - After Location 2 */}
-            <AdBanner5 />
 
             {/* Reviews Section */}
             <div className="bg-white border border-[#F0F0F0] rounded">

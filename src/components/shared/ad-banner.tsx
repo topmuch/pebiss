@@ -21,6 +21,7 @@ const variants = {
     subtext: 'text-white/60',
     cta: 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white',
     close: 'text-white/30 hover:text-white/70',
+    badge: 'bg-white/10',
   },
   light: {
     bg: 'bg-white border border-[#E0E0E0]',
@@ -29,14 +30,16 @@ const variants = {
     subtext: 'text-[#777]',
     cta: 'bg-primary hover:bg-primary/90 text-white',
     close: 'text-[#999] hover:text-[#555]',
+    badge: 'bg-[#F6F6F6]',
   },
   gradient: {
-    bg: 'bg-gradient-to-r from-[#1a1a2e] to-[#16213e]',
+    bg: 'bg-gradient-to-b from-[#1a1a2e] to-[#16213e]',
     accent: 'bg-[#0F3460]',
     text: 'text-white',
     subtext: 'text-white/60',
     cta: 'bg-[#E94560] hover:bg-[#D63851] text-white',
     close: 'text-white/30 hover:text-white/70',
+    badge: 'bg-white/10',
   },
 };
 
@@ -56,64 +59,59 @@ export function AdBanner({
   return (
     <div
       className={cn(
-        'relative rounded overflow-hidden group',
+        'relative rounded-lg overflow-hidden group flex flex-col',
         v.bg,
         className
       )}
+      style={{ width: '251px', height: '517px' }}
     >
+      {/* Close button */}
       <button
         onClick={() => setDismissed(true)}
         className={cn(
-          'absolute top-1.5 right-1.5 z-10 w-5 h-5 flex items-center justify-center transition-colors',
+          'absolute top-2 right-2 z-10 w-6 h-6 flex items-center justify-center transition-colors',
           v.close
         )}
         aria-label="Fermer la publicité"
       >
-        <X className="h-3 w-3" />
+        <X className="h-3.5 w-3.5" />
       </button>
 
-      <div className="flex items-center">
-        {/* Left: Accent + Text */}
-        <div className="flex-1 flex items-center gap-2.5 p-2.5 md:p-3">
-          {/* Accent Rectangle */}
-          <div
-            className={cn(
-              'hidden sm:flex flex-col items-center justify-center w-16 md:w-20 h-10 md:h-12 rounded shrink-0',
-              v.accent
-            )}
-          >
-            <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider text-white/70">
-              Annonce
-            </span>
-            <span className={cn('text-[10px] md:text-xs font-bold leading-tight text-center px-1', v.text)}>
-              {title.split(' ').slice(0, 2).join(' ')}
-            </span>
-          </div>
+      {/* Top: Accent badge */}
+      <div className={cn('mx-4 mt-4 px-3 py-1 rounded-full w-fit', v.badge)}>
+        <span className={cn('text-[10px] font-bold uppercase tracking-wider', v.text)}>
+          Annonce
+        </span>
+      </div>
 
-          {/* Text Content */}
-          <div className="min-w-0">
-            <h3 className={cn('text-xs md:text-sm font-bold leading-tight', v.text)}>
-              {title}
-            </h3>
-            <p className={cn('text-[10px] md:text-xs mt-0.5 truncate', v.subtext)}>
-              {subtitle}
-            </p>
-          </div>
+      {/* Middle: Title + Subtitle */}
+      <div className="flex-1 flex flex-col justify-center px-5 py-4">
+        <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center mb-5', v.accent)}>
+          <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white/90" fillRule="evenodd" clipRule="evenodd">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+          </svg>
         </div>
 
-        {/* Right: CTA Button */}
-        <div className="shrink-0 pr-2.5 md:pr-3">
-          <a
-            href={ctaLink}
-            className={cn(
-              'inline-flex items-center gap-1 px-2.5 md:px-3 py-1.5 md:py-1.5 rounded text-[10px] md:text-xs font-semibold transition-colors',
-              v.cta
-            )}
-          >
-            {ctaText}
-            <ArrowRight className="h-3 w-3" />
-          </a>
-        </div>
+        <h3 className={cn('text-lg font-bold leading-snug', v.text)}>
+          {title}
+        </h3>
+        <p className={cn('text-xs leading-relaxed mt-2.5', v.subtext)}>
+          {subtitle}
+        </p>
+      </div>
+
+      {/* Bottom: CTA Button */}
+      <div className="px-5 pb-5">
+        <a
+          href={ctaLink}
+          className={cn(
+            'flex items-center justify-center gap-2 w-full py-2.5 rounded text-sm font-semibold transition-colors',
+            v.cta
+          )}
+        >
+          {ctaText}
+          <ArrowRight className="h-4 w-4" />
+        </a>
       </div>
     </div>
   );
