@@ -260,8 +260,71 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Categories Section - Right Below Hero */}
+      <section className="relative -mt-12 md:-mt-16 z-20 pb-12 md:pb-16">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-foreground">
+                Catégories populaires
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Parcourez nos catégories les plus recherchées
+              </p>
+            </div>
+            <Link href="/annuaire" className="hidden sm:block">
+              <Button variant="ghost" size="sm" className="text-primary">
+                Voir tout
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </Link>
+          </div>
+
+          {!categories ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 md:gap-4">
+              {Array.from({ length: 14 }, (_, i) => (
+                <div key={i} className="bg-white rounded-xl shadow-sm p-4 flex flex-col items-center gap-3">
+                  <Skeleton className="h-10 w-10 rounded-lg" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 md:gap-4">
+              {categories.slice(0, 14).map((cat) => {
+                const Icon = getCategoryIcon(cat.slug);
+                return (
+                  <Link key={cat.id} href={`/annuaire?category=${cat.slug}`}>
+                    <div className="group bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 hover:border-primary/20 transition-all duration-300 cursor-pointer h-full p-4 md:p-5 flex flex-col items-center text-center gap-2.5">
+                      <div className="h-11 w-11 rounded-lg bg-gray-50 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+                        <Icon className="h-5 w-5 text-gray-700 group-hover:text-primary transition-colors" />
+                      </div>
+                      <h3 className="font-medium text-sm text-gray-800 group-hover:text-primary transition-colors leading-tight">
+                        {cat.name}
+                      </h3>
+                      <span className="text-xs text-gray-400">
+                        {cat._count.businesses} entreprise{cat._count.businesses > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="mt-6 text-center sm:hidden">
+            <Link href="/annuaire">
+              <Button variant="outline" size="sm" className="text-primary">
+                Voir toutes les catégories
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Bar */}
-      <section className="bg-white border-b border-border/40 -mt-px relative z-10">
+      <section className="bg-white border-y border-border/30">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="text-center">
@@ -300,74 +363,6 @@ export default function HomePage() {
               </div>
               <p className="text-sm text-muted-foreground">Avis clients</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Popular Categories */}
-      <section className="py-16 md:py-20">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                Catégories populaires
-              </h2>
-              <p className="text-muted-foreground mt-1">
-                Parcourez nos catégories les plus recherchées
-              </p>
-            </div>
-            <Link href="/annuaire" className="hidden sm:block">
-              <Button variant="ghost" className="text-primary">
-                Voir tout
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
-          </div>
-
-          {!categories ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {Array.from({ length: 10 }, (_, i) => (
-                <Card key={i} className="border-border/40">
-                  <CardContent className="p-6 flex flex-col items-center gap-3">
-                    <Skeleton className="h-12 w-12 rounded-xl" />
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-3 w-16" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {categories.slice(0, 10).map((cat) => {
-                const Icon = getCategoryIcon(cat.slug);
-                return (
-                  <Link key={cat.id} href={`/annuaire?category=${cat.slug}`}>
-                    <Card className="group hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer border-border/40 h-full">
-                      <CardContent className="p-6 flex flex-col items-center text-center gap-3">
-                        <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                          <Icon className="h-7 w-7 text-primary" />
-                        </div>
-                        <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
-                          {cat.name}
-                        </h3>
-                        <span className="text-xs text-muted-foreground">
-                          {cat._count.businesses} entreprise{cat._count.businesses > 1 ? 's' : ''}
-                        </span>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="mt-8 text-center sm:hidden">
-            <Link href="/annuaire">
-              <Button variant="outline" className="text-primary">
-                Voir toutes les catégories
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
