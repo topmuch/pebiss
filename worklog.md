@@ -136,3 +136,36 @@ Stage Summary:
 - Hero section displays a real photograph (/hero.png, 1344x768)
 - All 7 category cards have real photographs with dark overlay gradient and white text
 - Footer uses inverted version of same logo for visibility on dark background
+
+---
+Task ID: 8
+Agent: Verification Subagent
+Task: Verify header logo changes (bigger logo, text removed)
+
+Work Log:
+- Opened http://localhost:3000/ with agent-browser, waited for network idle
+- Took full-page screenshot saved to verify-header-logo-v2.png
+- Inspected header logo image via JavaScript evaluation
+
+Verification Results:
+
+1. Logo is BIGGER with object-contain (not rounded circle): ✅ PASSED
+   - Source: /src/components/layout/header.tsx line 59-65
+   - Image attributes: width={140} height={44} className="h-11 w-auto object-contain"
+   - Rendered dimensions: 116px × 44px (constrained by h-11 height + natural aspect ratio 256:97)
+   - objectFit: "contain" ✅
+   - borderRadius: "0px" ✅ (previously was rounded-full)
+   - Natural image size: 256×97px
+   - Previous state: 40×40 with rounded-full + object-cover (from Task ID 7)
+
+2. Text "Pebiss" next to logo is REMOVED: ✅ PASSED
+   - Header link (first <a> in header) contains only 1 child: <IMG> tag
+   - Link textContent: "" (empty string, no text nodes)
+   - No <span> or text element with "Pebiss" text exists in the logo area
+   - The accessibility snapshot shows: link "Pebiss" [ref=e2] → image "Pebiss" (link name comes from img alt)
+
+Stage Summary:
+- Both verification checks PASSED
+- Logo changed from small 40×40 rounded circle to larger ~116×44 non-rounded object-contain image
+- "Pebiss" text label removed from header; only the logo image remains
+- Screenshot saved: verify-header-logo-v2.png
