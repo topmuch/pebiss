@@ -78,18 +78,6 @@ function getCategoryIcon(slug: string | undefined): React.ElementType {
   return categoryIcons[slug] || defaultIcon;
 }
 
-// Popular cities data
-const popularCities = [
-  { name: 'Dakar', slug: 'dakar', image: '/categories/mode-textile.png', count: 45 },
-  { name: 'Thiès', slug: 'thies', image: '/categories/btp-construction.png', count: 12 },
-  { name: 'Saint-Louis', slug: 'saint-louis', image: '/categories/tourisme-hotellerie.png', count: 8 },
-  { name: 'Ziguinchor', slug: 'ziguinchor', image: '/categories/agriculture-agroalimentaire.png', count: 6 },
-  { name: 'Kaolack', slug: 'kaolack', image: '/categories/commerce-distribution.png', count: 9 },
-  { name: 'Louga', slug: 'louga', image: '/categories/services-financiers.png', count: 4 },
-  { name: 'Diourbel', slug: 'diourbel', image: '/categories/restaurants-alimentation.png', count: 5 },
-  { name: 'Kolda', slug: 'kolda', image: '/categories/mode-textile.png', count: 3 },
-];
-
 interface Category {
   id: string;
   name: string;
@@ -118,8 +106,6 @@ export default function HomePage() {
   const [searchCity, setSearchCity] = useState('');
   const [searchCategory, setSearchCategory] = useState('');
   const catScrollRef = useRef<HTMLDivElement>(null);
-  const cityScrollRef = useRef<HTMLDivElement>(null);
-  const featuredScrollRef = useRef<HTMLDivElement>(null);
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['categories-home'],
@@ -422,50 +408,6 @@ export default function HomePage() {
                 Voir toutes les annonces <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ EXPLORE CITIES ============ */}
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold text-foreground">
-                Explorer les villes
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Découvrez les villes populaires et les incontournables. Explorez les joyaux cachés et les meilleures destinations.
-              </p>
-            </div>
-            <div className="hidden sm:flex gap-2">
-              <button onClick={() => scrollContainer(cityScrollRef, 'left')} className="p-2 bg-white border border-border hover:bg-muted transition-colors">
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button onClick={() => scrollContainer(cityScrollRef, 'right')} className="p-2 bg-white border border-border hover:bg-muted transition-colors">
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-
-          <div ref={cityScrollRef} className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
-            {popularCities.map((city) => (
-              <Link key={city.slug} href={`/annuaire?city=${city.slug}`} className="shrink-0 group">
-                <div className="relative w-[160px] md:w-[200px] h-[280px] md:h-[350px] overflow-hidden">
-                  <Image
-                    src={city.image}
-                    alt={city.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-white font-semibold text-base">{city.name}</h3>
-                    <span className="text-xs text-white/70">{city.count} annonces</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
           </div>
         </div>
       </section>
