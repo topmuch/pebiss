@@ -433,6 +433,41 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Advertising Banner */}
+      <section className="container mx-auto px-4 pb-12 md:pb-16">
+        <Link href="/register" className="block">
+          <div className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <Image
+              src="/banner-ad.png"
+              alt="Publicité - Inscrivez votre entreprise sur Pebiss"
+              width={1344}
+              height={768}
+              className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500"
+            />
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+            {/* Banner Content */}
+            <div className="absolute inset-0 flex items-center px-8 md:px-16">
+              <div className="max-w-lg">
+                <span className="inline-block px-3 py-1 bg-pebiss-blue-light text-white text-xs font-semibold rounded-full mb-3 uppercase tracking-wide">
+                  Publicité
+                </span>
+                <h3 className="text-2xl md:text-4xl font-bold text-white mb-3 leading-tight">
+                  Boostez votre visibilité au Sénégal
+                </h3>
+                <p className="text-sm md:text-base text-white/80 mb-5 leading-relaxed">
+                  Inscrivez votre entreprise gratuitement sur Pebiss et touchez des milliers de clients potentiels chaque jour.
+                </p>
+                <span className="inline-flex items-center gap-2 bg-white text-primary font-semibold px-6 py-3 rounded-xl text-sm group-hover:bg-pebiss-blue-light group-hover:text-white transition-colors duration-300">
+                  S'inscrire maintenant
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </div>
+            </div>
+          </div>
+        </Link>
+      </section>
+
       {/* CTA Section */}
       <section className="py-16 md:py-24 pebiss-gradient relative overflow-hidden">
         <div className="absolute inset-0">
