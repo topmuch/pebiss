@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -33,7 +34,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Search, Ban, CheckCircle2, Users } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Search, Ban, CheckCircle2, Users, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminUtilisateursPage() {
@@ -41,6 +48,15 @@ export default function AdminUtilisateursPage() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [actionTarget, setActionTarget] = useState<{ id: string; action: string; name: string } | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    role: 'ENTERPRISE',
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-users', search, roleFilter],
@@ -77,6 +93,42 @@ export default function AdminUtilisateursPage() {
     onError: () => toast.error('Erreur lors de l\'action'),
   });
 
+  const createMutation = useMutation({
+    mutationFn: async (data: typeof form) => {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Erreur');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      toast.success('Utilisateur créé avec succès');
+      closeDialog();
+    },
+    onError: (err) => toast.error(err.message || 'Erreur lors de la création'),
+  });
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setForm({
+      name: '',
+      email: '',
+      password: '',
+      phone: '',
+      role: 'ENTERPRISE',
+    });
+  };
+
+  const updateField = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
   const users = data?.users || [];
 
   const getRoleColor = (role: string) => {
@@ -89,9 +141,15 @@ export default function AdminUtilisateursPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Utilisateurs</h1>
-        <p className="text-muted-foreground">Gérez les utilisateurs de la plateforme</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Utilisateurs</h1>
+          <p className="text-muted-foreground">Gérez les utilisateurs de la plateforme</p>
+        </div>
+        <Button onClick={() => setDialogOpen(true)} className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
+          <Plus className="mr-2 h-4 w-4" />
+          Ajouter un utilisateur
+        </Button>
       </div>
 
       {/* Filters */}
@@ -239,6 +297,79 @@ export default function AdminUtilisateursPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Add User Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog(); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Ajouter un utilisateur</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Nom *</Label>
+              <Input
+                value={form.name}
+                onChange={(e) => updateField('name', e.target.value)}
+                placeholder="Nom complet"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Email *</Label>
+              <Input
+                type="email"
+                value={form.email}
+                onChange={(e) => updateField('email', e.target.value)}
+                placeholder="email@exemple.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Mot de passe *</Label>
+              <Input
+                type="password"
+                value={form.password}
+                onChange={(e) => updateField('password', e.target.value)}
+                placeholder="Minimum 6 caractères"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Téléphone</Label>
+              <Input
+                value={form.phone}
+                onChange={(e) => updateField('phone', e.target.value)}
+                placeholder="+221 XX XXX XXXX"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Rôle</Label>
+              <Select value={form.role} onValueChange={(v) => updateField('role', v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner un rôle" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ADMIN">Administrateur</SelectItem>
+                  <SelectItem value="ENTERPRISE">Entreprise</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" onClick={closeDialog}>Annuler</Button>
+              <Button
+                onClick={() => createMutation.mutate(form)}
+                disabled={
+                  !form.name.trim() ||
+                  !form.email.trim() ||
+                  !form.password.trim() ||
+                  form.password.length < 6 ||
+                  createMutation.isPending
+                }
+                className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"
+              >
+                {createMutation.isPending ? 'Création...' : 'Créer l\'utilisateur'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

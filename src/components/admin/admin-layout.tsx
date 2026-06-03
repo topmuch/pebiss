@@ -27,6 +27,7 @@ import {
   ChevronLeft,
   ArrowLeft,
   Shield,
+  Settings,
 } from 'lucide-react';
 
 const navItems = [
@@ -36,6 +37,7 @@ const navItems = [
   { href: '/admin/utilisateurs', label: 'Utilisateurs', icon: Users },
   { href: '/admin/annonces', label: 'Annonces', icon: Megaphone },
   { href: '/admin/avis', label: 'Avis', icon: Star },
+  { href: '/admin/parametres', label: 'Paramètres', icon: Settings },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {

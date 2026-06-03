@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import bcrypt from 'bcryptjs';
 
 // GET /api/admin/users - All users (admin only)
 export async function GET(request: NextRequest) {
@@ -95,6 +96,87 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching admin users:', error);
     return NextResponse.json(
       { error: 'Erreur lors de la récupération des utilisateurs' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST /api/admin/users - Create a user (admin only)
+export async function POST(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: 'Authentification requise' },
+        { status: 401 }
+      );
+    }
+
+    const userRole = (session.user as any).role;
+    if (userRole !== 'ADMIN') {
+      return NextResponse.json(
+        { error: 'Accès non autorisé. Réservé aux administrateurs.' },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { name, email, password, phone, role } = body;
+
+    if (!name || !email || !password) {
+      return NextResponse.json(
+        { error: 'Le nom, l\'email et le mot de passe sont requis' },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: 'Le mot de passe doit contenir au moins 6 caractères' },
+        { status: 400 }
+      );
+    }
+
+    // Check email uniqueness
+    const existingUser = await db.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'Un utilisateur avec cet email existe déjà' },
+        { status: 409 }
+      );
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const validRoles = ['ADMIN', 'ENTERPRISE'];
+    const userRoleValue = validRoles.includes(role) ? role : 'ENTERPRISE';
+
+    const user = await db.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        role: userRoleValue,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        phone: true,
+        avatar: true,
+        isBlocked: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json(user, { status: 201 });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    return NextResponse.json(
+      { error: 'Erreur lors de la création de l\'utilisateur' },
       { status: 500 }
     );
   }

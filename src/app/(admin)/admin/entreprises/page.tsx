@@ -5,6 +5,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -33,7 +35,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Search, Eye, Ban, CheckCircle2, Trash2, Building2 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Search, Eye, Ban, CheckCircle2, Trash2, Building2, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -42,6 +50,21 @@ export default function AdminEntreprisesPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [actionTarget, setActionTarget] = useState<{ id: string; action: string } | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const [form, setForm] = useState({
+    businessName: '',
+    categoryId: '',
+    description: '',
+    address: '',
+    city: '',
+    businessPhone: '',
+    businessEmail: '',
+    website: '',
+    ownerName: '',
+    ownerEmail: '',
+    ownerPassword: '',
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-businesses', search, statusFilter],
@@ -51,6 +74,15 @@ export default function AdminEntreprisesPage() {
       if (statusFilter !== 'all') params.set('status', statusFilter);
       params.set('limit', '100');
       const res = await fetch(`/api/admin/businesses?${params}`);
+      if (!res.ok) throw new Error('Erreur');
+      return res.json();
+    },
+  });
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const res = await fetch('/api/categories');
       if (!res.ok) throw new Error('Erreur');
       return res.json();
     },
@@ -90,13 +122,62 @@ export default function AdminEntreprisesPage() {
     },
   });
 
+  const createMutation = useMutation({
+    mutationFn: async (data: typeof form) => {
+      const res = await fetch('/api/admin/businesses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Erreur');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-businesses'] });
+      toast.success('Entreprise créée avec succès');
+      closeDialog();
+    },
+    onError: (err) => toast.error(err.message || 'Erreur lors de la création'),
+  });
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setForm({
+      businessName: '',
+      categoryId: '',
+      description: '',
+      address: '',
+      city: '',
+      businessPhone: '',
+      businessEmail: '',
+      website: '',
+      ownerName: '',
+      ownerEmail: '',
+      ownerPassword: '',
+    });
+  };
+
+  const updateField = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
   const businesses = data?.businesses || [];
+  const categories = categoriesData || [];
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Entreprises</h1>
-        <p className="text-muted-foreground">Gérez toutes les entreprises de la plateforme</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Entreprises</h1>
+          <p className="text-muted-foreground">Gérez toutes les entreprises de la plateforme</p>
+        </div>
+        <Button onClick={() => setDialogOpen(true)} className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
+          <Plus className="mr-2 h-4 w-4" />
+          Ajouter une entreprise
+        </Button>
       </div>
 
       {/* Filters */}
@@ -249,6 +330,146 @@ export default function AdminEntreprisesPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Add Business Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog(); }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Ajouter une entreprise</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            {/* Business Info */}
+            <div>
+              <h3 className="text-sm font-semibold mb-3">Informations de l&apos;entreprise</h3>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2 md:col-span-2">
+                  <Label>Nom de l&apos;entreprise *</Label>
+                  <Input
+                    value={form.businessName}
+                    onChange={(e) => updateField('businessName', e.target.value)}
+                    placeholder="Nom de l'entreprise"
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label>Catégorie</Label>
+                  <Select value={form.categoryId} onValueChange={(v) => updateField('categoryId', v)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner une catégorie" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat: any) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label>Description</Label>
+                  <Textarea
+                    value={form.description}
+                    onChange={(e) => updateField('description', e.target.value)}
+                    placeholder="Description de l'entreprise"
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Adresse</Label>
+                  <Input
+                    value={form.address}
+                    onChange={(e) => updateField('address', e.target.value)}
+                    placeholder="Adresse"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Ville</Label>
+                  <Input
+                    value={form.city}
+                    onChange={(e) => updateField('city', e.target.value)}
+                    placeholder="Ville"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Téléphone</Label>
+                  <Input
+                    value={form.businessPhone}
+                    onChange={(e) => updateField('businessPhone', e.target.value)}
+                    placeholder="+221 XX XXX XXXX"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    value={form.businessEmail}
+                    onChange={(e) => updateField('businessEmail', e.target.value)}
+                    placeholder="email@entreprise.com"
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label>Site web</Label>
+                  <Input
+                    value={form.website}
+                    onChange={(e) => updateField('website', e.target.value)}
+                    placeholder="https://www.entreprise.com"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t pt-6">
+              <h3 className="text-sm font-semibold mb-3">Propriétaire</h3>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Nom du propriétaire *</Label>
+                  <Input
+                    value={form.ownerName}
+                    onChange={(e) => updateField('ownerName', e.target.value)}
+                    placeholder="Nom complet"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Email du propriétaire *</Label>
+                  <Input
+                    type="email"
+                    value={form.ownerEmail}
+                    onChange={(e) => updateField('ownerEmail', e.target.value)}
+                    placeholder="email@exemple.com"
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label>Mot de passe *</Label>
+                  <Input
+                    type="password"
+                    value={form.ownerPassword}
+                    onChange={(e) => updateField('ownerPassword', e.target.value)}
+                    placeholder="Minimum 6 caractères"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" onClick={closeDialog}>Annuler</Button>
+              <Button
+                onClick={() => createMutation.mutate(form)}
+                disabled={
+                  !form.businessName.trim() ||
+                  !form.ownerName.trim() ||
+                  !form.ownerEmail.trim() ||
+                  !form.ownerPassword.trim() ||
+                  form.ownerPassword.length < 6 ||
+                  createMutation.isPending
+                }
+                className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"
+              >
+                {createMutation.isPending ? 'Création...' : 'Créer l\'entreprise'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

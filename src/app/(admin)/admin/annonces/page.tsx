@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -33,7 +35,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Search, Trash2, Megaphone } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Search, Trash2, Megaphone, Plus, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AD_TYPES: Record<string, string> = {
@@ -48,6 +56,17 @@ export default function AdminAnnoncesPage() {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    type: 'SERVICE',
+    categoryId: '',
+    businessId: '',
+    image: '',
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-ads', search, typeFilter],
@@ -57,6 +76,24 @@ export default function AdminAnnoncesPage() {
       if (typeFilter !== 'all') params.set('type', typeFilter);
       params.set('limit', '100');
       const res = await fetch(`/api/ads?${params}`);
+      if (!res.ok) throw new Error('Erreur');
+      return res.json();
+    },
+  });
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const res = await fetch('/api/categories');
+      if (!res.ok) throw new Error('Erreur');
+      return res.json();
+    },
+  });
+
+  const { data: businessesData } = useQuery({
+    queryKey: ['admin-businesses-list'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/businesses?limit=100');
       if (!res.ok) throw new Error('Erreur');
       return res.json();
     },
@@ -75,13 +112,81 @@ export default function AdminAnnoncesPage() {
     onError: () => toast.error('Erreur lors de la suppression'),
   });
 
+  const uploadMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('files', file);
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!res.ok) throw new Error('Erreur lors du téléchargement');
+      return res.json();
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: typeof form) => {
+      const res = await fetch('/api/ads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Erreur');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-ads'] });
+      toast.success('Annonce créée avec succès');
+      closeDialog();
+    },
+    onError: (err) => toast.error(err.message || 'Erreur lors de la création'),
+  });
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setForm({
+      title: '',
+      description: '',
+      type: 'SERVICE',
+      categoryId: '',
+      businessId: '',
+      image: '',
+    });
+  };
+
+  const updateField = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleUpload = async (file: File) => {
+    try {
+      const result = await uploadMutation.mutateAsync(file);
+      updateField('image', result.url);
+      toast.success('Image téléchargée avec succès');
+    } catch {
+      toast.error('Erreur lors du téléchargement');
+    }
+  };
+
   const ads = data?.ads || [];
+  const categories = categoriesData || [];
+  const businesses = businessesData?.businesses || [];
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Annonces</h1>
-        <p className="text-muted-foreground">Modérez les annonces de la plateforme</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Annonces</h1>
+          <p className="text-muted-foreground">Modérez les annonces de la plateforme</p>
+        </div>
+        <Button onClick={() => setDialogOpen(true)} className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
+          <Plus className="mr-2 h-4 w-4" />
+          Créer une annonce
+        </Button>
       </div>
 
       {/* Filters */}
@@ -207,6 +312,132 @@ export default function AdminAnnoncesPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Add Ad Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog(); }}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Créer une annonce</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Titre *</Label>
+              <Input
+                value={form.title}
+                onChange={(e) => updateField('title', e.target.value)}
+                placeholder="Titre de l'annonce"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea
+                value={form.description}
+                onChange={(e) => updateField('description', e.target.value)}
+                placeholder="Description de l'annonce"
+                rows={3}
+              />
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Type</Label>
+                <Select value={form.type} onValueChange={(v) => updateField('type', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="SERVICE">Service</SelectItem>
+                    <SelectItem value="PROMOTION">Promotion</SelectItem>
+                    <SelectItem value="PRODUCT">Produit</SelectItem>
+                    <SelectItem value="EVENT">Événement</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Catégorie</Label>
+                <Select value={form.categoryId} onValueChange={(v) => updateField('categoryId', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat: any) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Entreprise *</Label>
+              <Select value={form.businessId} onValueChange={(v) => updateField('businessId', v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une entreprise" />
+                </SelectTrigger>
+                <SelectContent>
+                  {businesses.map((b: any) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-3">
+              <Label>Image</Label>
+              {form.image && (
+                <div className="relative inline-block">
+                  <img
+                    src={form.image}
+                    alt="Aperçu"
+                    className="h-24 w-40 rounded-lg border object-cover"
+                  />
+                </div>
+              )}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => imageInputRef.current?.click()}
+                  disabled={uploadMutation.isPending}
+                  type="button"
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  {uploadMutation.isPending ? 'Téléchargement...' : 'Télécharger une image'}
+                </Button>
+                {form.image && (
+                  <Button variant="ghost" onClick={() => updateField('image', '')} type="button">
+                    Supprimer
+                  </Button>
+                )}
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleUpload(file);
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" onClick={closeDialog}>Annuler</Button>
+              <Button
+                onClick={() => createMutation.mutate(form)}
+                disabled={
+                  !form.title.trim() ||
+                  !form.businessId.trim() ||
+                  createMutation.isPending
+                }
+                className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"
+              >
+                {createMutation.isPending ? 'Création...' : 'Créer l\'annonce'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

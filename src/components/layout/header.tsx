@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -24,29 +25,35 @@ import {
   LayoutDashboard,
   LogOut,
   Shield,
+  Sun,
+  Moon,
+  Languages,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTranslation, type Locale } from '@/lib/i18n';
 
 export function Header() {
   const { data: session, status } = useSession();
+  const { theme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { locale, setLocale, t } = useTranslation();
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isEnterprise = session?.user?.role === 'ENTERPRISE';
   const isAuth = status === 'authenticated';
   const navLinks = [
-    { href: '/', label: 'Accueil' },
-    { href: '/annuaire', label: 'Annuaire' },
-    { href: '/annonces', label: 'Annonces' },
+    { href: '/', label: t('home') },
+    { href: '/annuaire', label: t('directory') },
+    { href: '/annonces', label: t('ads') },
   ];
 
   const isActive = (href: string) => pathname === href;
 
   return (
-    <header className="z-50 w-full sticky top-0 bg-white border-b border-border shadow-sm">
+    <header className="z-50 w-full sticky top-0 bg-white dark:bg-card border-b border-border shadow-sm transition-colors">
       <div className="container mx-auto flex h-16 md:h-20 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
@@ -77,7 +84,42 @@ export function Header() {
         </nav>
 
         {/* Right Section */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* Language Selector */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9" title={t('select_language')}>
+                <Languages className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => setLocale('pt')}
+                className={locale === 'pt' ? 'bg-muted font-medium' : ''}
+              >
+                🇵🇹 Português
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setLocale('fr')}
+                className={locale === 'fr' ? 'bg-muted font-medium' : ''}
+              >
+                🇫🇷 Français
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          >
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+
           {isAuth ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -101,19 +143,19 @@ export function Header() {
                 {isEnterprise && (
                   <DropdownMenuItem onClick={() => router.push('/dashboard')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Mon tableau de bord
+                    {t('my_dashboard')}
                   </DropdownMenuItem>
                 )}
                 {isAdmin && (
                   <DropdownMenuItem onClick={() => router.push('/admin')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Administration
+                    {t('admin_panel')}
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  Déconnexion
+                  {t('disconnect')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -121,12 +163,12 @@ export function Header() {
             <div className="hidden md:flex items-center gap-2">
               <Link href="/login">
                 <Button variant="ghost" size="sm" className="text-sm">
-                  Connexion
+                  {t('login')}
                 </Button>
               </Link>
               <Link href="/register">
                 <Button size="sm" className="bg-primary hover:bg-primary/90 text-white">
-                  Inscription
+                  {t('register')}
                 </Button>
               </Link>
             </div>
@@ -166,6 +208,29 @@ export function Header() {
                     {link.label}
                   </Link>
                 ))}
+
+                {/* Language + Theme in mobile */}
+                <div className="flex items-center gap-2 px-4 py-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 text-xs"
+                    onClick={() => setLocale(locale === 'pt' ? 'fr' : 'pt')}
+                  >
+                    <Languages className="h-3 w-3 mr-1" />
+                    {locale === 'pt' ? '🇵🇹 PT' : '🇫🇷 FR'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 text-xs"
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  >
+                    {theme === 'dark' ? <Sun className="h-3 w-3 mr-1" /> : <Moon className="h-3 w-3 mr-1" />}
+                    {theme === 'dark' ? 'Clair' : 'Sombre'}
+                  </Button>
+                </div>
+
                 {isAuth ? (
                   <>
                     {isEnterprise && (
@@ -175,7 +240,7 @@ export function Header() {
                         className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
                       >
                         <LayoutDashboard className="mr-2 h-4 w-4 inline" />
-                        Mon tableau de bord
+                        {t('my_dashboard')}
                       </Link>
                     )}
                     {isAdmin && (
@@ -185,7 +250,7 @@ export function Header() {
                         className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
                       >
                         <Shield className="mr-2 h-4 w-4 inline" />
-                        Administration
+                        {t('admin_panel')}
                       </Link>
                     )}
                     <button
@@ -193,19 +258,19 @@ export function Header() {
                       className="px-4 py-3 text-sm font-medium text-destructive hover:bg-destructive/10 text-left"
                     >
                       <LogOut className="mr-2 h-4 w-4 inline" />
-                      Déconnexion
+                      {t('disconnect')}
                     </button>
                   </>
                 ) : (
                   <div className="flex flex-col gap-2 mt-4 px-4">
                     <Link href="/login" onClick={() => setMobileOpen(false)}>
                       <Button variant="outline" className="w-full">
-                        Connexion
+                        {t('login')}
                       </Button>
                     </Link>
                     <Link href="/register" onClick={() => setMobileOpen(false)}>
                       <Button className="w-full bg-primary hover:bg-primary/90 text-white">
-                        Inscription
+                        {t('register')}
                       </Button>
                     </Link>
                   </div>

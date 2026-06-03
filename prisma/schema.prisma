@@ -147,3 +147,24 @@ model Ad {
   business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
   category    Category? @relation(fields: [categoryId], references: [id])
 }
+
+model SiteConfig {
+  id             String   @id @default(cuid())
+  siteName       String   @default("Pebiss")
+  logo           String?
+  favicon        String?
+  address        String?
+  phone          String?
+  email          String?
+  seoTitle       String?
+  seoDescription String?
+  seoImage       String?
+  defaultLang    String   @default("pt") // pt, fr
+  facebook       String?
+  instagram      String?
+  twitter        String?
+  linkedin       String?
+  whatsapp       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

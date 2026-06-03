@@ -201,7 +201,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-[#F6F6F6]">
+    <div className="bg-[#F6F6F6] dark:bg-[#0F0F1A]">
       {/* ============ HERO SECTION — Full-Width Banner 1842x652 ============ */}
       <section className="relative w-full" style={{ aspectRatio: '1842 / 652' }}>
         {/* Background Image */}
@@ -651,33 +651,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ STATS BAR ============ */}
-      <section className="bg-primary py-10 md:py-12">
+      {/* ============ STATS BAR — Multicolor KPI ============ */}
+      <section className="py-10 md:py-12">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            <div className="text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div className="kpi-gradient-blue rounded-2xl p-6 md:p-8 text-center shadow-lg">
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                 {animStats.businesses}+
               </div>
-              <p className="text-sm text-white/60">Entreprises référencées</p>
+              <p className="text-sm text-white/80 font-medium">Entreprises référencées</p>
             </div>
-            <div className="text-center">
+            <div className="kpi-gradient-purple rounded-2xl p-6 md:p-8 text-center shadow-lg">
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                 {animStats.categories}+
               </div>
-              <p className="text-sm text-white/60">Catégories</p>
+              <p className="text-sm text-white/80 font-medium">Catégories</p>
             </div>
-            <div className="text-center">
+            <div className="kpi-gradient-cyan rounded-2xl p-6 md:p-8 text-center shadow-lg">
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                 {animStats.cities}+
               </div>
-              <p className="text-sm text-white/60">Villes couvertes</p>
+              <p className="text-sm text-white/80 font-medium">Villes couvertes</p>
             </div>
-            <div className="text-center">
+            <div className="kpi-gradient-pink rounded-2xl p-6 md:p-8 text-center shadow-lg">
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                 {animStats.reviews}+
               </div>
-              <p className="text-sm text-white/60">Avis clients</p>
+              <p className="text-sm text-white/80 font-medium">Avis clients</p>
             </div>
           </div>
         </div>
