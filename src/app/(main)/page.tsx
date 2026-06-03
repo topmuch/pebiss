@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -22,9 +22,12 @@ import {
   Palette,
   ArrowRight,
   ChevronRight,
+  ChevronLeft,
   UserPlus,
-  Compass,
-  TrendingUp,
+  Heart,
+  Eye,
+  Calendar,
+  Megaphone,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -38,8 +41,6 @@ const categoryIcons: Record<string, React.ElementType> = {
   'commerce-distribution': ShoppingBag,
   'btp-construction': Wrench,
 };
-
-const defaultIcon = Building2;
 
 const categoryImages: Record<string, string> = {
   'mode-textile': '/categories/mode-textile.png',
@@ -61,10 +62,24 @@ const allowedCategories = [
   'btp-construction',
 ];
 
+const defaultIcon = Building2;
+
 function getCategoryIcon(slug: string | undefined): React.ElementType {
   if (!slug) return defaultIcon;
   return categoryIcons[slug] || defaultIcon;
 }
+
+// Popular cities data
+const popularCities = [
+  { name: 'Dakar', slug: 'dakar', image: '/categories/mode-textile.png', count: 45 },
+  { name: 'Thiès', slug: 'thies', image: '/categories/btp-construction.png', count: 12 },
+  { name: 'Saint-Louis', slug: 'saint-louis', image: '/categories/tourisme-hotellerie.png', count: 8 },
+  { name: 'Ziguinchor', slug: 'ziguinchor', image: '/categories/agriculture-agroalimentaire.png', count: 6 },
+  { name: 'Kaolack', slug: 'kaolack', image: '/categories/commerce-distribution.png', count: 9 },
+  { name: 'Louga', slug: 'louga', image: '/categories/services-financiers.png', count: 4 },
+  { name: 'Diourbel', slug: 'diourbel', image: '/categories/restaurants-alimentation.png', count: 5 },
+  { name: 'Kolda', slug: 'kolda', image: '/categories/mode-textile.png', count: 3 },
+];
 
 interface Category {
   id: string;
@@ -92,6 +107,10 @@ export default function HomePage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchCity, setSearchCity] = useState('');
+  const [searchCategory, setSearchCategory] = useState('');
+  const catScrollRef = useRef<HTMLDivElement>(null);
+  const cityScrollRef = useRef<HTMLDivElement>(null);
+  const featuredScrollRef = useRef<HTMLDivElement>(null);
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['categories-home'],
@@ -114,13 +133,14 @@ export default function HomePage() {
     const params = new URLSearchParams();
     if (searchQuery) params.set('query', searchQuery);
     if (searchCity) params.set('city', searchCity);
+    if (searchCategory) params.set('category', searchCategory);
     router.push(`/annuaire?${params.toString()}`);
   }
 
   const [animStats, setAnimStats] = useState({ businesses: 0, categories: 0, cities: 0, reviews: 0 });
   const statsTarget = {
     businesses: Math.max(totalBusinesses, 150),
-    categories: Math.max(totalCategories, 14),
+    categories: Math.max(totalCategories, 7),
     cities: 12,
     reviews: Math.max(totalReviews + 120, 340),
   };
@@ -145,175 +165,151 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, []);
 
+  const scrollContainer = (ref: React.RefObject<HTMLDivElement | null>, direction: 'left' | 'right') => {
+    if (ref.current) {
+      const amount = direction === 'left' ? -300 : 300;
+      ref.current.scrollBy({ left: amount, behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative pebiss-gradient overflow-hidden">
-        <div className="hero-pattern absolute inset-0" />
+    <div className="bg-[#F6F6F6]">
+      {/* ============ HERO SECTION ============ */}
+      <section className="relative min-h-[600px] md:min-h-[700px] overflow-hidden">
+        {/* Background Image */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-pebiss-blue-light/10 rounded-full blur-3xl" />
+          <Image
+            src="/hero.png"
+            alt="Ville de Dakar - Sénégal"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         </div>
-        <div className="relative container mx-auto px-4 py-16 md:py-24 lg:py-28">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Hero Content */}
-            <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-white mb-6 leading-tight">
-                Trouvez les meilleures{' '}
-                <span className="text-pebiss-blue-light">entreprises</span> du{' '}
-                <span className="text-pebiss-blue-light">Sénégal</span>
-              </h1>
-              <p className="text-lg md:text-xl text-white/80 mb-10 max-w-xl">
-                Référencez votre entreprise et connectez-vous avec des milliers de
-                clients potentiels. Le premier annuaire professionnel du Sénégal.
-              </p>
 
-              {/* Search Bar */}
-              <form onSubmit={handleHeroSearch} className="max-w-xl">
-                <div className="flex flex-col sm:flex-row gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/20">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60" />
-                    <input
-                      type="text"
-                      placeholder="Que recherchez-vous ?"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 bg-white rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                  </div>
-                  <div className="flex-1 relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60" />
-                    <input
-                      type="text"
-                      placeholder="Ville..."
-                      value={searchCity}
-                      onChange={(e) => setSearchCity(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 bg-white rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="bg-pebiss-blue-light hover:bg-pebiss-blue-light/90 text-white rounded-xl px-8"
-                  >
-                    <Search className="h-5 w-5" />
-                    <span className="hidden sm:inline">Rechercher</span>
-                  </Button>
-                </div>
-              </form>
+        {/* Hero Content */}
+        <div className="relative container mx-auto px-4 pt-32 pb-20 md:pt-40 md:pb-28">
+          <div className="max-w-2xl">
+            {/* Badge */}
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold uppercase tracking-wider mb-6">
+              <Megaphone className="h-3.5 w-3.5" />
+              Annuaire N°1 au Sénégal
+            </span>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-start gap-4 mt-8">
-                <Link href="/register">
-                  <Button
-                    size="lg"
-                    className="bg-pebiss-blue-light hover:bg-pebiss-blue-light/90 text-white rounded-xl px-8"
-                  >
-                    <UserPlus className="h-5 w-5" />
-                    S&apos;inscrire gratuitement
-                  </Button>
-                </Link>
-                <Link href="/annuaire">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="bg-white/10 text-white border-white/30 hover:bg-white/20 rounded-xl px-8"
-                  >
-                    <Compass className="h-5 w-5" />
-                    Explorer l&apos;annuaire
-                  </Button>
-                </Link>
-              </div>
-            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-white mb-5 leading-tight">
+              Trouvez les meilleures{' '}
+              <span className="text-pebiss-blue-light">entreprises</span> du Sénégal
+            </h1>
+            <p className="text-base md:text-lg text-white/70 mb-10 max-w-xl leading-relaxed">
+              Explorez les villes et découvrez les meilleures entreprises. Connectez-vous avec des milliers de clients potentiels.
+            </p>
 
-            {/* Hero Image */}
-            <div className="hidden lg:flex justify-center">
-              <div className="relative">
-                <div className="absolute -inset-4 bg-white/10 rounded-3xl blur-2xl" />
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-                  <Image
-                    src="/hero.png"
-                    alt="Réseau d'entreprises sénégalaises - Annuaire Pebiss"
-                    width={560}
-                    height={320}
-                    className="w-full h-auto object-cover"
-                    priority
+            {/* Search Bar */}
+            <form onSubmit={handleHeroSearch} className="bg-white p-2 max-w-2xl">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Que recherchez-vous ?"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
                   />
                 </div>
-                {/* Floating stat card */}
-                <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-pebiss-blue-light/20 flex items-center justify-center">
-                    <Building2 className="h-5 w-5 text-pebiss-blue-light" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-foreground">{animStats.businesses}+</p>
-                    <p className="text-xs text-muted-foreground">Entreprises</p>
-                  </div>
+                <div className="flex-1 relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Ville..."
+                    value={searchCity}
+                    onChange={(e) => setSearchCity(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
+                  />
                 </div>
-                {/* Floating rating card */}
-                <div className="absolute -top-4 -right-4 bg-white rounded-xl shadow-lg p-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Star className="h-5 w-5 text-primary fill-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-foreground">{animStats.reviews}+</p>
-                    <p className="text-xs text-muted-foreground">Avis clients</p>
-                  </div>
+                <div className="flex-1 relative">
+                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <select
+                    value={searchCategory}
+                    onChange={(e) => setSearchCategory(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 appearance-none"
+                  >
+                    <option value="">Catégorie...</option>
+                    <option value="mode-textile">Mode & Textile</option>
+                    <option value="restaurants-alimentation">Restaurants & Alimentation</option>
+                    <option value="tourisme-hotellerie">Tourisme & Hôtellerie</option>
+                    <option value="services-financiers">Services Financiers</option>
+                    <option value="agriculture-agroalimentaire">Agriculture & Agroalimentaire</option>
+                    <option value="commerce-distribution">Commerce & Distribution</option>
+                    <option value="btp-construction">BTP & Construction</option>
+                  </select>
                 </div>
+                <Button
+                  type="submit"
+                  className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 text-sm font-medium shrink-0"
+                >
+                  <Search className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-2">Rechercher</span>
+                </Button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </section>
 
-      {/* Categories Section - Right Below Hero */}
-      <section className="relative -mt-12 md:-mt-16 z-20 pb-12 md:pb-16">
+      {/* ============ CATEGORIES SECTION ============ */}
+      <section className="relative -mt-12 z-20 pb-12 md:pb-16">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-end mb-4">
-            <Link href="/annuaire" className="hidden sm:block">
-              <Button variant="ghost" size="sm" className="text-primary">
-                Voir tout
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl md:text-2xl font-semibold text-foreground">
+              Parcourir par catégories
+            </h2>
+            <div className="hidden sm:flex gap-2">
+              <button onClick={() => scrollContainer(catScrollRef, 'left')} className="p-2 bg-white border border-border hover:bg-muted transition-colors">
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button onClick={() => scrollContainer(catScrollRef, 'right')} className="p-2 bg-white border border-border hover:bg-muted transition-colors">
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           {!categories ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
+            <div className="flex gap-4 overflow-hidden">
               {Array.from({ length: 7 }, (_, i) => (
-                <div key={i} className="aspect-square rounded-2xl">
-                  <Skeleton className="h-full w-full rounded-2xl" />
+                <div key={i} className="shrink-0 w-[150px] md:w-[170px]">
+                  <Skeleton className="w-[150px] h-[190px] md:w-[170px] md:h-[210px]" />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
+            <div ref={catScrollRef} className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
               {categories
                 .filter((cat) => allowedCategories.includes(cat.slug))
                 .map((cat) => {
                   const Icon = getCategoryIcon(cat.slug);
                   const imgUrl = categoryImages[cat.slug];
                   return (
-                    <Link key={cat.id} href={`/annuaire?category=${cat.slug}`}>
-                      <div className="group relative rounded-2xl aspect-square overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:shadow-lg">
-                        <Image
-                          src={imgUrl || '/hero.png'}
-                          alt={cat.name}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                        {/* Overlay gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                        {/* Content at bottom */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-end pb-3 px-2">
-                          <div className="h-10 w-10 rounded-full bg-white/20 backdrop-blur-sm group-hover:bg-white/30 flex items-center justify-center transition-colors mb-1.5">
-                            <Icon className="h-5 w-5 text-white" />
+                    <Link key={cat.id} href={`/annuaire?category=${cat.slug}`} className="shrink-0 group">
+                      <div className="w-[150px] md:w-[170px] bg-white border border-border overflow-hidden transition-all duration-300 hover:shadow-md">
+                        <div className="relative h-[130px] md:h-[150px] overflow-hidden">
+                          <Image
+                            src={imgUrl || '/hero.png'}
+                            alt={cat.name}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        </div>
+                        <div className="p-3 text-center">
+                          <div className="flex items-center justify-center gap-1.5 mb-1">
+                            <Icon className="h-3.5 w-3.5 text-pebiss-blue" />
+                            <h3 className="text-xs font-medium text-foreground truncate">
+                              {cat.name}
+                            </h3>
                           </div>
-                          <h3 className="font-semibold text-xs sm:text-sm text-white leading-tight text-center">
-                            {cat.name}
-                          </h3>
-                          <span className="text-[10px] sm:text-xs text-white/70 mt-0.5">
-                            {cat._count.businesses} entreprise{cat._count.businesses > 1 ? 's' : ''}
+                          <span className="text-[10px] text-muted-foreground">
+                            {cat._count.businesses} annonce{cat._count.businesses > 1 ? 's' : ''}
                           </span>
                         </div>
                       </div>
@@ -322,92 +318,44 @@ export default function HomePage() {
                 })}
             </div>
           )}
-
         </div>
       </section>
 
-      {/* Stats Bar */}
-      <section className="bg-white border-y border-border/30">
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-2">
-                <Building2 className="h-6 w-6 text-primary mr-2" />
-                <span className="text-2xl md:text-3xl font-bold text-primary">
-                  {animStats.businesses}+
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground">Entreprises référencées</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-2">
-                <TrendingUp className="h-6 w-6 text-primary mr-2" />
-                <span className="text-2xl md:text-3xl font-bold text-primary">
-                  {animStats.categories}+
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground">Catégories</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-2">
-                <MapPin className="h-6 w-6 text-primary mr-2" />
-                <span className="text-2xl md:text-3xl font-bold text-primary">
-                  {animStats.cities}+
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground">Villes</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-2">
-                <Star className="h-6 w-6 text-pebiss-blue-light mr-2" />
-                <span className="text-2xl md:text-3xl font-bold text-primary">
-                  {animStats.reviews}+
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground">Avis clients</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Businesses */}
-      <section className="py-16 md:py-20 bg-muted/30">
+      {/* ============ CURRENT LISTINGS ============ */}
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                Entreprises récentes
+              <h2 className="text-xl md:text-2xl font-semibold text-foreground">
+                Annonces récentes
               </h2>
-              <p className="text-muted-foreground mt-1">
-                Découvrez les dernières entreprises inscrites
+              <p className="text-sm text-muted-foreground mt-1">
+                Parcourez les annonces des villes populaires et proches. Trouvez ce dont vous avez besoin.
               </p>
             </div>
-            <Link href="/annuaire" className="hidden sm:block">
-              <Button variant="ghost" className="text-primary">
-                Voir tout
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
+            <Link href="/annuaire" className="hidden sm:flex items-center gap-1 text-sm font-medium text-primary hover:text-pebiss-blue transition-colors">
+              Voir tout <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
           {!businessesData ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }, (_, i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {Array.from({ length: 4 }, (_, i) => (
                 <BusinessCardSkeleton key={i} />
               ))}
             </div>
           ) : businesses.length === 0 ? (
-            <Card className="border-border/40">
+            <Card className="border-border">
               <CardContent className="p-12 text-center">
-                <Building2 className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Aucune entreprise disponible
+                <Building2 className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">
+                  Aucune annonce disponible
                 </h3>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-sm text-muted-foreground mb-6">
                   Soyez le premier à inscrire votre entreprise sur Pebiss !
                 </p>
                 <Link href="/register">
-                  <Button className="bg-pebiss-blue-light hover:bg-pebiss-blue-light/90 text-white">
+                  <Button className="bg-primary hover:bg-primary/90 text-white text-sm">
                     <UserPlus className="h-4 w-4 mr-2" />
                     Inscrire mon entreprise
                   </Button>
@@ -415,28 +363,71 @@ export default function HomePage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {businesses.map((business) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {businesses.slice(0, 8).map((business) => (
                 <BusinessCard key={business.id} business={business} variant="grid" />
               ))}
             </div>
           )}
 
-          <div className="mt-8 text-center sm:hidden">
+          <div className="mt-6 text-center sm:hidden">
             <Link href="/annuaire">
-              <Button variant="outline" className="text-primary">
-                Voir toutes les entreprises
-                <ChevronRight className="h-4 w-4 ml-1" />
+              <Button variant="outline" className="text-sm text-primary">
+                Voir toutes les annonces <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Advertising Banner */}
+      {/* ============ EXPLORE CITIES ============ */}
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-xl md:text-2xl font-semibold text-foreground">
+                Explorer les villes
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Découvrez les villes populaires et les incontournables. Explorez les joyaux cachés et les meilleures destinations.
+              </p>
+            </div>
+            <div className="hidden sm:flex gap-2">
+              <button onClick={() => scrollContainer(cityScrollRef, 'left')} className="p-2 bg-white border border-border hover:bg-muted transition-colors">
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button onClick={() => scrollContainer(cityScrollRef, 'right')} className="p-2 bg-white border border-border hover:bg-muted transition-colors">
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          <div ref={cityScrollRef} className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+            {popularCities.map((city) => (
+              <Link key={city.slug} href={`/annuaire?city=${city.slug}`} className="shrink-0 group">
+                <div className="relative w-[160px] md:w-[200px] h-[280px] md:h-[350px] overflow-hidden">
+                  <Image
+                    src={city.image}
+                    alt={city.name}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 className="text-white font-semibold text-base">{city.name}</h3>
+                    <span className="text-xs text-white/70">{city.count} annonces</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============ ADVERTISING BANNER ============ */}
       <section className="container mx-auto px-4 pb-12 md:pb-16">
         <Link href="/register" className="block">
-          <div className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <div className="relative overflow-hidden group cursor-pointer">
             <Image
               src="/banner-ad.png"
               alt="Publicité - Inscrivez votre entreprise sur Pebiss"
@@ -444,23 +435,20 @@ export default function HomePage() {
               height={768}
               className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500"
             />
-            {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-            {/* Banner Content */}
             <div className="absolute inset-0 flex items-center px-8 md:px-16">
               <div className="max-w-lg">
-                <span className="inline-block px-3 py-1 bg-pebiss-blue-light text-white text-xs font-semibold rounded-full mb-3 uppercase tracking-wide">
+                <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-[10px] font-semibold uppercase tracking-wider mb-3">
                   Publicité
                 </span>
-                <h3 className="text-2xl md:text-4xl font-bold text-white mb-3 leading-tight">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight">
                   Boostez votre visibilité au Sénégal
                 </h3>
-                <p className="text-sm md:text-base text-white/80 mb-5 leading-relaxed">
-                  Inscrivez votre entreprise gratuitement sur Pebiss et touchez des milliers de clients potentiels chaque jour.
+                <p className="text-sm text-white/80 mb-5 leading-relaxed">
+                  Inscrivez votre entreprise gratuitement et touchez des milliers de clients chaque jour.
                 </p>
-                <span className="inline-flex items-center gap-2 bg-white text-primary font-semibold px-6 py-3 rounded-xl text-sm group-hover:bg-pebiss-blue-light group-hover:text-white transition-colors duration-300">
-                  S'inscrire maintenant
-                  <ArrowRight className="h-4 w-4" />
+                <span className="inline-flex items-center gap-2 bg-white text-primary font-semibold px-5 py-2.5 text-sm hover:bg-primary hover:text-white transition-colors duration-300">
+                  Inscrire maintenant <ArrowRight className="h-4 w-4" />
                 </span>
               </div>
             </div>
@@ -468,32 +456,129 @@ export default function HomePage() {
         </Link>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 md:py-24 pebiss-gradient relative overflow-hidden">
+      {/* ============ ABOUT / EXPERIENCE SECTION ============ */}
+      <section className="py-16 md:py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* Left: Image with badge */}
+            <div className="relative">
+              <div className="overflow-hidden">
+                <Image
+                  src="/hero.png"
+                  alt="Entreprises sénégalaises"
+                  width={640}
+                  height={400}
+                  className="w-full h-[300px] md:h-[400px] object-cover"
+                />
+              </div>
+              <div className="absolute bottom-4 left-4 bg-primary text-white px-4 py-3">
+                <span className="block text-2xl font-bold">25+</span>
+                <span className="block text-xs text-white/70">Années d&apos;expérience</span>
+              </div>
+            </div>
+
+            {/* Right: Content */}
+            <div>
+              <h2 className="text-2xl md:text-3xl font-semibold text-foreground mb-4 leading-tight">
+                Pourquoi nous sommes axés sur la qualité, inspirés par vous.
+              </h2>
+              <p className="text-muted-foreground mb-8 leading-relaxed">
+                Explorez une plateforme de confiance qui vous connecte avec les meilleures villes et entreprises du Sénégal. Des annonces fiables, faciles à utiliser, pour tous vos besoins.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                {[
+                  { title: 'Annonces complètes', desc: 'Informations détaillées sur chaque entreprise' },
+                  { title: 'Infos fiables', desc: 'Données vérifiées et à jour' },
+                  { title: 'Interface intuitive', desc: 'Navigation simple et efficace' },
+                  { title: 'Villes diversifiées', desc: 'Couverture de tout le Sénégal' },
+                  { title: 'Approuvé localement', desc: 'La confiance des entrepreneurs sénégalais' },
+                  { title: 'Expérience fluide', desc: 'Résultats rapides et précis' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="mt-0.5 h-5 w-5 shrink-0 bg-pebiss-blue/10 flex items-center justify-center">
+                      <svg className="h-3 w-3 text-pebiss-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-foreground">{item.title}</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/register">
+                <Button className="bg-primary hover:bg-primary/90 text-white text-sm px-6 py-2.5">
+                  En savoir plus <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ STATS BAR ============ */}
+      <section className="bg-primary py-10 md:py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <div className="text-center">
+              <div className="text-3xl md:text-4xl font-bold text-white mb-1">
+                {animStats.businesses}+
+              </div>
+              <p className="text-sm text-white/60">Entreprises référencées</p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl md:text-4xl font-bold text-white mb-1">
+                {animStats.categories}+
+              </div>
+              <p className="text-sm text-white/60">Catégories</p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl md:text-4xl font-bold text-white mb-1">
+                {animStats.cities}+
+              </div>
+              <p className="text-sm text-white/60">Villes couvertes</p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl md:text-4xl font-bold text-white mb-1">
+                {animStats.reviews}+
+              </div>
+              <p className="text-sm text-white/60">Avis clients</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ CTA SECTION ============ */}
+      <section className="py-16 md:py-20 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
+          <Image
+            src="/hero.png"
+            alt=""
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black/70" />
         </div>
         <div className="relative container mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-4xl font-bold text-white mb-4">
             Inscrivez votre entreprise
           </h2>
-          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-base text-white/70 mb-8 max-w-2xl mx-auto">
             Rejoignez des centaines d&apos;entreprises sénégalaises sur Pebiss.
             Attirez de nouveaux clients et développez votre activité.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/register">
-              <Button
-                size="lg"
-                className="bg-white text-primary hover:bg-white/90 font-semibold rounded-xl px-8 h-12"
-              >
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold px-8 h-12 text-sm">
                 <UserPlus className="h-5 w-5 mr-2" />
                 Créer mon compte gratuitement
               </Button>
             </Link>
           </div>
-          <div className="flex items-center justify-center gap-6 mt-8 text-sm text-white/70">
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm text-white/60">
             <span className="flex items-center gap-1.5">
               <CheckIcon /> Inscription gratuite
             </span>

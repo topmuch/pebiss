@@ -21,14 +21,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Menu,
-  Building2,
   Search,
   LogIn,
   UserPlus,
   LayoutDashboard,
   LogOut,
   Shield,
-  X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -42,6 +40,7 @@ export function Header() {
   const isAdmin = session?.user?.role === 'ADMIN';
   const isEnterprise = session?.user?.role === 'ENTERPRISE';
   const isAuth = status === 'authenticated';
+  const isHome = pathname === '/';
 
   const navLinks = [
     { href: '/', label: 'Accueil' },
@@ -52,16 +51,22 @@ export function Header() {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <header
+      className={`z-50 w-full transition-colors duration-300 ${
+        isHome
+          ? 'absolute top-0 left-0 right-0 bg-transparent'
+          : 'sticky top-0 bg-white/95 backdrop-blur border-b border-border'
+      }`}
+    >
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center group">
+        <Link href="/" className="flex items-center">
           <Image
             src="/pebiss-logo.jpeg"
             alt="Pebiss"
             width={140}
             height={44}
-            className="h-11 w-auto object-contain"
+            className={`h-11 w-auto object-contain ${isHome ? 'brightness-0 invert' : ''}`}
           />
         </Link>
 
@@ -71,10 +76,14 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive(link.href)
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                isHome
+                  ? isActive(link.href)
+                    ? 'text-white font-semibold'
+                    : 'text-white/80 hover:text-white'
+                  : isActive(link.href)
+                    ? 'text-foreground font-semibold'
+                    : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {link.label}
@@ -83,14 +92,7 @@ export function Header() {
         </nav>
 
         {/* Right Section */}
-        <div className="flex items-center gap-2">
-          {/* Search Button (Mobile) */}
-          <Link href="/annuaire" className="md:hidden">
-            <Button variant="ghost" size="icon">
-              <Search className="h-5 w-5" />
-            </Button>
-          </Link>
-
+        <div className="flex items-center gap-3">
           {isAuth ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -133,14 +135,16 @@ export function Header() {
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <Link href="/login">
-                <Button variant="ghost" size="sm">
-                  <LogIn className="mr-2 h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`text-sm ${isHome ? 'text-white/90 hover:text-white hover:bg-white/10' : ''}`}
+                >
                   Connexion
                 </Button>
               </Link>
               <Link href="/register">
-                <Button size="sm" className="bg-pebiss-orange hover:bg-pebiss-orange text-white">
-                  <UserPlus className="mr-2 h-4 w-4" />
+                <Button size="sm" className="bg-primary hover:bg-primary/90 text-white">
                   Inscription
                 </Button>
               </Link>
@@ -150,19 +154,24 @@ export function Header() {
           {/* Mobile Menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`md:hidden ${isHome ? 'text-white hover:bg-white/10' : ''}`}
+              >
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-80">
               <SheetHeader>
-                <SheetTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-                      P
-                    </div>
-                    <span className="text-lg font-bold text-primary">Pebiss</span>
-                  </div>
+                <SheetTitle className="flex items-center gap-2">
+                  <Image
+                    src="/pebiss-logo.jpeg"
+                    alt="Pebiss"
+                    width={100}
+                    height={32}
+                    className="h-8 w-auto object-contain"
+                  />
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-1 mt-6">
@@ -171,7 +180,7 @@ export function Header() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-4 py-3 text-sm font-medium transition-colors ${
                       isActive(link.href)
                         ? 'bg-primary text-primary-foreground'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -185,7 +194,7 @@ export function Header() {
                     <Link
                       href="/dashboard"
                       onClick={() => setMobileOpen(false)}
-                      className="px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+                      className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
                     >
                       <LayoutDashboard className="mr-2 h-4 w-4 inline" />
                       Tableau de bord
@@ -194,7 +203,7 @@ export function Header() {
                       <Link
                         href="/admin"
                         onClick={() => setMobileOpen(false)}
-                        className="px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+                        className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
                       >
                         <Shield className="mr-2 h-4 w-4 inline" />
                         Administration
@@ -202,7 +211,7 @@ export function Header() {
                     )}
                     <button
                       onClick={() => { signOut(); setMobileOpen(false); }}
-                      className="px-4 py-3 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 text-left"
+                      className="px-4 py-3 text-sm font-medium text-destructive hover:bg-destructive/10 text-left"
                     >
                       <LogOut className="mr-2 h-4 w-4 inline" />
                       Déconnexion
@@ -212,13 +221,11 @@ export function Header() {
                   <div className="flex flex-col gap-2 mt-4 px-4">
                     <Link href="/login" onClick={() => setMobileOpen(false)}>
                       <Button variant="outline" className="w-full">
-                        <LogIn className="mr-2 h-4 w-4" />
                         Connexion
                       </Button>
                     </Link>
                     <Link href="/register" onClick={() => setMobileOpen(false)}>
-                      <Button className="w-full bg-pebiss-orange hover:bg-pebiss-orange text-white">
-                        <UserPlus className="mr-2 h-4 w-4" />
+                      <Button className="w-full bg-primary hover:bg-primary/90 text-white">
                         Inscription
                       </Button>
                     </Link>
