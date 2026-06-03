@@ -20,3 +20,21 @@ Stage Summary:
 - KPI cards use multicolor gradients matching the reference image (green, orange, purple, cyan)
 - Dark/light toggle button added in 3 locations: sidebar, mobile header, desktop header bar
 - All changes compile and lint clean
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Fix footer logo not showing and header logo not displaying well in dark mode
+
+Work Log:
+- Investigated logo files: all are actually JPEG (no transparency) despite .png/.svg extensions
+- Created transparent PNG (pebiss-logo-rgba.png) using sharp with correct RGB threshold >200
+- Updated footer.tsx and header.tsx to use new transparent PNG
+- Footer: brightness-0 invert shows white logo on dark bg correctly
+- Header: transparent PNG blue text visible on both light and dark backgrounds
+- Verified with agent-browser + VLM: footer and header logos visible, dark mode clean
+
+Stage Summary:
+- Created /public/pebiss-logo-rgba.png transparent PNG logo (330x125, RGBA)
+- Footer logo visible as white text on dark background via brightness-0 invert
+- Header logo displays cleanly in both light and dark modes with no white rectangle artifacts

@@ -18,7 +18,7 @@ export function Footer() {
           <div className="space-y-5">
             <Link href="/" className="flex items-center">
               <Image
-                src="/pebiss-logo.jpeg"
+                src="/pebiss-logo-rgba.png"
                 alt="Pebiss"
                 width={140}
                 height={44}

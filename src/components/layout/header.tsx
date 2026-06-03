@@ -58,7 +58,7 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image
-            src="/pebiss-logo.jpeg"
+            src="/pebiss-logo-rgba.png"
             alt="Pebiss"
             width={180}
             height={56}
@@ -185,7 +185,7 @@ export function Header() {
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
                   <Image
-                    src="/pebiss-logo.jpeg"
+                    src="/pebiss-logo-rgba.png"
                     alt="Pebiss"
                     width={140}
                     height={44}
