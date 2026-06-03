@@ -17,7 +17,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { BusinessCard } from '@/components/shared/business-card';
 import { BusinessCardSkeleton } from '@/components/shared/business-card-skeleton';
-import { useTranslation } from '@/lib/i18n';
+import { useTranslation, categoryTranslations } from '@/lib/i18n';
 import {
   Search,
   MapPin,
@@ -67,7 +67,7 @@ const SENEGAL_REGIONS = [
 ];
 
 export default function AnnuairePage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('query') || '');
   const [city, setCity] = useState(searchParams.get('city') || '');
@@ -171,7 +171,7 @@ export default function AnnuairePage() {
                     <SelectItem value="all">{t('annuaire_all_categories')}</SelectItem>
                     {categories?.map((cat) => (
                       <SelectItem key={cat.id} value={cat.slug}>
-                        {cat.name}
+                        {cat.slug && categoryTranslations[cat.slug] ? categoryTranslations[cat.slug][locale] : cat.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -226,7 +226,10 @@ export default function AnnuairePage() {
             )}
             {category && (
               <Badge variant="secondary" className="gap-1">
-                {categories?.find((c) => c.slug === category)?.name || category}
+                {categories?.find((c) => c.slug === category) && (() => {
+                  const cat = categories.find((c) => c.slug === category);
+                  return cat?.slug && categoryTranslations[cat.slug] ? categoryTranslations[cat.slug][locale] : cat?.name;
+                })()}
                 <button onClick={() => setCategory('')}>
                   <X className="h-3 w-3" />
                 </button>

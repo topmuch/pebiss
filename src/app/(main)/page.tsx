@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BusinessCard } from '@/components/shared/business-card';
 import { BusinessCardSkeleton } from '@/components/shared/business-card-skeleton';
-import { useTranslation } from '@/lib/i18n';
+import { useTranslation, categoryTranslations } from '@/lib/i18n';
 import {
   Search,
   MapPin,
@@ -125,7 +125,7 @@ interface Business {
 
 export default function HomePage() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchCity, setSearchCity] = useState('');
   const [searchCategory, setSearchCategory] = useState('');
@@ -263,7 +263,7 @@ export default function HomePage() {
                     <option value="">{t('search_select_category')}</option>
                     {categories?.map((cat) => (
                       <option key={cat.id} value={cat.slug}>
-                        {cat.name}
+                        {cat.slug && categoryTranslations[cat.slug] ? categoryTranslations[cat.slug][locale] : cat.name}
                       </option>
                     ))}
                   </select>
@@ -300,7 +300,7 @@ export default function HomePage() {
                 const Icon = getCategoryIcon(cat.slug, getCategoryIndex(cat.slug));
                 return (
                   <Link key={cat.id} href={`/annuaire?category=${cat.slug}`} className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors text-xs sm:text-sm">
-                    <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {cat.name}
+                    <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {cat.slug && categoryTranslations[cat.slug] ? categoryTranslations[cat.slug][locale] : cat.name}
                   </Link>
                 );
               })}
@@ -351,10 +351,10 @@ export default function HomePage() {
                           <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
                         </div>
                         <h3 className="text-white text-xs md:text-sm font-semibold text-center leading-tight px-2">
-                          {cat.name}
+                          {cat.slug && categoryTranslations[cat.slug] ? categoryTranslations[cat.slug][locale] : cat.name}
                         </h3>
                         <span className="text-white/70 text-[10px]">
-                          {cat._count.businesses} annonce{cat._count.businesses > 1 ? 's' : ''}
+                          {cat._count.businesses} {t(cat._count.businesses > 1 ? 'cat_annonces' : 'cat_annonce')}
                         </span>
                       </div>
                     </Link>

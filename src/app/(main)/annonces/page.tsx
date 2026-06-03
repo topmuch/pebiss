@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useTranslation } from '@/lib/i18n';
+import { useTranslation, categoryTranslations } from '@/lib/i18n';
 import {
   Megaphone,
   Building2,
@@ -136,7 +136,7 @@ export default function AnnoncesPage() {
                 </Select>
               </div>
               <div className="flex-1 w-full">
-                <label className="text-sm font-medium mb-1.5 block">Catégorie</label>
+                <label className="text-sm font-medium mb-1.5 block">{t('ads_page_list_category')}</label>
                 <Select value={category} onValueChange={(v) => { setCategory(v === 'all' ? '' : v); setPage(1); }}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={t('annuaire_all_categories')} />
@@ -145,7 +145,7 @@ export default function AnnoncesPage() {
                     <SelectItem value="all">{t('annuaire_all_categories')}</SelectItem>
                     {categories?.map((cat) => (
                       <SelectItem key={cat.id} value={cat.slug}>
-                        {cat.name}
+                        {cat.slug && categoryTranslations[cat.slug] ? categoryTranslations[cat.slug][locale] : cat.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -170,7 +170,7 @@ export default function AnnoncesPage() {
               }}
               className="text-destructive"
             >
-              Réinitialiser les filtres
+              {t('ads_page_list_reset_filters')}
             </Button>
           )}
         </div>
@@ -277,7 +277,7 @@ export default function AnnoncesPage() {
                             )}
                             {ad.category && ad.business.city && <span>·</span>}
                             {ad.category && (
-                              <span className="truncate">{ad.category.name}</span>
+                              <span className="truncate">{ad.category && ad.category.slug && categoryTranslations[ad.category.slug] ? categoryTranslations[ad.category.slug][locale] : ad.category?.name}</span>
                             )}
                           </div>
                         </div>

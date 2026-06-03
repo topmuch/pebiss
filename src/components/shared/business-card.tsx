@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Building2, MapPin, Eye, ArrowRight, Plus } from 'lucide-react';
 import { RatingStars } from './rating-stars';
+import { useTranslation, categoryTranslations } from '@/lib/i18n';
 
 interface Business {
   id: string;
@@ -37,6 +38,7 @@ interface BusinessCardProps {
 }
 
 export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) {
+  const { locale } = useTranslation();
   if (variant === 'list') {
     return (
       <Card className="group hover:shadow-lg transition-all duration-300 border-border/60 overflow-hidden">
@@ -68,7 +70,7 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
                   </h3>
                   {business.category && (
                     <Badge variant="secondary" className="text-xs flex-shrink-0">
-                      {business.category.name}
+                      {business.category.slug && categoryTranslations[business.category.slug] ? categoryTranslations[business.category.slug][locale] : business.category.name}
                     </Badge>
                   )}
                 </div>
@@ -126,7 +128,7 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
           {business.category && (
             <div className="absolute top-3 left-3">
               <Badge className="bg-white/90 text-foreground backdrop-blur-sm border-0 text-[11px] font-medium shadow-sm">
-                {business.category.name}
+                {business.category.slug && categoryTranslations[business.category.slug] ? categoryTranslations[business.category.slug][locale] : business.category.name}
               </Badge>
             </div>
           )}

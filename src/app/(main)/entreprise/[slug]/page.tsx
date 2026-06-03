@@ -25,7 +25,7 @@ import { RatingStars } from '@/components/shared/rating-stars';
 import { BusinessCard } from '@/components/shared/business-card';
 import { AdBanner1, AdBanner2, AdBanner3, AdBanner4, AdBanner5, AdBannerImmobilier, AdBannerTechnologie, AdBannerRestaurant, AdBannerMode } from '@/components/shared/ad-banner';
 import { useToast } from '@/hooks/use-toast';
-import { useTranslation } from '@/lib/i18n';
+import { useTranslation, categoryTranslations } from '@/lib/i18n';
 import {
   Building2,
   MapPin,
@@ -189,7 +189,7 @@ export default function BusinessDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['business', slug] });
     },
     onError: (error: Error) => {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('common_error'), description: error.message, variant: 'destructive' });
     },
     onSettled: () => {
       setIsSubmitting(false);
@@ -273,7 +273,7 @@ export default function BusinessDetailPage() {
                   <BreadcrumbItem>
                     <BreadcrumbLink asChild>
                       <Link href={`/annuaire?category=${business.category.slug}`} className="text-[#242424] hover:text-primary text-sm">
-                        {business.category.name}
+                        {business.category.slug && categoryTranslations[business.category.slug] ? categoryTranslations[business.category.slug][locale] : business.category.name}
                       </Link>
                     </BreadcrumbLink>
                   </BreadcrumbItem>
@@ -375,7 +375,7 @@ export default function BusinessDetailPage() {
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-[#777]">
                 {business.category && (
                   <Link href={`/annuaire?category=${business.category.slug}`} className="hover:text-primary">
-                    {business.category.name}
+                    {business.category.slug && categoryTranslations[business.category.slug] ? categoryTranslations[business.category.slug][locale] : business.category.name}
                   </Link>
                 )}
                 {business.city && (
@@ -724,7 +724,7 @@ export default function BusinessDetailPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       {business.category && (
                         <Badge variant="secondary" className="bg-[#F6F6F6] text-[#555] border-none text-xs font-normal px-2 py-0.5">
-                          {business.category.name}
+                          {business.category.slug && categoryTranslations[business.category.slug] ? categoryTranslations[business.category.slug][locale] : business.category.name}
                         </Badge>
                       )}
                       <span className="flex items-center gap-1 bg-[#00BA00] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center">
@@ -918,7 +918,7 @@ export default function BusinessDetailPage() {
         {/* Similar Ads */}
         {similarBusinesses && similarBusinesses.businesses.filter((b) => b.slug !== slug).length > 0 && (
           <div className="mt-10">
-            <h2 className="text-2xl font-medium text-[#20292F] mb-5">Entreprises similaires</h2>
+            <h2 className="text-2xl font-medium text-[#20292F] mb-5">{t('entreprise_similar')}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {similarBusinesses.businesses
                 .filter((b) => b.slug !== slug)
