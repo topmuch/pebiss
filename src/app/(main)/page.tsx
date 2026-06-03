@@ -13,20 +13,13 @@ import {
   MapPin,
   Building2,
   Star,
-  Briefcase,
   Utensils,
-  Laptop,
-  Home,
-  Truck,
-  Heart,
-  GraduationCap,
-  ShoppingBag,
   Wrench,
-  Palette,
-  Camera,
   Plane,
-  Scale,
-  Lightbulb,
+  Landmark,
+  Sprout,
+  ShoppingBag,
+  Palette,
   ArrowRight,
   ChevronRight,
   UserPlus,
@@ -37,39 +30,25 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 const categoryIcons: Record<string, React.ElementType> = {
+  'mode-textile': Palette,
   'restaurants-alimentation': Utensils,
-  'technologie-informatique': Laptop,
-  'immobilier': Home,
-  'transport-logistique': Truck,
-  'sante-bien-etre': Heart,
-  'education-formation': GraduationCap,
-  'commerce-shopping': ShoppingBag,
-  'services-professionnels': Briefcase,
-  'artisanat-industrie': Wrench,
-  'art-culture': Palette,
-  'photographie-video': Camera,
-  'tourisme-voyage': Plane,
-  'juridique-conseil': Scale,
-  'startup-innovation': Lightbulb,
+  'tourisme-hotellerie': Plane,
+  'services-financiers': Landmark,
+  'agriculture-agroalimentaire': Sprout,
+  'commerce-distribution': ShoppingBag,
+  'btp-construction': Wrench,
 };
 
 const defaultIcon = Building2;
 
 const categoryGradients = [
-  'bg-gradient-to-br from-emerald-500 to-emerald-700',
-  'bg-gradient-to-br from-orange-500 to-orange-700',
-  'bg-gradient-to-br from-violet-500 to-violet-700',
-  'bg-gradient-to-br from-cyan-500 to-cyan-700',
-  'bg-gradient-to-br from-rose-500 to-rose-700',
-  'bg-gradient-to-br from-amber-500 to-amber-700',
-  'bg-gradient-to-br from-indigo-500 to-indigo-700',
-  'bg-gradient-to-br from-teal-500 to-teal-700',
-  'bg-gradient-to-br from-pink-500 to-pink-700',
-  'bg-gradient-to-br from-sky-500 to-sky-700',
-  'bg-gradient-to-br from-fuchsia-500 to-fuchsia-700',
-  'bg-gradient-to-br from-lime-600 to-lime-800',
-  'bg-gradient-to-br from-red-500 to-red-700',
-  'bg-gradient-to-br from-blue-500 to-blue-700',
+  'bg-gradient-to-br from-pink-500 to-pink-700',       // Mode & Textile
+  'bg-gradient-to-br from-orange-500 to-orange-700',     // Restaurants & Alimentation
+  'bg-gradient-to-br from-cyan-500 to-cyan-700',         // Tourisme & Hôtellerie
+  'bg-gradient-to-br from-emerald-500 to-emerald-700',   // Services Financiers
+  'bg-gradient-to-br from-lime-600 to-lime-800',         // Agriculture & Agroalimentaire
+  'bg-gradient-to-br from-violet-500 to-violet-700',      // Commerce & Distribution
+  'bg-gradient-to-br from-amber-600 to-amber-800',        // BTP & Construction
 ];
 
 function getCategoryIcon(slug: string | undefined): React.ElementType {
@@ -298,16 +277,16 @@ export default function HomePage() {
           </div>
 
           {!categories ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 md:gap-4">
-              {Array.from({ length: 14 }, (_, i) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
+              {Array.from({ length: 7 }, (_, i) => (
                 <div key={i} className="aspect-square rounded-2xl">
                   <Skeleton className="h-full w-full rounded-2xl" />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 md:gap-4">
-              {categories.slice(0, 14).map((cat, index) => {
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
+              {categories.map((cat, index) => {
                 const Icon = getCategoryIcon(cat.slug);
                 const gradient = categoryGradients[index % categoryGradients.length];
                 return (
@@ -331,14 +310,6 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="mt-6 text-center sm:hidden">
-            <Link href="/annuaire">
-              <Button variant="outline" size="sm" className="text-primary">
-                Voir toutes les catégories
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
-          </div>
         </div>
       </section>
 
