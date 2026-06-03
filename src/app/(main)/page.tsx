@@ -412,38 +412,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ ADVERTISING BANNER ============ */}
-      <section className="container mx-auto px-4 pb-12 md:pb-16">
-        <Link href="/register" className="block">
-          <div className="relative overflow-hidden group cursor-pointer">
-            <Image
-              src="/banner-ad.png"
-              alt="Publicité - Inscrivez votre entreprise sur Pebiss"
-              width={1344}
-              height={768}
-              className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-            <div className="absolute inset-0 flex items-center px-8 md:px-16">
-              <div className="max-w-lg">
-                <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-[10px] font-semibold uppercase tracking-wider mb-3">
-                  Publicité
-                </span>
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight">
-                  Boostez votre visibilité au Sénégal
-                </h3>
-                <p className="text-sm text-white/80 mb-5 leading-relaxed">
-                  Inscrivez votre entreprise gratuitement et touchez des milliers de clients chaque jour.
-                </p>
-                <span className="inline-flex items-center gap-2 bg-white text-primary font-semibold px-5 py-2.5 text-sm hover:bg-primary hover:text-white transition-colors duration-300">
-                  Inscrire maintenant <ArrowRight className="h-4 w-4" />
-                </span>
-              </div>
-            </div>
-          </div>
-        </Link>
-      </section>
-
       {/* ============ ABOUT / EXPERIENCE SECTION ============ */}
       <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
