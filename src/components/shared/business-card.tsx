@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Building2, MapPin, Eye, ArrowRight } from 'lucide-react';
+import { Building2, MapPin, Eye, ArrowRight, Plus } from 'lucide-react';
 import { RatingStars } from './rating-stars';
 
 interface Business {
@@ -105,76 +105,58 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
   }
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 border-border/60 overflow-hidden flex flex-col">
-      {/* Cover Image */}
-      <Link href={`/entreprise/${business.slug}`} className="relative aspect-[16/10] overflow-hidden">
-        {business.coverImage ? (
-          <Image
-            src={business.coverImage}
-            alt={business.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-            <Building2 className="h-16 w-16 text-primary/30" />
-          </div>
-        )}
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-        {/* Category badge on image */}
-        {business.category && (
-          <div className="absolute top-3 left-3">
-            <Badge className="bg-white/90 text-foreground backdrop-blur-sm border-0 text-xs font-medium shadow-sm">
-              {business.category.name}
-            </Badge>
-          </div>
-        )}
-
-        {/* Views badge */}
-        <div className="absolute top-3 right-3 flex items-center gap-1 bg-black/40 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
-          <Eye className="h-3 w-3" />
-          {business.views}
-        </div>
-
-        {/* Bottom info overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <h3 className="text-white font-bold text-lg leading-tight drop-shadow-md line-clamp-1">
-            {business.name}
-          </h3>
-          {business.city && (
-            <div className="flex items-center gap-1 text-white/80 text-sm mt-1">
-              <MapPin className="h-3.5 w-3.5" />
-              {business.city}
+    <Link href={`/entreprise/${business.slug}`} className="group block">
+      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-border bg-white">
+        {/* Cover Image — large, full width */}
+        <div className="relative aspect-[16/10] overflow-hidden">
+          {business.coverImage ? (
+            <Image
+              src={business.coverImage}
+              alt={business.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center">
+              <Building2 className="h-16 w-16 text-primary/30" />
             </div>
           )}
+          {/* Category badge */}
+          {business.category && (
+            <div className="absolute top-3 left-3">
+              <Badge className="bg-white/90 text-foreground backdrop-blur-sm border-0 text-[11px] font-medium shadow-sm">
+                {business.category.name}
+              </Badge>
+            </div>
+          )}
+          {/* Views badge */}
+          <div className="absolute top-3 right-3 flex items-center gap-1 bg-black/40 backdrop-blur-sm text-white text-[11px] px-2 py-1 rounded-full">
+            <Eye className="h-3 w-3" />
+            {business.views}
+          </div>
         </div>
-      </Link>
 
-      {/* Card body */}
-      <CardContent className="p-4 flex-1 flex flex-col">
-        {business.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3 leading-relaxed">
-            {business.description}
-          </p>
-        )}
-
-        <div className="mt-auto flex items-center justify-between pt-3 border-t border-border/40">
-          <RatingStars
-            rating={business.avgRating || 0}
-            reviewCount={business._count?.reviews}
-            size="sm"
-          />
-          <Link href={`/entreprise/${business.slug}`}>
-            <Button variant="ghost" size="sm" className="text-primary hover:text-primary gap-1 px-2">
-              <span className="hidden sm:inline">Voir la fiche</span>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
+        {/* Text area — white section below image */}
+        <div className="p-4 flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-bold text-foreground text-base leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-1">
+              {business.name}
+            </h3>
+            {business.description && (
+              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                {business.description}
+              </p>
+            )}
+          </div>
+          {/* Green circular + button */}
+          <div className="shrink-0 mt-1">
+            <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors shadow-sm">
+              <Plus className="h-4 w-4" />
+            </span>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </Card>
+    </Link>
   );
 }
