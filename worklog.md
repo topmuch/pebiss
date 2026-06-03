@@ -708,3 +708,29 @@ Stage Summary:
 - AdBanner component enhanced to support both image and text-based banners
 - All banners verified at correct 251x517px dimensions
 - Zero errors in console or dev log
+
+---
+Task ID: 13
+Agent: Main Orchestrator
+Task: Add 4 promotional images to homepage
+
+Work Log:
+- Read current homepage (src/app/(main)/page.tsx) structure
+- Generated 4 high-quality AI images (1344x768 landscape) for homepage promo section:
+  1. home-mode.png — African textile market / fashion scene
+  2. home-ville.png — Dakar city skyline at sunset
+  3. home-resto.png — West African cuisine / food scene
+  4. home-btp.png — Construction & infrastructure development
+- All images saved to /public/home-banners/
+- Added new "Découvrez nos catégories populaires" section between listings and about section
+- 4-column responsive grid (1 col mobile, 2 col tablet, 4 col desktop)
+- Each card: background image with object-cover, dark gradient overlay, icon+title+desc at bottom
+- Hover effects: image scale 110%, overlay darkens, arrow icon appears at top-right
+- All cards link to their respective category pages
+- Verified all 4 images load correctly, zero errors
+
+Stage Summary:
+- 4 new promotional image cards added to homepage
+- Responsive grid layout with hover animations
+- Section positioned between "Annonces récentes" and "About" sections
+- Zero broken images, zero console errors
