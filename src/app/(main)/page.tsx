@@ -297,8 +297,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ CATEGORIES SECTION — Multicolor Gradient Squares ============ */}
-      <section className="pb-12 md:pb-16">
+      {/* ============ CATEGORIES SECTION — Auto-Slide Multicolor Gradient Squares ============ */}
+      <section className="pb-12 md:pb-16 overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl md:text-2xl font-semibold text-foreground">
@@ -313,19 +313,21 @@ export default function HomePage() {
               </button>
             </div>
           </div>
+        </div>
 
-          {!categories ? (
-            <div className="flex gap-4 overflow-hidden">
-              {Array.from({ length: 7 }, (_, i) => (
-                <div key={i} className="shrink-0 w-[130px] md:w-[150px]">
-                  <Skeleton className="w-[130px] h-[130px] md:w-[150px] md:h-[150px] rounded-2xl" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div ref={catScrollRef} className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
-              {categories
-                .filter((cat) => allowedCategories.includes(cat.slug))
+        {/* Infinite sliding track */}
+        {!categories ? (
+          <div className="flex gap-4 overflow-hidden px-4">
+            {Array.from({ length: 14 }, (_, i) => (
+              <div key={i} className="shrink-0 w-[130px] md:w-[150px]">
+                <Skeleton className="w-[130px] h-[130px] md:w-[150px] md:h-[150px] rounded-2xl" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="group relative">
+            <div className="flex gap-4 animate-slide-categories">
+              {[...categories.filter((cat) => allowedCategories.includes(cat.slug)), ...categories.filter((cat) => allowedCategories.includes(cat.slug)), ...categories.filter((cat) => allowedCategories.includes(cat.slug))]
                 .map((cat, idx) => {
                   const Icon = getCategoryIcon(cat.slug);
                   const gradients: Record<string, string> = {
@@ -342,8 +344,8 @@ export default function HomePage() {
                   };
                   const gradient = gradients[cat.slug] || 'from-gray-400 to-gray-600';
                   return (
-                    <Link key={cat.id} href={`/annuaire?category=${cat.slug}`} className="shrink-0 group">
-                      <div className={`w-[130px] md:w-[150px] h-[130px] md:h-[150px] rounded-2xl bg-gradient-to-br ${gradient} flex flex-col items-center justify-center gap-2 transition-all duration-300 hover:scale-105 hover:shadow-xl`}>
+                    <Link key={`${cat.id}-${idx}`} href={`/annuaire?category=${cat.slug}`} className="shrink-0 group/card">
+                      <div className={`w-[130px] md:w-[150px] h-[130px] md:h-[150px] rounded-2xl bg-gradient-to-br ${gradient} flex flex-col items-center justify-center gap-2 transition-all duration-300 group-hover/card:scale-105 group-hover/card:shadow-xl`}>
                         <div className="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
                           <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
                         </div>
@@ -358,8 +360,11 @@ export default function HomePage() {
                   );
                 })}
             </div>
-          )}
-        </div>
+            {/* Fade edges */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#F6F6F6] to-transparent pointer-events-none z-10" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#F6F6F6] to-transparent pointer-events-none z-10" />
+          </div>
+        )}
       </section>
 
       {/* ============ CURRENT LISTINGS ============ */}

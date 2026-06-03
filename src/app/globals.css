@@ -182,3 +182,22 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Categories infinite slide animation */
+@keyframes slide-categories {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% / 3));
+  }
+}
+
+.animate-slide-categories {
+  animation: slide-categories 20s linear infinite;
+}
+
+/* Pause on hover */
+.group:hover .animate-slide-categories {
+  animation-play-state: paused;
+}
