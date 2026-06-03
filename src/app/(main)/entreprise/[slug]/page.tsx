@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
@@ -124,6 +124,7 @@ export default function BusinessDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [isSliding, setIsSliding] = useState(true);
 
   const { data: business, isLoading } = useQuery<BusinessData>({
     queryKey: ['business', slug],
@@ -133,6 +134,27 @@ export default function BusinessDetailPage() {
     }),
     enabled: !!slug,
   });
+
+  // All images: cover first, then photos
+  const allImages = business
+    ? [
+        ...(business.coverImage ? [{ id: 'cover', url: business.coverImage }] : []),
+        ...business.photos.filter((p) => p.url !== business.coverImage),
+      ]
+    : [];
+
+  // Auto-slide
+  const nextSlide = useCallback(() => {
+    if (allImages.length > 1) {
+      setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+    }
+  }, [allImages.length]);
+
+  useEffect(() => {
+    if (!isSliding || allImages.length <= 1) return;
+    const timer = setInterval(nextSlide, 4000);
+    return () => clearInterval(timer);
+  }, [isSliding, nextSlide, allImages.length]);
 
   const { data: similarBusinesses } = useQuery<{ businesses: SimilarBusiness[] }>({
     queryKey: ['similar-businesses', business?.category?.slug],
@@ -167,14 +189,6 @@ export default function BusinessDetailPage() {
       setIsSubmitting(false);
     },
   });
-
-  // All images: cover first, then photos
-  const allImages = business
-    ? [
-        ...(business.coverImage ? [{ id: 'cover', url: business.coverImage }] : []),
-        ...business.photos.filter((p) => p.url !== business.coverImage),
-      ]
-    : [];
 
   function handleCopyLink() {
     navigator.clipboard.writeText(window.location.href);
@@ -273,14 +287,25 @@ export default function BusinessDetailPage() {
           <div className="lg:col-span-2 space-y-5">
             {/* Image Gallery */}
             <div className="bg-white border border-[#F0F0F0] rounded overflow-hidden">
-              {/* Main Image */}
-              <div className="relative aspect-[16/9] bg-[#F6F6F6] overflow-hidden">
+              {/* Main Image Slider */}
+              <div
+                className="relative aspect-[16/9] bg-[#F6F6F6] overflow-hidden"
+                onMouseEnter={() => setIsSliding(false)}
+                onMouseLeave={() => setIsSliding(true)}
+              >
                 {allImages.length > 0 ? (
-                  <img
-                    src={allImages[currentImageIndex].url}
-                    alt={business.name}
-                    className="w-full h-full object-cover"
-                  />
+                  <>
+                    <img
+                      key={currentImageIndex}
+                      src={allImages[currentImageIndex].url}
+                      alt={`${business.name} - Image ${currentImageIndex + 1}`}
+                      className="w-full h-full object-cover transition-opacity duration-500"
+                    />
+                    {/* Image counter badge */}
+                    <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">
+                      {currentImageIndex + 1} / {allImages.length}
+                    </div>
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Building2 className="h-20 w-20 text-gray-300" />
@@ -291,17 +316,33 @@ export default function BusinessDetailPage() {
                   <>
                     <button
                       onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-white transition-colors"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 border border-[#F0F0F0] rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm"
                     >
-                      <ChevronLeft className="h-4 w-4 text-[#242424]" />
+                      <ChevronLeft className="h-5 w-5 text-[#242424]" />
                     </button>
                     <button
                       onClick={() => setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1))}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-white transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 border border-[#F0F0F0] rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm"
                     >
-                      <ChevronRight className="h-4 w-4 text-[#242424]" />
+                      <ChevronRight className="h-5 w-5 text-[#242424]" />
                     </button>
                   </>
+                )}
+                {/* Dots indicator */}
+                {allImages.length > 1 && (
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    {allImages.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        className={`rounded-full transition-all ${
+                          idx === currentImageIndex
+                            ? 'w-6 h-2 bg-white'
+                            : 'w-2 h-2 bg-white/60 hover:bg-white/80'
+                        }`}
+                      />
+                    ))}
+                  </div>
                 )}
               </div>
 
@@ -488,12 +529,22 @@ export default function BusinessDetailPage() {
                     {business.region && `, ${business.region}`}
                     {business.country && ` - ${business.country}`}
                   </p>
-                  <div className="h-48 rounded bg-[#F6F6F6] border border-[#F0F0F0] flex items-center justify-center">
-                    <div className="text-center text-[#777]">
-                      <MapPin className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                      <p className="text-sm">Carte non disponible</p>
-                    </div>
-                  </div>
+                  {(() => {
+                    const mapQuery = [business.address, business.city, business.region, business.country].filter(Boolean).join(', ');
+                    const encodedQuery = encodeURIComponent(mapQuery || 'Sénégal');
+                    return (
+                      <iframe
+                        src={`https://maps.google.com/maps?q=${encodedQuery}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
+                        width="100%"
+                        height="280"
+                        style={{ border: 0, borderRadius: '4px' }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title="Localisation de l'entreprise"
+                      />
+                    );
+                  })()}
                 </div>
               </div>
             )}
@@ -858,6 +909,26 @@ export default function BusinessDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Floating WhatsApp Button */}
+      {business.whatsapp && (
+        <a
+          href={`https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#1DA851] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
+          title="Contacter sur WhatsApp"
+        >
+          <svg viewBox="0 0 32 32" className="w-7 h-7 fill-current">
+            <path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.5 1.128 6.744 3.046 9.378L1.052 31.29l6.128-1.962c2.504 1.624 5.474 2.572 8.652 2.672h.044C24.826 32 32 24.824 32 16.004S24.826 0 16.004 0zm9.348 22.614c-.39 1.1-1.932 2.014-3.168 2.28-.846.18-1.95.324-5.668-1.218-4.76-2.466-7.824-7.284-8.064-7.604-.228-.32-1.892-2.52-1.892-4.804s1.196-3.404 1.618-3.868c.422-.462.92-.58 1.228-.58.306 0 .612.002.88.014.284.014.664-.108 1.04.796.39.94 1.326 3.234 1.444 3.472.118.236.196.514.04.828-.158.314-.236.508-.472.784-.236.274-.496.614-.708.826-.236.236-.482.49-.206.962.276.472 1.224 2.016 2.628 3.266 1.806 1.6 3.322 2.096 3.796 2.332.474.236.748.196 1.022-.118.276-.314 1.186-1.382 1.502-1.856.316-.472.632-.392 1.064-.236.434.158 2.742 1.292 3.212 1.528.47.236.784.354.902.548.118.196.118 1.116-.272 2.214z"/>
+          </svg>
+          {/* Tooltip */}
+          <span className="absolute right-full mr-3 bg-white text-[#242424] text-sm font-medium px-3 py-2 rounded-lg shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            Contacter sur WhatsApp
+            <span className="absolute left-full top-1/2 -translate-y-1/2 border-4 border-transparent border-l-white" />
+          </span>
+        </a>
+      )}
     </div>
   );
 }
