@@ -107,19 +107,18 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
   return (
     <Link href={`/entreprise/${business.slug}`} className="group block">
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-border bg-white">
-        {/* Cover Image — large, full width (~85% of card) */}
-        <div className="relative overflow-hidden">
+        {/* Cover Image — fixed aspect ratio, all images same size */}
+        <div className="relative aspect-[3/2] overflow-hidden">
           {business.coverImage ? (
             <Image
               src={business.coverImage}
               alt={business.name}
-              width={600}
-              height={400}
-              className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
           ) : (
-            <div className="w-full aspect-[3/2] bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center">
               <Building2 className="h-16 w-16 text-primary/30" />
             </div>
           )}
