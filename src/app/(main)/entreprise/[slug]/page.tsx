@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { RatingStars } from '@/components/shared/rating-stars';
 import { BusinessCard } from '@/components/shared/business-card';
-import { AdBanner1, AdBanner2, AdBanner3, AdBanner4, AdBanner5 } from '@/components/shared/ad-banner';
+import { AdBanner1, AdBanner2, AdBanner3, AdBanner4, AdBanner5, AdBannerImmobilier, AdBannerTechnologie, AdBannerRestaurant, AdBannerMode } from '@/components/shared/ad-banner';
 import { useToast } from '@/hooks/use-toast';
 import {
   Building2,
@@ -386,11 +386,12 @@ export default function BusinessDetailPage() {
               </div>
             </div>
 
-            {/* Ad Banners 1-3 - After Meta Row */}
+            {/* Image Ad Banners 1-4 - After Meta Row */}
             <div className="flex flex-wrap gap-4 justify-center">
-              <AdBanner1 />
-              <AdBanner2 />
-              <AdBanner3 />
+              <AdBannerImmobilier />
+              <AdBannerTechnologie />
+              <AdBannerRestaurant />
+              <AdBannerMode />
             </div>
 
             {/* Description Section */}
@@ -497,10 +498,11 @@ export default function BusinessDetailPage() {
               </div>
             )}
 
-            {/* Ad Banners 4-5 - After Products/Photos */}
+            {/* Text Ad Banners 1-3 - After Products/Photos */}
             <div className="flex flex-wrap gap-4 justify-center">
-              <AdBanner4 />
-              <AdBanner5 />
+              <AdBanner1 />
+              <AdBanner2 />
+              <AdBanner3 />
             </div>
 
             {/* Opening Hours */}

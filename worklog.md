@@ -678,3 +678,33 @@ Stage Summary:
 - All 5 hero requirements confirmed: light bg, 2-col layout, text+search left, 2×2 images right, sticky white header
 - 1 CSS issue found: --primary resolves to blue (#0061b4) instead of black (#242424), affecting search button and stats bar
 - Recommendation: Clean rebuild or investigate CSS build pipeline to fix the --primary color resolution
+
+---
+Task ID: 12
+Agent: Main Orchestrator
+Task: Add 4 high-quality image ad banners to entreprise page
+
+Work Log:
+- Read current AdBanner component (src/components/shared/ad-banner.tsx) and entreprise page
+- Generated 4 high-quality AI images (768x1344 portrait) for ad banners:
+  1. ad-immobilier.png — Real estate promotion with Dakar skyline
+  2. ad-technologie.png — Digital/tech solutions advertisement
+  3. ad-restaurant.png — Restaurant & cuisine promotion
+  4. ad-mode.png — Fashion & boutique advertisement
+- All images saved to /public/ad-banners/
+- Updated AdBanner component to support image-based banners with:
+  - Full-bleed background image with object-cover
+  - Gradient overlay (from-black/80 via-black/30 to-black/10)
+  - Title, subtitle, and white CTA button at bottom
+  - Close button with backdrop blur
+  - "ANNONCE" badge at top-left
+  - Fixed 251x517px dimensions via inline style
+- Created 4 new banner components: AdBannerImmobilier, AdBannerTechnologie, AdBannerRestaurant, AdBannerMode
+- Updated entreprise page: 4 image banners after meta row, 3 text banners after products/photos
+- Verified all banners render correctly at 251x517px with proper styling, overlays, and CTAs
+
+Stage Summary:
+- 4 new high-quality image ad banners added to entreprise page
+- AdBanner component enhanced to support both image and text-based banners
+- All banners verified at correct 251x517px dimensions
+- Zero errors in console or dev log

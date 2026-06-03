@@ -5,12 +5,14 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface AdBannerProps {
-  title: string;
-  subtitle: string;
+  title?: string;
+  subtitle?: string;
   ctaText?: string;
   ctaLink?: string;
   variant?: 'dark' | 'light' | 'gradient';
   className?: string;
+  image?: string;
+  overlayGradient?: string;
 }
 
 const variants = {
@@ -50,12 +52,83 @@ export function AdBanner({
   ctaLink = '#',
   variant = 'dark',
   className,
+  image,
+  overlayGradient,
 }: AdBannerProps) {
   const [dismissed, setDismissed] = useState(false);
   const v = variants[variant];
 
   if (dismissed) return null;
 
+  /* ── Image-based banner ── */
+  if (image) {
+    return (
+      <div
+        className={cn(
+          'relative rounded-lg overflow-hidden group shrink-0 cursor-pointer',
+          className
+        )}
+        style={{ width: '251px', height: '517px' }}
+      >
+        {/* Background image */}
+        <img
+          src={image}
+          alt={title || 'Publicité'}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+
+        {/* Overlay gradient */}
+        <div
+          className={cn(
+            'absolute inset-0',
+            overlayGradient || 'bg-gradient-to-t from-black/80 via-black/30 to-black/10'
+          )}
+        />
+
+        {/* Close button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setDismissed(true);
+          }}
+          className="absolute top-2 right-2 z-20 w-7 h-7 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-black/60 transition-colors"
+          aria-label="Fermer la publicité"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+
+        {/* Top badge */}
+        <div className="absolute top-3 left-3 z-10">
+          <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+            Annonce
+          </span>
+        </div>
+
+        {/* Content */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 p-5">
+          {title && (
+            <h3 className="text-white text-lg font-bold leading-snug mb-1.5 drop-shadow-lg">
+              {title}
+            </h3>
+          )}
+          {subtitle && (
+            <p className="text-white/80 text-xs leading-relaxed mb-4 line-clamp-2 drop-shadow">
+              {subtitle}
+            </p>
+          )}
+          <a
+            href={ctaLink}
+            className="inline-flex items-center gap-2 bg-white text-[#242424] px-5 py-2.5 rounded text-sm font-semibold hover:bg-white/90 transition-colors shadow-lg"
+          >
+            {ctaText}
+            <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Text-based banner (legacy) ── */
   return (
     <div
       className={cn(
@@ -117,7 +190,7 @@ export function AdBanner({
   );
 }
 
-/* Pre-configured banner sets for the entreprise page */
+/* Pre-configured text-based banner sets */
 export function AdBanner1() {
   return (
     <AdBanner
@@ -174,6 +247,55 @@ export function AdBanner5() {
       ctaText="Voir offres"
       ctaLink="/register"
       variant="gradient"
+    />
+  );
+}
+
+/* Image-based ad banners (high quality) */
+export function AdBannerImmobilier() {
+  return (
+    <AdBanner
+      image="/ad-banners/ad-immobilier.png"
+      title="Immobilier Premium"
+      subtitle="Trouvez les meilleures offres immobilières au Sénégal"
+      ctaText="Voir annonces"
+      ctaLink="/annuaire?category=immobilier"
+    />
+  );
+}
+
+export function AdBannerTechnologie() {
+  return (
+    <AdBanner
+      image="/ad-banners/ad-technologie.png"
+      title="Solutions Digitales"
+      subtitle="Transformez votre entreprise avec la technologie"
+      ctaText="Découvrir"
+      ctaLink="/annuaire?category=technologie"
+    />
+  );
+}
+
+export function AdBannerRestaurant() {
+  return (
+    <AdBanner
+      image="/ad-banners/ad-restaurant.png"
+      title="Restaurants & Cuisine"
+      subtitle="Découvrez les meilleures adresses culinaires de Dakar"
+      ctaText="Réserver"
+      ctaLink="/annuaire?category=restaurants"
+    />
+  );
+}
+
+export function AdBannerMode() {
+  return (
+    <AdBanner
+      image="/ad-banners/ad-mode.png"
+      title="Mode & Boutique"
+      subtitle="Explorez les tendances fashion et les boutiques exclusives"
+      ctaText="Explorer"
+      ctaLink="/annuaire?category=mode"
     />
   );
 }
