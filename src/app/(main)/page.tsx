@@ -174,129 +174,112 @@ export default function HomePage() {
 
   return (
     <div className="bg-[#F6F6F6]">
-      {/* ============ HERO SECTION — 2-Column AdForest Style ============ */}
-      <section className="relative py-16 md:py-24 lg:py-20" style={{ background: '#E8F0FE' }}>
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left Column — Text + Search */}
-            <div className="max-w-xl">
-              {/* Badge / Count */}
-              <p className="text-sm md:text-base font-semibold text-pebiss-blue mb-3">
-                Plus de {animStats.businesses} annonces d&apos;entreprises
-              </p>
+      {/* ============ HERO SECTION — Full-Width Banner 1842x652 ============ */}
+      <section className="relative w-full" style={{ aspectRatio: '1842 / 652' }}>
+        {/* Background Image */}
+        <Image
+          src="/hero-banner.png"
+          alt="Pebiss - Annuaire d'entreprises au Sénégal"
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/50" />
 
-              {/* Heading */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground leading-tight mb-4">
-                Trouvez, Explorez,{' '}
-                <span className="text-primary">Découvrez</span>
-              </h1>
+        {/* Content */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="container mx-auto px-4 text-center">
+            {/* Badge */}
+            <p className="text-sm md:text-base font-semibold text-white/90 mb-3">
+              Plus de {animStats.businesses} annonces d&apos;entreprises
+            </p>
 
-              {/* Description */}
-              <p className="text-sm md:text-base text-muted-foreground mb-8 leading-relaxed max-w-md">
-                Découvrez des lieux incroyables près de chez vous en quelques clics. Parcourez les meilleures annonces et connectez-vous avec des entreprises locales de confiance chaque jour.
-              </p>
+            {/* Heading */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4">
+              Trouvez, Explorez,{' '}
+              <span className="text-primary">Découvrez</span>
+            </h1>
 
-              {/* Search Bar */}
-              <form onSubmit={handleHeroSearch} className="bg-white p-3 shadow-sm mb-6">
-                <div className="flex flex-col sm:flex-row gap-2 items-stretch">
-                  <div className="flex-1">
-                    <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Catégorie</label>
-                    <select
-                      value={searchCategory}
-                      onChange={(e) => setSearchCategory(e.target.value)}
-                      className="w-full px-3 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 appearance-none pr-8"
-                    >
-                      <option value="">Sélectionner une catégorie</option>
-                      <option value="mode-textile">Mode & Textile</option>
-                      <option value="restaurants-alimentation">Restaurants & Alimentation</option>
-                      <option value="tourisme-hotellerie">Tourisme & Hôtellerie</option>
-                      <option value="services-financiers">Services Financiers</option>
-                      <option value="agriculture-agroalimentaire">Agriculture & Agroalimentaire</option>
-                      <option value="commerce-distribution">Commerce & Distribution</option>
-                      <option value="btp-construction">BTP & Construction</option>
-                    </select>
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Emplacement</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Sélectionner un emplacement"
-                        value={searchCity}
-                        onChange={(e) => setSearchCity(e.target.value)}
-                        className="w-full pl-3 pr-9 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
-                      />
-                      <MapPin className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 pointer-events-none" />
-                    </div>
-                  </div>
-                  <div className="flex items-end">
-                    <Button
-                      type="submit"
-                      className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 text-sm font-medium w-full sm:w-auto"
-                    >
-                      <Search className="h-4 w-4 mr-2" />
-                      Rechercher
-                    </Button>
+            {/* Description */}
+            <p className="text-sm md:text-base text-white/80 mb-8 leading-relaxed max-w-2xl mx-auto">
+              Découvrez des lieux incroyables près de chez vous en quelques clics. Parcourez les meilleures annonces et connectez-vous avec des entreprises locales de confiance chaque jour.
+            </p>
+
+            {/* Search Bar */}
+            <form onSubmit={handleHeroSearch} className="bg-white p-3 md:p-4 shadow-lg max-w-4xl mx-auto mb-6">
+              <div className="flex flex-col sm:flex-row gap-2 items-stretch">
+                <div className="flex-1">
+                  <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Ce que vous cherchez</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Ex : Restaurant, Boutique, Hôtel..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-3 pr-9 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
+                    />
+                    <Search className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 pointer-events-none" />
                   </div>
                 </div>
-              </form>
+                <div className="flex-1">
+                  <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Catégorie</label>
+                  <select
+                    value={searchCategory}
+                    onChange={(e) => setSearchCategory(e.target.value)}
+                    className="w-full px-3 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 appearance-none pr-8"
+                  >
+                    <option value="">Sélectionner une catégorie</option>
+                    <option value="mode-textile">Mode & Textile</option>
+                    <option value="restaurants-alimentation">Restaurants & Alimentation</option>
+                    <option value="tourisme-hotellerie">Tourisme & Hôtellerie</option>
+                    <option value="services-financiers">Services Financiers</option>
+                    <option value="agriculture-agroalimentaire">Agriculture & Agroalimentaire</option>
+                    <option value="commerce-distribution">Commerce & Distribution</option>
+                    <option value="btp-construction">BTP & Construction</option>
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Emplacement</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Sélectionner un emplacement"
+                      value={searchCity}
+                      onChange={(e) => setSearchCity(e.target.value)}
+                      className="w-full pl-3 pr-9 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
+                    />
+                    <MapPin className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 pointer-events-none" />
+                  </div>
+                </div>
+                <div className="flex items-end">
+                  <Button
+                    type="submit"
+                    className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 text-sm font-medium w-full sm:w-auto"
+                  >
+                    <Search className="h-4 w-4 mr-2" />
+                    Rechercher
+                  </Button>
+                </div>
+              </div>
+            </form>
 
-              {/* Popular Categories */}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                <span className="text-muted-foreground font-medium text-xs uppercase tracking-wide">Populaire :</span>
-                <Link href="/annuaire?category=mode-textile" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
-                  <Palette className="h-3.5 w-3.5" /> Mode & Textile
-                </Link>
-                <Link href="/annuaire?category=restaurants-alimentation" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
-                  <Utensils className="h-3.5 w-3.5" /> Restaurants
-                </Link>
-                <Link href="/annuaire?category=tourisme-hotellerie" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
-                  <Plane className="h-3.5 w-3.5" /> Tourisme
-                </Link>
-                <Link href="/annuaire?category=btp-construction" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
-                  <Wrench className="h-3.5 w-3.5" /> BTP
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Column — 2x2 Image Grid */}
-            <div className="hidden lg:grid grid-cols-2 gap-3">
-              <div className="relative aspect-[4/5] overflow-hidden group">
-                <Image
-                  src="/categories/mode-textile.png"
-                  alt="Mode & Textile"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
-              </div>
-              <div className="relative aspect-[4/5] overflow-hidden group">
-                <Image
-                  src="/categories/btp-construction.png"
-                  alt="BTP & Construction"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
-              </div>
-              <div className="relative aspect-[4/5] overflow-hidden group">
-                <Image
-                  src="/categories/restaurants-alimentation.png"
-                  alt="Restaurants & Alimentation"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
-              </div>
-              <div className="relative aspect-[4/5] overflow-hidden group">
-                <Image
-                  src="/categories/tourisme-hotellerie.png"
-                  alt="Tourisme & Hôtellerie"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
-              </div>
+            {/* Popular Categories */}
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
+              <span className="text-white/60 font-medium text-xs uppercase tracking-wide">Populaire :</span>
+              <Link href="/annuaire?category=mode-textile" className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
+                <Palette className="h-3.5 w-3.5" /> Mode & Textile
+              </Link>
+              <Link href="/annuaire?category=restaurants-alimentation" className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
+                <Utensils className="h-3.5 w-3.5" /> Restaurants
+              </Link>
+              <Link href="/annuaire?category=tourisme-hotellerie" className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
+                <Plane className="h-3.5 w-3.5" /> Tourisme
+              </Link>
+              <Link href="/annuaire?category=btp-construction" className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors">
+                <Wrench className="h-3.5 w-3.5" /> BTP
+              </Link>
             </div>
           </div>
         </div>

@@ -28,14 +28,23 @@ import {
   LogOut,
   Shield,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
 export function Header() {
   const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 60);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isEnterprise = session?.user?.role === 'ENTERPRISE';
@@ -49,8 +58,14 @@ export function Header() {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <header className="z-50 w-full sticky top-0 bg-white/95 backdrop-blur border-b border-border transition-colors duration-300">
-      <div className="container mx-auto flex h-20 items-center justify-between px-4">
+    <header
+      className={`z-50 w-full top-0 transition-all duration-300 ${
+        scrolled
+          ? 'sticky bg-white/95 backdrop-blur border-b border-border shadow-sm'
+          : 'absolute bg-transparent'
+      }`}
+    >
+      <div className="container mx-auto flex h-16 md:h-20 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image
@@ -58,7 +73,9 @@ export function Header() {
             alt="Pebiss"
             width={140}
             height={44}
-            className="h-11 w-auto object-contain"
+            className={`h-10 md:h-11 w-auto object-contain transition-all duration-300 ${
+              !scrolled ? 'drop-shadow-lg brightness-0 invert' : ''
+            }`}
           />
         </Link>
 
@@ -69,9 +86,13 @@ export function Header() {
               key={link.href}
               href={link.href}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
-                isActive(link.href)
-                  ? 'text-foreground font-semibold'
-                  : 'text-muted-foreground hover:text-foreground'
+                scrolled
+                  ? isActive(link.href)
+                    ? 'text-foreground font-semibold'
+                    : 'text-muted-foreground hover:text-foreground'
+                  : isActive(link.href)
+                    ? 'text-white font-semibold'
+                    : 'text-white/80 hover:text-white'
               }`}
             >
               {link.label}
@@ -126,7 +147,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-sm"
+                  className={`text-sm ${!scrolled ? 'text-white hover:text-white/90 hover:bg-white/10' : ''}`}
                 >
                   Connexion
                 </Button>
@@ -145,7 +166,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
+                className={`md:hidden ${!scrolled ? 'text-white hover:text-white/90 hover:bg-white/10' : ''}`}
               >
                 <Menu className="h-5 w-5" />
               </Button>
