@@ -269,15 +269,7 @@ export default function HomePage() {
       {/* Categories Section - Right Below Hero */}
       <section className="relative -mt-12 md:-mt-16 z-20 pb-12 md:pb-16">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold text-foreground">
-                Catégories populaires
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Parcourez nos catégories les plus recherchées
-              </p>
-            </div>
+          <div className="flex items-center justify-end mb-4">
             <Link href="/annuaire" className="hidden sm:block">
               <Button variant="ghost" size="sm" className="text-primary">
                 Voir tout
