@@ -115,7 +115,7 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
               alt={business.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
-              sizes="251px"
+              sizes="502px"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center">
