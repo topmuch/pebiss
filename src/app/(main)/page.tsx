@@ -28,6 +28,9 @@ import {
   Eye,
   Calendar,
   Megaphone,
+  Stethoscope,
+  GraduationCap,
+  Home,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -40,6 +43,9 @@ const categoryIcons: Record<string, React.ElementType> = {
   'agriculture-agroalimentaire': Sprout,
   'commerce-distribution': ShoppingBag,
   'btp-construction': Wrench,
+  'sante-bien-etre': Stethoscope,
+  'education-formation': GraduationCap,
+  'immobilier': Home,
 };
 
 const categoryImages: Record<string, string> = {
@@ -60,6 +66,9 @@ const allowedCategories = [
   'agriculture-agroalimentaire',
   'commerce-distribution',
   'btp-construction',
+  'sante-bien-etre',
+  'education-formation',
+  'immobilier',
 ];
 
 const defaultIcon = Building2;
@@ -238,6 +247,9 @@ export default function HomePage() {
                     <option value="agriculture-agroalimentaire">Agriculture & Agroalimentaire</option>
                     <option value="commerce-distribution">Commerce & Distribution</option>
                     <option value="btp-construction">BTP & Construction</option>
+                      <option value="sante-bien-etre">Santé & Bien-être</option>
+                      <option value="education-formation">Éducation & Formation</option>
+                      <option value="immobilier">Immobilier</option>
                   </select>
                 </div>
                 <div className="flex-1">
@@ -324,6 +336,9 @@ export default function HomePage() {
                     'agriculture-agroalimentaire': 'from-lime-400 to-green-500',
                     'commerce-distribution': 'from-violet-500 to-purple-700',
                     'btp-construction': 'from-amber-400 to-orange-600',
+                    'sante-bien-etre': 'from-teal-400 to-emerald-600',
+                    'education-formation': 'from-sky-400 to-indigo-500',
+                    'immobilier': 'from-fuchsia-400 to-pink-600',
                   };
                   const gradient = gradients[cat.slug] || 'from-gray-400 to-gray-600';
                   return (
