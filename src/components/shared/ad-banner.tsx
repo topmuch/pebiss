@@ -18,10 +18,10 @@ interface AdBannerProps {
 const variants = {
   dark: {
     bg: 'bg-[#2D2D2D]',
-    accent: 'bg-[#2563EB]',
+    accent: 'bg-[#0099FF]',
     text: 'text-white',
     subtext: 'text-white/60',
-    cta: 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white',
+    cta: 'bg-[#0099FF] hover:bg-[#0066CC] text-white',
     close: 'text-white/30 hover:text-white/70',
     badge: 'bg-white/10',
   },
@@ -39,7 +39,7 @@ const variants = {
     accent: 'bg-[#0F3460]',
     text: 'text-white',
     subtext: 'text-white/60',
-    cta: 'bg-[#E94560] hover:bg-[#D63851] text-white',
+    cta: 'bg-[#0099FF] hover:bg-[#0066CC] text-white',
     close: 'text-white/30 hover:text-white/70',
     badge: 'bg-white/10',
   },

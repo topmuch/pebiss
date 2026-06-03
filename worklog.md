@@ -758,3 +758,33 @@ Stage Summary:
 - All 4 images load at correct 251x517px dimensions
 - Cards are: Services Financiers, Tourisme, Agriculture, Santé & Bien-être
 - Zero errors in console or dev log
+
+---
+Task ID: 15
+Agent: Main Orchestrator
+Task: Harmonize site colors with logo color palette
+
+Work Log:
+- Analyzed logo colors with VLM: #0099FF (bright blue), #0066CC (deep blue), #33B5E5 (light blue)
+- Read current globals.css: old scheme used #1E40AF (indigo), #F59E0B (orange), #242424 (near-black primary)
+- Updated all CSS variables in globals.css to match logo blue palette:
+  - --primary: #0066CC (deep blue from logo)
+  - --accent: #0099FF (bright blue from logo)
+  - --ring: #0099FF
+  - --pebiss-blue: #0099FF
+  - --pebiss-blue-light: #33B5E5
+  - --pebiss-orange remapped to #0099FF (blue, not orange anymore)
+  - All chart colors now blue family (#0066CC, #0099FF, #33B5E5, #0052A3, #66CCFF)
+  - Sidebar: #004A99 (deep blue) with #005AB3 accents
+  - Dark mode: #001F3F sidebar, #0099FF primary
+- Updated .pebiss-gradient: linear-gradient(135deg, #0099FF, #0066CC)
+- Updated .hero-pattern radial gradients to use logo blue colors
+- Updated ad-banner.tsx: dark variant CTA #0099FF, gradient variant CTA #0099FF
+- Verified: 0 orange, 0 indigo remaining across homepage, annuaire, and entreprise pages
+- All buttons, links, accents now use consistent blue palette
+
+Stage Summary:
+- Full site color harmonization with logo blue palette
+- 100% of brand colors now match logo: #0099FF, #0066CC, #33B5E5
+- Zero orange or indigo colors remaining
+- All pages verified with consistent blue theme
