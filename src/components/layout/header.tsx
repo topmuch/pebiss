@@ -59,11 +59,11 @@ export function Header() {
           <Image
             src="/pebiss-logo.png"
             alt="Pebiss"
-            width={36}
-            height={36}
-            className="rounded-lg"
+            width={40}
+            height={40}
+            className="rounded-lg object-contain"
           />
-          <span className="text-xl font-bold text-primary group-hover:text-pebiss-orange transition-colors">
+          <span className="text-xl font-bold text-primary group-hover:text-pebiss-blue-light transition-colors">
             Pebiss
           </span>
         </Link>

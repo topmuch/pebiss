@@ -146,7 +146,7 @@ export default function HomePage() {
         <div className="hero-pattern absolute inset-0" />
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-pebiss-orange/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-pebiss-blue-light/10 rounded-full blur-3xl" />
         </div>
         <div className="relative container mx-auto px-4 py-16 md:py-24 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
@@ -154,8 +154,8 @@ export default function HomePage() {
             <div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-white mb-6 leading-tight">
                 Trouvez les meilleures{' '}
-                <span className="text-pebiss-orange">entreprises</span> du{' '}
-                <span className="text-pebiss-orange">Sénégal</span>
+                <span className="text-pebiss-blue-light">entreprises</span> du{' '}
+                <span className="text-pebiss-blue-light">Sénégal</span>
               </h1>
               <p className="text-lg md:text-xl text-white/80 mb-10 max-w-xl">
                 Référencez votre entreprise et connectez-vous avec des milliers de
@@ -188,7 +188,7 @@ export default function HomePage() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white rounded-xl px-8"
+                    className="bg-pebiss-blue-light hover:bg-pebiss-blue-light/90 text-white rounded-xl px-8"
                   >
                     <Search className="h-5 w-5" />
                     <span className="hidden sm:inline">Rechercher</span>
@@ -201,7 +201,7 @@ export default function HomePage() {
                 <Link href="/register">
                   <Button
                     size="lg"
-                    className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white rounded-xl px-8"
+                    className="bg-pebiss-blue-light hover:bg-pebiss-blue-light/90 text-white rounded-xl px-8"
                   >
                     <UserPlus className="h-5 w-5" />
                     S&apos;inscrire gratuitement
@@ -236,8 +236,8 @@ export default function HomePage() {
                 </div>
                 {/* Floating stat card */}
                 <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-pebiss-orange/10 flex items-center justify-center">
-                    <Building2 className="h-5 w-5 text-pebiss-orange" />
+                  <div className="h-10 w-10 rounded-full bg-pebiss-blue-light/20 flex items-center justify-center">
+                    <Building2 className="h-5 w-5 text-pebiss-blue-light" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-foreground">{animStats.businesses}+</p>
@@ -356,7 +356,7 @@ export default function HomePage() {
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
-                <Star className="h-6 w-6 text-pebiss-orange mr-2" />
+                <Star className="h-6 w-6 text-pebiss-blue-light mr-2" />
                 <span className="text-2xl md:text-3xl font-bold text-primary">
                   {animStats.reviews}+
                 </span>
@@ -404,7 +404,7 @@ export default function HomePage() {
                   Soyez le premier à inscrire votre entreprise sur Pebiss !
                 </p>
                 <Link href="/register">
-                  <Button className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white">
+                  <Button className="bg-pebiss-blue-light hover:bg-pebiss-blue-light/90 text-white">
                     <UserPlus className="h-4 w-4 mr-2" />
                     Inscrire mon entreprise
                   </Button>
@@ -431,7 +431,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 pebiss-gradient-orange relative overflow-hidden">
+      <section className="py-16 md:py-24 pebiss-gradient relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
@@ -448,7 +448,7 @@ export default function HomePage() {
             <Link href="/register">
               <Button
                 size="lg"
-                className="bg-white text-pebiss-orange hover:bg-white/90 font-semibold rounded-xl px-8 h-12"
+                className="bg-white text-primary hover:bg-white/90 font-semibold rounded-xl px-8 h-12"
               >
                 <UserPlus className="h-5 w-5 mr-2" />
                 Créer mon compte gratuitement

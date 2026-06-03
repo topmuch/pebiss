@@ -16,9 +16,9 @@ export function Footer() {
               <Image
                 src="/pebiss-logo.png"
                 alt="Pebiss"
-                width={36}
-                height={36}
-                className="rounded-lg brightness-0 invert"
+                width={40}
+                height={40}
+                className="rounded-lg brightness-0 invert object-contain"
               />
               <span className="text-xl font-bold">Pebiss</span>
             </Link>
