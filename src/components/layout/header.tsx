@@ -40,8 +40,6 @@ export function Header() {
   const isAdmin = session?.user?.role === 'ADMIN';
   const isEnterprise = session?.user?.role === 'ENTERPRISE';
   const isAuth = status === 'authenticated';
-  const isHome = pathname === '/';
-
   const navLinks = [
     { href: '/', label: 'Accueil' },
     { href: '/annuaire', label: 'Annuaire' },
@@ -51,13 +49,7 @@ export function Header() {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <header
-      className={`z-50 w-full transition-colors duration-300 ${
-        isHome
-          ? 'absolute top-0 left-0 right-0 bg-transparent'
-          : 'sticky top-0 bg-white/95 backdrop-blur border-b border-border'
-      }`}
-    >
+    <header className="z-50 w-full sticky top-0 bg-white/95 backdrop-blur border-b border-border transition-colors duration-300">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
@@ -66,7 +58,7 @@ export function Header() {
             alt="Pebiss"
             width={140}
             height={44}
-            className={`h-11 w-auto object-contain ${isHome ? 'brightness-0 invert' : ''}`}
+            className="h-11 w-auto object-contain"
           />
         </Link>
 
@@ -77,13 +69,9 @@ export function Header() {
               key={link.href}
               href={link.href}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
-                isHome
-                  ? isActive(link.href)
-                    ? 'text-white font-semibold'
-                    : 'text-white/80 hover:text-white'
-                  : isActive(link.href)
-                    ? 'text-foreground font-semibold'
-                    : 'text-muted-foreground hover:text-foreground'
+                isActive(link.href)
+                  ? 'text-foreground font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {link.label}
@@ -138,7 +126,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`text-sm ${isHome ? 'text-white/90 hover:text-white hover:bg-white/10' : ''}`}
+                  className="text-sm"
                 >
                   Connexion
                 </Button>
@@ -157,7 +145,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className={`md:hidden ${isHome ? 'text-white hover:bg-white/10' : ''}`}
+                className="md:hidden"
               >
                 <Menu className="h-5 w-5" />
               </Button>

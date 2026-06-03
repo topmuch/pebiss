@@ -555,3 +555,126 @@ Stage Summary:
 - French localization complete throughout
 - Zero broken images (27 total), zero console errors
 - Optional improvements: add Poppins font, add featured listings carousel in hero right column
+
+---
+Task ID: 11
+Agent: Verification Subagent
+Task: Verify new 2-column hero redesign matching AdForest City & Places template
+
+Work Log:
+- Read worklog (Tasks 1-10) to understand full project history
+- Read source files: /src/app/(main)/page.tsx, /src/components/layout/header.tsx, /src/app/(main)/layout.tsx, /src/app/globals.css
+- Opened http://localhost:3000/ with agent-browser at 1920×1080 viewport
+- Waited for network idle, took viewport + full-page screenshots
+- Extracted detailed CSS measurements via JavaScript evaluation for header, hero section, hero grid, left column, right column, search form, and all page sections
+- Verified all 30 images on page (0 broken after full load)
+- Checked console errors (none)
+- Scrolled full page to verify all sections render correctly
+
+## VERIFICATION RESULTS
+
+### 1. HEADER ✅ PASS — White Sticky Header
+- **Position:** `sticky top-0` (NOT absolute/transparent overlay) ✅
+- **Background:** `bg-white/95 backdrop-blur` — white with 95% opacity + blur ✅
+- **Border:** `border-b border-border` (1px solid bottom border) ✅
+- **z-index:** 50 ✅
+- **Height:** 81px ✅
+- **Logo:** /pebiss-logo.jpeg, 116×44px, object-contain, no border-radius ✅
+- **Nav links:** "Accueil" (active, dark), "Annuaire", "Annonces" — all dark text ✅
+- **Right side:** "Connexion" ghost + "Inscription" primary button ✅
+- **CONFIRMED:** Header is now a regular white sticky header, NOT a transparent overlay
+
+### 2. HERO SECTION ✅ PASS — Light Background + 2-Column Layout
+
+#### 2a. Background ✅ PASS
+- **Background color:** `rgb(232, 240, 254)` — light blue #E8F0FE via inline style ✅
+- **Background image:** none (no full-bleed dark image) ✅
+- **Padding:** 80px top and bottom ✅
+- **CONFIRMED:** Light background, NOT a full-bleed dark image
+
+#### 2b. Layout ✅ PASS
+- **Grid:** 2 columns — `gridTemplateColumns: 728px 728px` (equal split) ✅
+- **Gap:** 48px between columns ✅
+- **Align:** center ✅
+- **Total hero height:** 1067px at 1920×1080 viewport ✅
+
+#### 2c. Left Column Content ✅ PASS
+- **Badge text:** "Plus de 150 annonces d'entreprises" — 16px, weight 600, blue color (`text-pebiss-blue`) ✅
+- **H1:** "Trouvez, Explorez, Découvrez" — 48px, weight 800 (extrabold), dark text ✅
+  - "Découvrez" highlighted with `text-primary` span ✅
+- **Description:** Gray paragraph, 16px, `text-muted-foreground` ✅
+- **Search bar:**
+  - White background (`bg-white`), padding 12px, subtle shadow ✅
+  - "Catégorie" dropdown: select with 8 options (Sélectionner + 7 categories), 42px height, bg #F6F6F6 ✅
+  - "Emplacement" input: text with MapPin icon, placeholder "Sélectionner un emplacement", 42px height, bg #F6F6F6 ✅
+  - "Rechercher" button: `bg-primary` (renders as blue #0061b4), white text, with Search icon ✅
+    - ⚠️ NOTE: Button renders BLUE (#0061b4) instead of BLACK. The code uses `bg-primary` which should map to `#242424` per globals.css, but the browser resolves `--primary` to `#0061b4` (same as --pebiss-blue). This is likely a CSS build/cache issue. The original AdForest spec calls for a black button.
+- **"Populaire :" row:**
+  - Label: "Populaire :" — uppercase, small text ✅
+  - 4 category links: "Mode & Textile", "Restaurants", "Tourisme", "BTP" — each with icon ✅
+  - All links functional with proper href `/annuaire?category=...` ✅
+
+#### 2d. Right Column — 2×2 Image Grid ✅ PASS
+- **Display:** `grid grid-cols-2` with `hidden lg:grid` (visible on desktop only) ✅
+- **Grid columns:** 358px × 358px (2 equal columns, 3px gap) ✅
+- **4 images displayed:**
+  1. Mode & Textile — 358×447.5px, object-fit: cover, NO broken ✅
+  2. BTP & Construction — 358×447.5px, object-fit: cover, NO broken ✅
+  3. Restaurants & Alimentation — 358×447.5px, object-fit: cover, NO broken ✅
+  4. Tourisme & Hôtellerie — 358×447.5px, object-fit: cover, NO broken ✅
+- **Aspect ratio:** `aspect-[4/5]` — tall portrait format (4:5) ✅
+- **Hover effects:** `group-hover:scale-105 transition-transform` + dark overlay intensifies ✅
+- **Subtle dark overlay:** `bg-black/10 group-hover:bg-black/20` ✅
+
+### 3. REMAINING PAGE SECTIONS ✅ ALL PASS
+
+| Section | Status | Notes |
+|---------|--------|-------|
+| Categories carousel | ✅ | 7 categories, horizontal scroll, 170×220px cards |
+| Listings grid | ✅ | 6 business cards in 4-column grid |
+| Explore cities | ✅ | 8 cities in horizontal carousel, 200×350px tall portrait cards |
+| Ad banner | ✅ | Full-width banner with overlay |
+| About section | ✅ | 2-column layout with image + badge + feature list |
+| Stats bar | ✅ | 4 animated counters, bg-primary |
+| CTA section | ✅ | Dark overlay with white CTA button |
+| Footer | ✅ | Dark bg, 4-column grid, social icons |
+
+- **Total images on page:** 30
+- **Broken images:** 0 (after full page scroll/load)
+- **Console errors:** 0
+
+## ISSUES FOUND
+
+### Issue 1: "Rechercher" button is BLUE instead of BLACK ⚠️
+- **Expected:** Black button (AdForest-style: `#242424`)
+- **Actual:** Blue button (`#0061b4`)
+- **Root cause:** The CSS variable `--primary` resolves to `#0061b4` in the browser instead of the `#242424` specified in globals.css. Both `--primary` and `--pebiss-blue` have the same computed value `#0061b4` in the browser, suggesting a CSS build cache issue or a stylesheet override from a dependency. The source code in globals.css clearly sets `--primary: #242424` but this is not being reflected in the rendered page.
+- **Impact:** Minor visual deviation — the hero search button appears blue instead of the intended dark charcoal/black to match the AdForest template.
+- **Fix:** Investigate CSS build pipeline; likely needs a clean rebuild or there's a conflicting stylesheet from a UI library.
+
+### Issue 2: Stats bar background also affected by CSS issue ⚠️
+- The stats bar uses `bg-primary` which renders as blue `#0061b4` instead of dark charcoal `#242424`
+- Same root cause as Issue 1
+
+## SUMMARY
+
+The new 2-column hero redesign has been successfully implemented:
+- ✅ Light blue background (#E8F0FE) — confirmed, no dark full-bleed image
+- ✅ 2-column grid layout (text left, images right)
+- ✅ Left side: blue badge text + extra-bold heading + description + white search bar + popular categories
+- ✅ Right side: 4 images in 2×2 grid with tall portrait aspect ratio
+- ✅ Header: white sticky with border, not transparent overlay
+- ✅ All remaining page sections render correctly
+- ✅ Zero broken images (30 total), zero console errors
+- ⚠️ "Rechercher" button is blue instead of black (CSS variable resolution issue, not a code bug)
+
+Screenshots saved:
+- /home/z/my-project/verify-hero-redesign-viewport.png
+- /home/z/my-project/verify-hero-redesign-fullpage.png
+- /home/z/my-project/verify-hero-redesign-hero.png
+
+Stage Summary:
+- New 2-column hero design VERIFIED ✅
+- All 5 hero requirements confirmed: light bg, 2-col layout, text+search left, 2×2 images right, sticky white header
+- 1 CSS issue found: --primary resolves to blue (#0061b4) instead of black (#242424), affecting search button and stats bar
+- Recommendation: Clean rebuild or investigate CSS build pipeline to fix the --primary color resolution

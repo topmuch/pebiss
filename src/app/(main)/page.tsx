@@ -174,92 +174,136 @@ export default function HomePage() {
 
   return (
     <div className="bg-[#F6F6F6]">
-      {/* ============ HERO SECTION ============ */}
-      <section className="relative min-h-[600px] md:min-h-[700px] overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <Image
-            src="/hero.png"
-            alt="Ville de Dakar - Sénégal"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
-        </div>
+      {/* ============ HERO SECTION — 2-Column AdForest Style ============ */}
+      <section className="relative py-16 md:py-24 lg:py-20" style={{ background: '#E8F0FE' }}>
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left Column — Text + Search */}
+            <div className="max-w-xl">
+              {/* Badge / Count */}
+              <p className="text-sm md:text-base font-semibold text-pebiss-blue mb-3">
+                Plus de {animStats.businesses} annonces d&apos;entreprises
+              </p>
 
-        {/* Hero Content */}
-        <div className="relative container mx-auto px-4 pt-32 pb-20 md:pt-40 md:pb-28">
-          <div className="max-w-2xl">
-            {/* Badge */}
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold uppercase tracking-wider mb-6">
-              <Megaphone className="h-3.5 w-3.5" />
-              Annuaire N°1 au Sénégal
-            </span>
+              {/* Heading */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground leading-tight mb-4">
+                Trouvez, Explorez,{' '}
+                <span className="text-primary">Découvrez</span>
+              </h1>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-white mb-5 leading-tight">
-              Trouvez les meilleures{' '}
-              <span className="text-pebiss-blue-light">entreprises</span> du Sénégal
-            </h1>
-            <p className="text-base md:text-lg text-white/70 mb-10 max-w-xl leading-relaxed">
-              Explorez les villes et découvrez les meilleures entreprises. Connectez-vous avec des milliers de clients potentiels.
-            </p>
+              {/* Description */}
+              <p className="text-sm md:text-base text-muted-foreground mb-8 leading-relaxed max-w-md">
+                Découvrez des lieux incroyables près de chez vous en quelques clics. Parcourez les meilleures annonces et connectez-vous avec des entreprises locales de confiance chaque jour.
+              </p>
 
-            {/* Search Bar */}
-            <form onSubmit={handleHeroSearch} className="bg-white p-2 max-w-2xl">
-              <div className="flex flex-col sm:flex-row gap-2">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Que recherchez-vous ?"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
-                  />
+              {/* Search Bar */}
+              <form onSubmit={handleHeroSearch} className="bg-white p-3 shadow-sm mb-6">
+                <div className="flex flex-col sm:flex-row gap-2 items-stretch">
+                  <div className="flex-1">
+                    <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Catégorie</label>
+                    <select
+                      value={searchCategory}
+                      onChange={(e) => setSearchCategory(e.target.value)}
+                      className="w-full px-3 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 appearance-none pr-8"
+                    >
+                      <option value="">Sélectionner une catégorie</option>
+                      <option value="mode-textile">Mode & Textile</option>
+                      <option value="restaurants-alimentation">Restaurants & Alimentation</option>
+                      <option value="tourisme-hotellerie">Tourisme & Hôtellerie</option>
+                      <option value="services-financiers">Services Financiers</option>
+                      <option value="agriculture-agroalimentaire">Agriculture & Agroalimentaire</option>
+                      <option value="commerce-distribution">Commerce & Distribution</option>
+                      <option value="btp-construction">BTP & Construction</option>
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-[11px] text-muted-foreground mb-1 font-medium">Emplacement</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Sélectionner un emplacement"
+                        value={searchCity}
+                        onChange={(e) => setSearchCity(e.target.value)}
+                        className="w-full pl-3 pr-9 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
+                      />
+                      <MapPin className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 pointer-events-none" />
+                    </div>
+                  </div>
+                  <div className="flex items-end">
+                    <Button
+                      type="submit"
+                      className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 text-sm font-medium w-full sm:w-auto"
+                    >
+                      <Search className="h-4 w-4 mr-2" />
+                      Rechercher
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex-1 relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Ville..."
-                    value={searchCity}
-                    onChange={(e) => setSearchCity(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
-                  />
-                </div>
-                <div className="flex-1 relative">
-                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <select
-                    value={searchCategory}
-                    onChange={(e) => setSearchCategory(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 text-sm bg-[#F6F6F6] border border-border/60 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 appearance-none"
-                  >
-                    <option value="">Catégorie...</option>
-                    <option value="mode-textile">Mode & Textile</option>
-                    <option value="restaurants-alimentation">Restaurants & Alimentation</option>
-                    <option value="tourisme-hotellerie">Tourisme & Hôtellerie</option>
-                    <option value="services-financiers">Services Financiers</option>
-                    <option value="agriculture-agroalimentaire">Agriculture & Agroalimentaire</option>
-                    <option value="commerce-distribution">Commerce & Distribution</option>
-                    <option value="btp-construction">BTP & Construction</option>
-                  </select>
-                </div>
-                <Button
-                  type="submit"
-                  className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 text-sm font-medium shrink-0"
-                >
-                  <Search className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2">Rechercher</span>
-                </Button>
+              </form>
+
+              {/* Popular Categories */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                <span className="text-muted-foreground font-medium text-xs uppercase tracking-wide">Populaire :</span>
+                <Link href="/annuaire?category=mode-textile" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                  <Palette className="h-3.5 w-3.5" /> Mode & Textile
+                </Link>
+                <Link href="/annuaire?category=restaurants-alimentation" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                  <Utensils className="h-3.5 w-3.5" /> Restaurants
+                </Link>
+                <Link href="/annuaire?category=tourisme-hotellerie" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                  <Plane className="h-3.5 w-3.5" /> Tourisme
+                </Link>
+                <Link href="/annuaire?category=btp-construction" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                  <Wrench className="h-3.5 w-3.5" /> BTP
+                </Link>
               </div>
-            </form>
+            </div>
+
+            {/* Right Column — 2x2 Image Grid */}
+            <div className="hidden lg:grid grid-cols-2 gap-3">
+              <div className="relative aspect-[4/5] overflow-hidden group">
+                <Image
+                  src="/categories/mode-textile.png"
+                  alt="Mode & Textile"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
+              </div>
+              <div className="relative aspect-[4/5] overflow-hidden group">
+                <Image
+                  src="/categories/btp-construction.png"
+                  alt="BTP & Construction"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
+              </div>
+              <div className="relative aspect-[4/5] overflow-hidden group">
+                <Image
+                  src="/categories/restaurants-alimentation.png"
+                  alt="Restaurants & Alimentation"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
+              </div>
+              <div className="relative aspect-[4/5] overflow-hidden group">
+                <Image
+                  src="/categories/tourisme-hotellerie.png"
+                  alt="Tourisme & Hôtellerie"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ============ CATEGORIES SECTION ============ */}
-      <section className="relative -mt-12 z-20 pb-12 md:pb-16">
+      <section className="pb-12 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl md:text-2xl font-semibold text-foreground">
