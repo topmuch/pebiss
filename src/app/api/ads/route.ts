@@ -90,16 +90,16 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { title, description, image, type, categoryId, businessId } = body;
 
-    if (!title || !businessId) {
+    if (!title) {
       return NextResponse.json(
-        { error: 'Le titre et l\'entreprise sont requis' },
+        { error: 'Le titre est requis' },
         { status: 400 }
       );
     }
 
     // Verify user owns the business (or is admin)
     const userRole = (session.user as any).role;
-    if (userRole !== 'ADMIN') {
+    if (businessId && userRole !== 'ADMIN') {
       const business = await db.business.findUnique({
         where: { id: businessId },
       });

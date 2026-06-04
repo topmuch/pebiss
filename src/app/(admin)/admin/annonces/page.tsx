@@ -66,7 +66,6 @@ export default function AdminAnnoncesPage() {
     description: '',
     type: 'SERVICE',
     categoryId: '',
-    businessId: '',
     image: '',
   });
 
@@ -87,15 +86,6 @@ export default function AdminAnnoncesPage() {
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await fetch('/api/categories');
-      if (!res.ok) throw new Error('Erreur');
-      return res.json();
-    },
-  });
-
-  const { data: businessesData } = useQuery({
-    queryKey: ['admin-businesses-list'],
-    queryFn: async () => {
-      const res = await fetch('/api/admin/businesses?limit=100');
       if (!res.ok) throw new Error('Erreur');
       return res.json();
     },
@@ -155,7 +145,6 @@ export default function AdminAnnoncesPage() {
       description: '',
       type: 'SERVICE',
       categoryId: '',
-      businessId: '',
       image: '',
     });
   };
@@ -175,8 +164,7 @@ export default function AdminAnnoncesPage() {
   };
 
   const ads = data?.ads || [];
-  const categories = categoriesData || [];
-  const businesses = businessesData?.businesses || [];
+  const categories = Array.isArray(categoriesData) ? categoriesData : categoriesData?.categories || [];
 
   return (
     <div className="space-y-6">
@@ -228,7 +216,6 @@ export default function AdminAnnoncesPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('dash_ads_field_title')}</TableHead>
-                  <TableHead>{t('admin_ent_col_business')}</TableHead>
                   <TableHead>{t('dash_ads_field_type')}</TableHead>
                   <TableHead>{t('dash_ads_field_category')}</TableHead>
                   <TableHead>{t('admin_dash_col_date')}</TableHead>
@@ -239,12 +226,12 @@ export default function AdminAnnoncesPage() {
                 {isLoading ? (
                   [...Array(5)].map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell colSpan={6}><Skeleton className="h-12 w-full" /></TableCell>
+                      <TableCell colSpan={5}><Skeleton className="h-12 w-full" /></TableCell>
                     </TableRow>
                   ))
                 ) : ads.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                       {t('admin_ads_no_results')}
                     </TableCell>
                   </TableRow>
@@ -263,7 +250,6 @@ export default function AdminAnnoncesPage() {
                           <span className="font-medium text-sm truncate max-w-[150px]">{ad.title}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm">{ad.business?.name || '-'}</TableCell>
                       <TableCell>
                         <Badge className={`text-[10px] ${AD_TYPES[ad.type] || 'bg-gray-100 text-gray-800'}`}>
                           {ad.type}
@@ -370,21 +356,6 @@ export default function AdminAnnoncesPage() {
                 </Select>
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>{t('admin_ent_col_business')} *</Label>
-              <Select value={form.businessId} onValueChange={(v) => updateField('businessId', v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('dash_ads_select')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {businesses.map((b: any) => (
-                    <SelectItem key={b.id} value={b.id}>
-                      {b.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
             <div className="space-y-3">
               <Label>{t('dash_ads_field_image')}</Label>
               {form.image && (
@@ -429,7 +400,6 @@ export default function AdminAnnoncesPage() {
                 onClick={() => createMutation.mutate(form)}
                 disabled={
                   !form.title.trim() ||
-                  !form.businessId.trim() ||
                   createMutation.isPending
                 }
                 className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"

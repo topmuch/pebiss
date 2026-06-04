@@ -140,11 +140,11 @@ model Ad {
   image       String?
   type        String   @default("SERVICE") // SERVICE, PROMOTION, PRODUCT, EVENT
   categoryId  String?
-  businessId  String
+  businessId  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  business    Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
   category    Category? @relation(fields: [categoryId], references: [id])
 }
 
