@@ -107,6 +107,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
+      console.error('[POST /api/admin/businesses] No session');
       return NextResponse.json(
         { error: 'Authentification requise' },
         { status: 401 }
@@ -115,13 +116,24 @@ export async function POST(request: NextRequest) {
 
     const userRole = (session.user as any).role;
     if (userRole !== 'ADMIN') {
+      console.error('[POST /api/admin/businesses] Not admin, role:', userRole);
       return NextResponse.json(
         { error: 'Accès non autorisé. Réservé aux administrateurs.' },
         { status: 403 }
       );
     }
 
-    const body = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch (parseErr) {
+      console.error('[POST /api/admin/businesses] Failed to parse JSON body:', parseErr);
+      return NextResponse.json(
+        { error: 'Corps de la requête invalide (JSON)' },
+        { status: 400 }
+      );
+    }
+
     const {
       businessName,
       categoryId,
@@ -146,7 +158,9 @@ export async function POST(request: NextRequest) {
       ownerPassword,
     } = body;
 
-    if (!businessName) {
+    console.log('[POST /api/admin/businesses] Creating business:', businessName, 'category:', categoryId);
+
+    if (!businessName || typeof businessName !== 'string' || !businessName.trim()) {
       return NextResponse.json(
         { error: 'Le nom de l\'entreprise est requis' },
         { status: 400 }
@@ -202,22 +216,22 @@ export async function POST(request: NextRequest) {
         name: businessName,
         slug: finalSlug,
         categoryId: categoryId || null,
-        description,
-        address,
-        city,
-        region,
+        description: description || null,
+        address: address || null,
+        city: city || null,
+        region: region || null,
         country: country || 'Sénégal',
-        phone: businessPhone,
-        email: businessEmail,
-        website,
+        phone: businessPhone || null,
+        email: businessEmail || null,
+        website: website || null,
         logo: logo || null,
         coverImage: coverImage || null,
-        facebook,
-        instagram,
-        twitter,
-        linkedin,
-        whatsapp,
-        keywords,
+        facebook: facebook || null,
+        instagram: instagram || null,
+        twitter: twitter || null,
+        linkedin: linkedin || null,
+        whatsapp: whatsapp || null,
+        keywords: keywords || null,
         ownerId,
         isActive: true,
         isSuspended: false,
@@ -232,11 +246,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log('[POST /api/admin/businesses] Business created:', business.id, business.name);
     return NextResponse.json({ business }, { status: 201 });
   } catch (error) {
-    console.error('Error creating business:', error);
+    console.error('[POST /api/admin/businesses] Error creating business:', error);
+    const msg = error instanceof Error ? error.message : 'Erreur lors de la création de l\'entreprise';
     return NextResponse.json(
-      { error: 'Erreur lors de la création de l\'entreprise' },
+      { error: msg },
       { status: 500 }
     );
   }

@@ -24,15 +24,25 @@ async function main() {
     });
 
     let admin;
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@pebiss.sn';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123456';
+    const adminName = process.env.ADMIN_NAME || 'Administrateur Pebiss';
+    const hashedPassword = await bcrypt.hash(adminPassword, 12);
+
     if (existingAdmin) {
       console.log('  ✅ Admin already exists:', existingAdmin.email);
+      // Reset password to ensure it matches current env var
+      await prisma.user.update({
+        where: { id: existingAdmin.id },
+        data: {
+          password: hashedPassword,
+          email: adminEmail,
+          name: adminName,
+        },
+      });
+      console.log('  🔄 Admin password reset to match env vars');
       admin = existingAdmin;
     } else {
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@pebiss.com';
-      const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123456';
-      const adminName = process.env.ADMIN_NAME || 'Administrateur Pebiss';
-      const hashedPassword = await bcrypt.hash(adminPassword, 12);
-
       admin = await prisma.user.create({
         data: {
           email: adminEmail,
@@ -233,6 +243,7 @@ async function main() {
           facebook: ent.facebook || '',
           instagram: ent.instagram || '',
           keywords: ent.keywords,
+          coverImage: `/business-images/${ent.slug}.jpg`,
           categoryId: category.id,
           ownerId: user.id,
         },

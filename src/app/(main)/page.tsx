@@ -102,18 +102,26 @@ function getCategoryGradient(slug: string | undefined, index: number): string {
 }
 
 // Image with loading skeleton to prevent blue/empty flash
-function ImgWithLoad({ src, alt, className }: { src: string; alt: string; className?: string }) {
+function ImgWithLoad({ src, alt, className, fallbackText }: { src: string; alt: string; className?: string; fallbackText?: string }) {
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
   return (
     <div className="relative overflow-hidden">
-      {!loaded && <div className="absolute inset-0 bg-muted animate-pulse" />}
-      <img
-        src={src}
-        alt={alt}
-        className={className}
-        onLoad={() => setLoaded(true)}
-        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-      />
+      {!loaded && !error && <div className="absolute inset-0 bg-muted animate-pulse" />}
+      {error && (
+        <div className="absolute inset-0 bg-muted flex items-center justify-center">
+          <Building2 className="h-8 w-8 text-muted-foreground/20" />
+        </div>
+      )}
+      {!error && (
+        <img
+          src={src}
+          alt={alt}
+          className={className}
+          onLoad={() => setLoaded(true)}
+          onError={() => setError(true)}
+        />
+      )}
     </div>
   );
 }

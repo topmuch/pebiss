@@ -41,7 +41,13 @@ interface BusinessCardProps {
 function CoverImage({ src, alt }: { src: string; alt: string }) {
   const [error, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  if (error) return null;
+  if (error) {
+    return (
+      <div className="absolute inset-0 bg-muted flex items-center justify-center">
+        <Building2 className="h-10 w-10 text-muted-foreground/20" />
+      </div>
+    );
+  }
   return (
     <>
       {!loaded && (

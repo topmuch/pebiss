@@ -193,24 +193,45 @@ export default function DemoDataPage() {
   // Create mutation
   const createMutation = useMutation({
     mutationFn: async (data: BusinessForm) => {
+      const payload = {
+        businessName: data.businessName,
+        categoryId: data.categoryId || null,
+        description: data.description || null,
+        address: data.address || null,
+        city: data.city || null,
+        region: data.region || null,
+        businessPhone: data.businessPhone || null,
+        businessEmail: data.businessEmail || null,
+        website: data.website || null,
+        logo: data.logo || null,
+        coverImage: data.coverImage || null,
+      };
+      console.log('[DemoData] Creating business:', payload.businessName);
       const res = await fetch('/api/admin/businesses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || 'Erreur');
+        const err = await res.json().catch(() => ({ error: `Erreur serveur (${res.status})` }));
+        console.error('[DemoData] Create failed:', res.status, err);
+        throw new Error(err.error || `Erreur serveur (${res.status})`);
       }
-      return res.json();
+      const result = await res.json();
+      console.log('[DemoData] Create success:', result.business?.id, result.business?.name);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('[DemoData] Mutation success, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['demo-businesses'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast.success(t('demo_created_msg'));
       closeCreateDialog();
     },
-    onError: (err) => toast.error(err.message || t('demo_error')),
+    onError: (err) => {
+      console.error('[DemoData] Mutation error:', err);
+      toast.error(err.message || t('demo_error'));
+    },
   });
 
   // Update mutation
