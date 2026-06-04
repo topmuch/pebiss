@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+// Using native <img> instead of next/image for standalone mode compatibility
 import { useSession, signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
@@ -58,11 +58,9 @@ export function Header() {
       <div className="container mx-auto flex h-16 md:h-20 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <Image
+          <img
             src="/pebiss-logo-rgba.png"
             alt="Pebiss"
-            width={180}
-            height={56}
             className="h-12 sm:h-14 md:h-16 w-auto object-contain"
           />
         </Link>
@@ -185,11 +183,9 @@ export function Header() {
             <SheetContent side="right" className="w-80">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
-                  <Image
+                  <img
                     src="/pebiss-logo-rgba.png"
                     alt="Pebiss"
-                    width={140}
-                    height={44}
                     className="h-10 w-auto object-contain"
                   />
                 </SheetTitle>

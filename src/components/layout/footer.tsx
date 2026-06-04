@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+// Using native <img> instead of next/image for standalone mode compatibility
 import { Building2, Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/lib/i18n';
@@ -17,11 +17,9 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-5">
             <Link href="/" className="flex items-center">
-              <Image
+              <img
                 src="/pebiss-logo-rgba.png"
                 alt="Pebiss"
-                width={140}
-                height={44}
                 className="h-10 w-auto object-contain brightness-0 invert"
               />
             </Link>

@@ -44,7 +44,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+// Using native <img> instead of next/image for standalone mode compatibility
 
 // Dynamic icon mapping for categories
 const categoryIconMap: Record<string, LucideIcon> = {
@@ -232,13 +232,11 @@ export default function HomePage() {
       {/* ============ HERO SECTION — Full-Width Banner ============ */}
       <section className="relative w-full min-h-[520px] md:min-h-0 md:aspect-[1842/652] lg:aspect-[1842/652]">
         {/* Background Image */}
-        <Image
+        <img
           src="/hero-banner.png"
           alt="Pebiss - Annuaire d'entreprises en Guiné-Bissau"
-          fill
-          className="object-cover"
-          priority
-          sizes="100vw"
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
         />
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/50" />
@@ -625,11 +623,9 @@ export default function HomePage() {
             {/* Left: Image with badge */}
             <div className="relative">
               <div className="overflow-hidden">
-                <Image
+                <img
                   src="/hero.png"
                   alt={t('about_image_alt')}
-                  width={640}
-                  height={400}
                   className="w-full h-[300px] md:h-[400px] object-cover"
                 />
               </div>
@@ -716,11 +712,10 @@ export default function HomePage() {
       {/* ============ CTA SECTION ============ */}
       <section className="py-16 md:py-20 relative overflow-hidden">
         <div className="absolute inset-0">
-          <Image
+          <img
             src="/hero.png"
             alt=""
-            fill
-            className="object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/70" />
         </div>
