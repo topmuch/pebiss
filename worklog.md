@@ -38,3 +38,20 @@ Stage Summary:
 - Created /public/pebiss-logo-rgba.png transparent PNG logo (330x125, RGBA)
 - Footer logo visible as white text on dark background via brightness-0 invert
 - Header logo displays cleanly in both light and dark modes with no white rectangle artifacts
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Fix admin sidebar translation keys showing raw text + add Contact link to header
+
+Work Log:
+- Admin sidebar used t() keys (nav_dashboard, nav_enterprises, etc.) that didn't exist in i18n translations
+- Added all 10 missing nav translation keys to both FR and PT dictionaries in src/lib/i18n.ts
+- FR: Tableau de bord, Entreprises, Catégories, Utilisateurs, Annonces, Avis, Paramètres
+- PT: Painel, Empresas, Categorias, Utilizadores, Anúncios, Avaliações, Definições
+- Added "Contactez-nous" / "Contacto" link to header navigation menu
+- Ran lint: passes clean
+
+Stage Summary:
+- All admin sidebar menu items now show proper translated text in both French and Portuguese
+- Header navigation now includes 4 links: Accueil/Início, Annuaire/Diretório, Annonces/Anúncios, Contactez-nous/Contacto

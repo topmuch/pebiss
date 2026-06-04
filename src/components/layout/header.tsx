@@ -48,6 +48,7 @@ export function Header() {
     { href: '/', label: t('home') },
     { href: '/annuaire', label: t('directory') },
     { href: '/annonces', label: t('ads') },
+    { href: '/contact', label: t('contact_page_title') },
   ];
 
   const isActive = (href: string) => pathname === href;

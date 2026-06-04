@@ -712,6 +712,17 @@ const fr: Record<string, string> = {
   // Category counts
   'cat_annonce': 'annonce',
   'cat_annonces': 'annonces',
+  // Admin sidebar navigation
+  'nav_admin_section': 'Administration',
+  'nav_dashboard': 'Tableau de bord',
+  'nav_enterprises': 'Entreprises',
+  'nav_categories': 'Catégories',
+  'nav_users': 'Utilisateurs',
+  'nav_ads': 'Annonces',
+  'nav_reviews': 'Avis',
+  'nav_settings': 'Paramètres',
+  'nav_admin_label': 'Administrateur',
+  'nav_back_to_site': 'Retour au site',
 };
 
 // Portuguese translations
@@ -1411,6 +1422,17 @@ const pt: Record<string, string> = {
   'cat_annonce': 'anúncio',
   'cat_annonces': 'anúncios',
   // Category name translations (slug -> translated name)
+  // Admin sidebar navigation
+  'nav_admin_section': 'Administração',
+  'nav_dashboard': 'Painel',
+  'nav_enterprises': 'Empresas',
+  'nav_categories': 'Categorias',
+  'nav_users': 'Utilizadores',
+  'nav_ads': 'Anúncios',
+  'nav_reviews': 'Avaliações',
+  'nav_settings': 'Definições',
+  'nav_admin_label': 'Administrador',
+  'nav_back_to_site': 'Voltar ao site',
 };
 
 // Category name translation map: slug -> { fr: string, pt: string }
