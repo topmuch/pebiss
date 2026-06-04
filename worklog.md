@@ -123,3 +123,27 @@ Stage Summary:
 - Fix: Added both handlers to PUT /api/businesses/[slug]/route.ts
 - Verified: Upload works, photo saved to DB, photo displayed on dashboard
 - Committed and pushed: 02d764a
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: Fix images not displaying in production (showing as shadow only)
+
+Work Log:
+- Investigated all image rendering components across the codebase
+- Found ROOT CAUSE: Dockerfile uses Next.js standalone mode but never copies public/ or .next/static/ into .next/standalone/
+- In production, all uploaded images return 404 → img element shows nothing → container bg shows as "shadow"
+- Fixed Dockerfile: added `cp -r public .next/standalone/public` and `cp -r .next/static .next/standalone/.next/static`
+- Added `mkdir -p .next/standalone/public/uploads` in CMD for runtime uploads directory
+- Fixed business-card.tsx: replaced <Image fill> (from next/image) with native <img> + onError fallback
+  - Next.js Image with fill requires specific server configuration that breaks in standalone mode
+  - Added CoverImage component with error state that gracefully falls back to gradient placeholder
+  - Applied fix to both grid and list variants
+- Fixed photos/page.tsx: changed `data.urls` to `data.files?.map(f => f.url)` for multi-file upload response
+
+Stage Summary:
+- Root cause: standalone mode missing static file copy in Dockerfile
+- 3 files changed: Dockerfile, business-card.tsx, photos/page.tsx
+- Verified on browser: homepage loads, business cards display correctly, ads with images show
+- Committed and pushed: 7839a12
+- Coolify will rebuild the Docker image with the fix
