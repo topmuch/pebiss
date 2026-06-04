@@ -34,16 +34,6 @@ import {
   Moon,
 } from 'lucide-react';
 
-const navItems = [
-  { href: '/admin', label: 'Tableau de bord', icon: LayoutDashboard },
-  { href: '/admin/entreprises', label: 'Entreprises', icon: Building2 },
-  { href: '/admin/categories', label: 'Catégories', icon: Tag },
-  { href: '/admin/utilisateurs', label: 'Utilisateurs', icon: Users },
-  { href: '/admin/annonces', label: 'Annonces', icon: Megaphone },
-  { href: '/admin/avis', label: 'Avis', icon: Star },
-  { href: '/admin/parametres', label: 'Paramètres', icon: Settings },
-];
-
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
