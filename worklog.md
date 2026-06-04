@@ -147,3 +147,24 @@ Stage Summary:
 - Verified on browser: homepage loads, business cards display correctly, ads with images show
 - Committed and pushed: 7839a12
 - Coolify will rebuild the Docker image with the fix
+---
+Task ID: 1-4
+Agent: main
+Task: Remove hardcoded ads, fix translations, fix enterprise page
+
+Work Log:
+- Removed 9 hardcoded ad banner imports and usages from enterprise page (AdBanner1-5, AdBannerImmobilier, AdBannerTechnologie, AdBannerRestaurant, AdBannerMode)
+- Kept DynamicEnterpriseBanners which fetches from DB
+- Fixed "near" → "près de" in French annuaire_subtitle
+- Replaced 3 hardcoded WhatsApp strings with i18n keys on enterprise page
+- Replaced hardcoded "Toggle theme" in header
+- Replaced hardcoded "Navigation" sheet titles in dashboard and admin layouts
+- Made copyright dynamic with year parameter
+- Added 5 new translation keys to both FR and PT
+
+Stage Summary:
+- 6 files modified, pushed to GitHub
+- Enterprise page now only shows DB-driven banners (DynamicEnterpriseBanners)
+- All user-visible text across the site uses i18n translation system
+- No remaining hardcoded English strings on user-facing pages
+
