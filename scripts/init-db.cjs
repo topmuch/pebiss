@@ -6,8 +6,12 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 
+// Force correct DATABASE_URL regardless of Coolify env vars
+process.env.DATABASE_URL = process.env.DATABASE_URL || 'file:/app/data/pebiss.db';
+
 async function main() {
   const prisma = new PrismaClient();
+  console.log('📍 DATABASE_URL:', process.env.DATABASE_URL);
 
   try {
     console.log('🚀 Initializing Pebiss database...');
