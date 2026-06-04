@@ -25,6 +25,9 @@ RUN bun run build
 RUN cp -r public .next/standalone/public
 RUN cp -r .next/static .next/standalone/.next/static
 
+# Remove uploads dir from build (will be symlinked to persistent volume)
+RUN rm -rf .next/standalone/public/uploads
+
 # Create persistent data directory
 RUN mkdir -p /app/data
 
@@ -36,8 +39,8 @@ ENV DATABASE_URL=file:/app/data/pebiss.db
 ENV UPLOADS_DIR=/app/data/uploads
 
 # Start command:
-# 1. Ensure /app/data exists (persistent volume)
+# 1. Ensure /app/data/uploads exists (persistent volume)
 # 2. Init database + seed
-# 3. Create uploads dir + symlink so Next.js can serve files at /uploads/
+# 3. Create symlink so Next.js serves /uploads/ from /app/data/uploads
 # 4. Start server
 CMD sh -c "mkdir -p /app/data/uploads && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && ln -sfn /app/data/uploads .next/standalone/public/uploads && exec node .next/standalone/server.js"
