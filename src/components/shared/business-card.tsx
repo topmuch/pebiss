@@ -37,17 +37,24 @@ interface BusinessCardProps {
   variant?: 'grid' | 'list';
 }
 
-// Cover image with error fallback
+// Cover image with error fallback + loading state
 function CoverImage({ src, alt }: { src: string; alt: string }) {
   const [error, setError] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   if (error) return null;
   return (
-    <img
-      src={src}
-      alt={alt}
-      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-      onError={() => setError(true)}
-    />
+    <>
+      {!loaded && (
+        <div className="absolute inset-0 bg-muted animate-pulse" />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+        onLoad={() => setLoaded(true)}
+        onError={() => setError(true)}
+      />
+    </>
   );
 }
 
@@ -63,8 +70,8 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
               {business.coverImage ? (
                 <CoverImage src={business.coverImage} alt={business.name} />
               ) : (
-                <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                  <Building2 className="h-10 w-10 text-primary/40" />
+                <div className="w-full h-full bg-muted flex items-center justify-center">
+                  <Building2 className="h-10 w-10 text-muted-foreground/30" />
                 </div>
               )}
             </div>
@@ -118,12 +125,12 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
     <Link href={`/entreprise/${business.slug}`} className="group block">
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-border bg-white" style={{ width: '251px' }}>
         {/* Cover Image — fixed 251×517px portrait */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 to-primary/5" style={{ width: '251px', height: '517px' }}>
+        <div className="relative overflow-hidden bg-muted" style={{ width: '251px', height: '517px' }}>
           {business.coverImage ? (
             <CoverImage src={business.coverImage} alt={business.name} />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <Building2 className="h-20 w-20 text-primary/30" />
+              <Building2 className="h-20 w-20 text-muted-foreground/20" />
             </div>
           )}
           {/* Category badge */}

@@ -101,6 +101,23 @@ function getCategoryGradient(slug: string | undefined, index: number): string {
   return gradientPalette[index % gradientPalette.length];
 }
 
+// Image with loading skeleton to prevent blue/empty flash
+function ImgWithLoad({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className="relative overflow-hidden">
+      {!loaded && <div className="absolute inset-0 bg-muted animate-pulse" />}
+      <img
+        src={src}
+        alt={alt}
+        className={className}
+        onLoad={() => setLoaded(true)}
+        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+      />
+    </div>
+  );
+}
+
 interface Category {
   id: string;
   name: string;
@@ -443,7 +460,7 @@ export default function HomePage() {
                     <div className="relative overflow-hidden rounded-lg cursor-pointer hover:shadow-lg transition-all duration-300" style={{ width: '251px' }}>
                       {/* Image */}
                       <div className="relative" style={{ width: '251px', height: '517px' }}>
-                        <img src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        <ImgWithLoad src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                         {/* Gradient overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
                         {/* Badge */}
@@ -479,7 +496,7 @@ export default function HomePage() {
                 <Link key={`promo-${promoIdx}`} href={p.link} className="group block shrink-0">
                   <div className="relative overflow-hidden rounded-lg cursor-pointer hover:shadow-lg transition-all duration-300" style={{ width: '251px' }}>
                     <div className="relative" style={{ width: '251px', height: '517px' }}>
-                      <img src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <ImgWithLoad src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
                       <div className="absolute top-3 left-3">
                         <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
@@ -567,7 +584,7 @@ export default function HomePage() {
               },
             ].map((card) => (
               <Link key={card.title} href={card.link} className="group relative overflow-hidden rounded-lg aspect-[4/3]">
-                <img
+                <ImgWithLoad
                   src={card.image}
                   alt={card.title}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -809,7 +826,7 @@ function DynamicBannerCard({ banner }: { banner: BannerData }) {
     return (
       <Link href={banner.link || '#'} className="group block">
         <div className="relative overflow-hidden rounded-lg aspect-[4/3] cursor-pointer hover:shadow-lg transition-all duration-300">
-          <img
+          <ImgWithLoad
             src={banner.image}
             alt={banner.title}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"

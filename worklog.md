@@ -221,3 +221,36 @@ Stage Summary:
 - Demo Data tab is fully functional: create, read, update, delete businesses in any category
 - All businesses created belong to admin and display on homepage
 - Lint clean (application code)
+
+---
+Task ID: 7
+Agent: Main Agent
+Task: Fix blue placeholder squares showing before images load on page load
+
+Work Log:
+- Investigated the issue: blue/primary gradient backgrounds showing while images load
+- Root causes found:
+  1. Business card grid variant: `bg-gradient-to-br from-primary/15 to-primary/5` → blue tint background
+  2. Business card grid placeholder icon: `text-primary/30` → blue icon
+  3. Business card list variant: `bg-primary/10` and `text-primary/40` → blue background/icon
+  4. Promo listing cards on homepage: raw `<img>` tags with no loading state → flash empty
+  5. Home banner promotional cards: raw `<img>` tags with no loading state → flash empty
+  6. Dynamic banner cards: raw `<img>` tags with no loading state → flash empty
+- Fixed business-card.tsx:
+  - Added loading state to CoverImage component (gray pulse skeleton while loading)
+  - Changed grid card background from `from-primary/15 to-primary/5` to `bg-muted`
+  - Changed placeholder icon from `text-primary/30` to `text-muted-foreground/20`
+  - Changed list card placeholder from `bg-primary/10 text-primary/40` to `bg-muted text-muted-foreground/30`
+- Fixed page.tsx (homepage):
+  - Created `ImgWithLoad` component with gray pulse skeleton loading state
+  - Replaced raw `<img>` in 4 promo listing cards (2 locations)
+  - Replaced raw `<img>` in 4 home banner promotional cards
+  - Replaced raw `<img>` in DynamicBannerCard
+- Verified with Agent Browser: all images load with `loaded: true`, no blue gradients on business cards, no browser errors
+- Lint: only pre-existing .cjs errors
+
+Stage Summary:
+- All blue/primary tinted placeholder backgrounds replaced with neutral gray `bg-muted`
+- All major images on homepage now show gray pulse skeleton while loading
+- Business card CoverImage component has proper loading + error states
+- No visual blue flash on page load
