@@ -43,4 +43,4 @@ ENV DATABASE_URL=file:/app/data/pebiss.db
 # COOLIFY VOLUMES TO ADD:
 #   /app/public/uploads  → persistent storage for uploaded images
 #   /app/data             → persistent storage for SQLite database
-CMD sh -c "mkdir -p /app/public/uploads && mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && exec node .next/standalone/server.js"
+CMD sh -c "mkdir -p /app/public/uploads && mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && ln -sf /app/public/uploads .next/standalone/public/uploads && exec node .next/standalone/server.js"
