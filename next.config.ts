@@ -6,17 +6,8 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
-  // Rewrite /uploads/* to /api/uploads/* as fallback
-  // Primary: standalone serves from .next/standalone/public/uploads/ (symlink)
-  // Fallback: API route reads from /app/public/uploads/ directly
-  async rewrites() {
-    return [
-      {
-        source: '/uploads/:path*',
-        destination: '/api/uploads/:path*',
-      },
-    ];
-  },
+  // Note: /uploads/* → /api/uploads/* is handled by src/middleware.ts
+  // (more reliable in standalone mode than next.config rewrites)
 };
 
 export default nextConfig;
