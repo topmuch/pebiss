@@ -127,16 +127,16 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
     );
   }
 
-  // Grid variant — square/rectangular card with image top, content bottom
+  // Grid variant — square card with image top, content bottom
   return (
     <Link href={`/entreprise/${business.slug}`} className="group block">
-      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border border-border/50 hover:border-border bg-white h-full">
-        {/* Image area — ~60% of card height */}
+      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border border-border/50 hover:border-border bg-white">
+        {/* Image area — square */}
         <div className="relative overflow-hidden">
           {business.coverImage ? (
-            <CoverImage src={business.coverImage} alt={business.name} className="aspect-[4/3]" />
+            <CoverImage src={business.coverImage} alt={business.name} className="aspect-square" />
           ) : (
-            <div className="aspect-[4/3] bg-muted flex items-center justify-center">
+            <div className="aspect-square bg-muted flex items-center justify-center">
               <Building2 className="h-16 w-16 text-muted-foreground/15" />
             </div>
           )}
@@ -160,20 +160,20 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
           </div>
         </div>
 
-        {/* Content area — ~40% of card */}
-        <div className="p-3.5 flex flex-col gap-2">
+        {/* Content area */}
+        <div className="p-3 flex flex-col gap-1.5">
           {/* Business name */}
           <h3 className="font-semibold text-foreground text-sm leading-snug group-hover:text-primary transition-colors line-clamp-1">
             {business.name}
           </h3>
           {/* Description */}
           {business.description && (
-            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-1">
               {business.description}
             </p>
           )}
           {/* City + Rating row */}
-          <div className="flex items-center justify-between mt-auto pt-1">
+          <div className="flex items-center justify-between mt-auto">
             {business.city && (
               <span className="flex items-center gap-1 text-xs text-muted-foreground">
                 <MapPin className="h-3 w-3" />

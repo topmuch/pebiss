@@ -329,3 +329,22 @@ Stage Summary:
 - All 21+ images across the site now display correctly
 - Demo data creation code is correct — issue was likely production-wide breakage from `next/image`
 - Once deployed to Coolify, all images and features should work normally
+---
+Task ID: 10
+Agent: Main Agent
+Task: Change annonces récentes to square cards + remove "Découvrez nos catégories populaires" section
+
+Work Log:
+- Changed BusinessCard grid variant: replaced `aspect-[4/3]` with `aspect-square` for square image area
+- Made content area more compact (p-3, gap-1.5, line-clamp-1 for description)
+- Removed the entire "Découvrez nos catégories populaires" promotional section (4 cards with overlay)
+- Updated homepage grid from `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4` to `grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`
+- Updated skeleton count from 4 to 8 to match the 8 displayed cards
+- Verified with Agent Browser: 8 business cards displayed, `aspect-square` on image areas, "catégories populaires" section confirmed removed
+- Lint clean (only pre-existing .cjs errors)
+
+Stage Summary:
+- BusinessCard grid variant now uses square aspect ratio (1:1) for images
+- 8 annonces displayed in 2-row grid (2 cols mobile, 3 cols tablet, 4 cols desktop)
+- "Découvrez nos catégories populaires" section completely removed from homepage
+- 2 files modified: business-card.tsx, page.tsx

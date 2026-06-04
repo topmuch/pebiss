@@ -415,8 +415,8 @@ export default function HomePage() {
           {(() => {
             if (!businessesData) {
               return (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {Array.from({ length: 4 }, (_, i) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {Array.from({ length: 8 }, (_, i) => (
                     <BusinessCardSkeleton key={i} />
                   ))}
                 </div>
@@ -448,7 +448,7 @@ export default function HomePage() {
             const biz = businesses.slice(0, 8);
 
             return (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {biz.map((business) => (
                   <BusinessCard key={business.id} business={business} variant="grid" />
                 ))}
@@ -466,76 +466,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ PROMOTIONAL IMAGES — 4 Cards with Overlay ============ */}
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold text-foreground">
-                {t('popular_categories')}
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t('popular_categories_desc')}
-              </p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              {
-                title: t('mode'),
-                desc: t('mode_desc'),
-                image: '/home-banners/home-mode.png',
-                link: '/annuaire?category=mode-textile',
-                icon: Palette,
-              },
-              {
-                title: t('cities'),
-                desc: t('cities_desc'),
-                image: '/home-banners/home-ville.png',
-                link: '/annuaire',
-                icon: Building2,
-              },
-              {
-                title: t('restaurants'),
-                desc: t('restaurants_desc'),
-                image: '/home-banners/home-resto.png',
-                link: '/annuaire?category=restaurants-alimentation',
-                icon: Utensils,
-              },
-              {
-                title: t('btp'),
-                desc: t('btp_desc'),
-                image: '/home-banners/home-btp.png',
-                link: '/annuaire?category=btp-construction',
-                icon: Wrench,
-              },
-            ].map((card) => (
-              <Link key={card.title} href={card.link} className="group relative overflow-hidden rounded-lg aspect-[4/3]">
-                <ImgWithLoad
-                  src={card.image}
-                  alt={card.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 transition-opacity duration-300 group-hover:from-black/90 group-hover:via-black/40" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 bg-white/15 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                      <card.icon className="h-4 w-4 text-white" />
-                    </div>
-                    <h3 className="text-white font-semibold text-sm leading-tight">{card.title}</h3>
-                  </div>
-                  <p className="text-white/70 text-xs leading-relaxed">{card.desc}</p>
-                </div>
-                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-7 h-7 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                    <ArrowRight className="h-3.5 w-3.5 text-white" />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* ============ ABOUT / EXPERIENCE SECTION ============ */}
       <section className="py-16 md:py-20">
