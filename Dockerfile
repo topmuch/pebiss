@@ -25,11 +25,9 @@ RUN bun run build
 RUN cp -r public .next/standalone/public
 RUN cp -r .next/static .next/standalone/.next/static
 
-# Remove uploads from standalone build (they will be symlinked to persistent volume)
-RUN rm -rf .next/standalone/public/uploads
-
-# Create persistent data directory
+# Create persistent directories
 RUN mkdir -p /app/data
+RUN mkdir -p /app/uploads
 
 EXPOSE 3000
 
@@ -38,13 +36,12 @@ ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL=file:/app/data/pebiss.db
 
 # Start command:
-# 1. Ensure /app/public/uploads exists (Coolify volume → persistent)
-# 2. Ensure /app/data exists (Coolify volume → persistent)
+# 1. Ensure /app/uploads exists (Coolify volume → persistent uploaded images)
+# 2. Ensure /app/data exists (Coolify volume → persistent SQLite database)
 # 3. Init database + seed
-# 4. Symlink uploads into standalone public
-# 5. Start server
+# 4. Start server
 #
 # COOLIFY VOLUMES TO ADD:
-#   /app/public/uploads  → persistent storage for uploaded images
-#   /app/data             → persistent storage for SQLite database
-CMD sh -c "mkdir -p /app/public/uploads && mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && ln -sf /app/public/uploads .next/standalone/public/uploads && exec node .next/standalone/server.js"
+#   /app/uploads  → persistent storage for uploaded images
+#   /app/data     → persistent storage for SQLite database
+CMD sh -c "mkdir -p /app/uploads && mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && exec node .next/standalone/server.js"

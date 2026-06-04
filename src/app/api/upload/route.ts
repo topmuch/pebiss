@@ -29,10 +29,10 @@ export async function POST(request: NextRequest) {
 
     const uploadedFiles: { url: string; name: string; type: string; size: number }[] = [];
 
-    // Uploads directory: always public/uploads (served statically by Next.js)
-    // In dev: <project>/public/uploads  |  In production (Coolify): /app/public/uploads
-    // Coolify volume must be mounted at /app/public/uploads for persistence
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
+    // Uploads directory: project root /uploads (NOT inside public/)
+    // In dev: <project>/uploads  |  In production (Coolify): /app/uploads
+    // Coolify volume must be mounted at /app/uploads for persistence
+    const uploadsDir = join(process.cwd(), 'uploads');
     await mkdir(uploadsDir, { recursive: true });
 
     for (const file of files) {
