@@ -76,6 +76,7 @@ export default function AdminAnnoncesPage() {
     image: '',
     link: '',
     position: 'home',
+    format: 'rectangle',
     isActive: true,
     startDate: '',
     endDate: '',
@@ -160,6 +161,7 @@ export default function AdminAnnoncesPage() {
       image: '',
       link: '',
       position: 'home',
+      format: 'rectangle',
       isActive: true,
       startDate: '',
       endDate: '',
@@ -234,6 +236,7 @@ export default function AdminAnnoncesPage() {
                 <TableRow>
                   <TableHead>{t('dash_ads_field_title')}</TableHead>
                   <TableHead>{t('dash_ads_field_type')}</TableHead>
+                  <TableHead>{t('admin_ads_field_format')}</TableHead>
                   <TableHead>{t('admin_ads_col_position')}</TableHead>
                   <TableHead>{t('admin_ads_col_active')}</TableHead>
                   <TableHead>{t('dash_ads_field_category')}</TableHead>
@@ -245,12 +248,12 @@ export default function AdminAnnoncesPage() {
                 {isLoading ? (
                   [...Array(5)].map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell colSpan={7}><Skeleton className="h-12 w-full" /></TableCell>
+                      <TableCell colSpan={8}><Skeleton className="h-12 w-full" /></TableCell>
                     </TableRow>
                   ))
                 ) : ads.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       {t('admin_ads_no_results')}
                     </TableCell>
                   </TableRow>
@@ -272,6 +275,11 @@ export default function AdminAnnoncesPage() {
                       <TableCell>
                         <Badge className={`text-[10px] ${AD_TYPES[ad.type] || 'bg-gray-100 text-gray-800'}`}>
                           {ad.type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className="text-[10px] bg-muted text-muted-foreground">
+                          {t('banner_format_' + (ad.format || 'rectangle'))}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -386,6 +394,20 @@ export default function AdminAnnoncesPage() {
 
             {/* New fields */}
             <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>{t('admin_ads_field_format')}</Label>
+                <Select value={form.format} onValueChange={(v) => updateField('format', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('dash_ads_select')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="square">{t('banner_format_square')}</SelectItem>
+                    <SelectItem value="rectangle">{t('banner_format_rectangle')}</SelectItem>
+                    <SelectItem value="banner">{t('banner_format_banner')}</SelectItem>
+                    <SelectItem value="tall">{t('banner_format_tall')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label>{t('admin_ads_field_position')}</Label>
                 <Select value={form.position} onValueChange={(v) => updateField('position', v)}>

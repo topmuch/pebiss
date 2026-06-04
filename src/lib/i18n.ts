@@ -803,6 +803,20 @@ const fr: Record<string, string> = {
   'demo_view': 'Voir',
   'demo_edit': 'Modifier',
   'demo_no_category': 'Sans catégorie',
+  // Banner formats
+  'banner_format_label': 'Format',
+  'banner_format_square': 'Carré (1:1)',
+  'banner_format_rectangle': 'Rectangle (4:3)',
+  'banner_format_banner': 'Bannière large',
+  'banner_format_tall': 'Portrait (2:3)',
+  'admin_ads_field_format': 'Format de la bannière',
+  'banners_page_title': 'Bannières publicitaires',
+  'banners_page_subtitle': 'Découvrez toutes les bannières et promotions actives',
+  'banners_filter_all': 'Tous',
+  'banners_no_results': 'Aucune bannière disponible',
+  'banners_no_results_desc': 'Il n\'y a pas encore de bannières actives.',
+  'banners_view_details': 'Voir les détails',
+  'banners_count': '{count} bannière(s)',
 };
 
 // Portuguese translations
@@ -1593,6 +1607,20 @@ const pt: Record<string, string> = {
   'demo_view': 'Ver',
   'demo_edit': 'Editar',
   'demo_no_category': 'Sem categoria',
+  // Banner formats
+  'banner_format_label': 'Formato',
+  'banner_format_square': 'Quadrado (1:1)',
+  'banner_format_rectangle': 'Retângulo (4:3)',
+  'banner_format_banner': 'Banner largo',
+  'banner_format_tall': 'Retrato (2:3)',
+  'admin_ads_field_format': 'Formato do banner',
+  'banners_page_title': 'Banners publicitários',
+  'banners_page_subtitle': 'Descubra todos os banners e promoções ativas',
+  'banners_filter_all': 'Todos',
+  'banners_no_results': 'Nenhum banner disponível',
+  'banners_no_results_desc': 'Ainda não há banners ativos.',
+  'banners_view_details': 'Ver detalhes',
+  'banners_count': '{count} banner(s)',
 };
 
 // Category name translation map: slug -> { fr: string, pt: string }

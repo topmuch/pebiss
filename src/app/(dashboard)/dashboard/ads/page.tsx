@@ -53,7 +53,7 @@ export default function AdsPage() {
   const [editingAd, setEditingAd] = useState<any>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState({
-    title: '', description: '', type: 'SERVICE', categoryId: '', image: '',
+    title: '', description: '', type: 'SERVICE', categoryId: '', image: '', format: 'rectangle',
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -144,6 +144,7 @@ export default function AdsPage() {
       type: ad?.type || 'SERVICE',
       categoryId: ad?.categoryId || '',
       image: ad?.image || '',
+      format: ad?.format || 'rectangle',
     });
     setImagePreview(ad?.image || null);
     setImageFile(null);
@@ -153,7 +154,7 @@ export default function AdsPage() {
   const closeDialog = () => {
     setDialogOpen(false);
     setEditingAd(null);
-    setForm({ title: '', description: '', type: 'SERVICE', categoryId: '', image: '' });
+    setForm({ title: '', description: '', type: 'SERVICE', categoryId: '', image: '', format: 'rectangle' });
     setImagePreview(null);
     setImageFile(null);
   };
@@ -253,6 +254,7 @@ export default function AdsPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-medium">{ad.title}</h3>
                           <Badge className={`text-[10px] ${getTypeColor(ad.type)}`}>{ad.type}</Badge>
+                          <Badge className="text-[10px] bg-muted text-muted-foreground">{t('banner_format_' + (ad.format || 'rectangle'))}</Badge>
                         </div>
                         {ad.description && (
                           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ad.description}</p>
@@ -317,6 +319,20 @@ export default function AdsPage() {
               />
             </div>
             <div className="grid gap-4 grid-cols-2">
+              <div className="space-y-2">
+                <Label>{t('banner_format_label')}</Label>
+                <Select value={form.format} onValueChange={(val) => setForm({ ...form, format: val })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="square">{t('banner_format_square')}</SelectItem>
+                    <SelectItem value="rectangle">{t('banner_format_rectangle')}</SelectItem>
+                    <SelectItem value="banner">{t('banner_format_banner')}</SelectItem>
+                    <SelectItem value="tall">{t('banner_format_tall')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label>{t('dash_ads_field_type')}</Label>
                 <Select value={form.type} onValueChange={(val) => setForm({ ...form, type: val })}>

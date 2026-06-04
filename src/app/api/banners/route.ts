@@ -9,19 +9,34 @@ export async function GET(request: NextRequest) {
 
     const now = new Date();
 
+    // When position is "all", return all active banners regardless of position
+    const whereClause = position === 'all'
+      ? {
+          isActive: true,
+          OR: [
+            { AND: [{ startDate: { lte: now } }, { endDate: { gte: now } }] },
+            { AND: [{ startDate: { lte: now } }, { endDate: null }] },
+            { AND: [{ startDate: null }, { endDate: { gte: now } }] },
+            { AND: [{ startDate: null }, { endDate: null }] },
+          ],
+        }
+      : {
+          position,
+          isActive: true,
+          OR: [
+            { AND: [{ startDate: { lte: now } }, { endDate: { gte: now } }] },
+            { AND: [{ startDate: { lte: now } }, { endDate: null }] },
+            { AND: [{ startDate: null }, { endDate: { gte: now } }] },
+            { AND: [{ startDate: null }, { endDate: null }] },
+          ],
+        };
+
+    const takeLimit = position === 'all' ? 50 : 10;
+
     const banners = await db.ad.findMany({
-      where: {
-        position,
-        isActive: true,
-        OR: [
-          { AND: [{ startDate: { lte: now } }, { endDate: { gte: now } }] },
-          { AND: [{ startDate: { lte: now } }, { endDate: null }] },
-          { AND: [{ startDate: null }, { endDate: { gte: now } }] },
-          { AND: [{ startDate: null }, { endDate: null }] },
-        ],
-      },
+      where: whereClause,
       orderBy: { createdAt: 'desc' },
-      take: 10,
+      take: takeLimit,
       select: {
         id: true,
         title: true,
@@ -30,6 +45,7 @@ export async function GET(request: NextRequest) {
         link: true,
         type: true,
         position: true,
+        format: true,
         createdAt: true,
       },
     });
