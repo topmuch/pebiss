@@ -133,6 +133,8 @@ export async function POST(request: NextRequest) {
       businessPhone,
       businessEmail,
       website,
+      logo,
+      coverImage,
       facebook,
       instagram,
       twitter,
@@ -208,6 +210,8 @@ export async function POST(request: NextRequest) {
         phone: businessPhone,
         email: businessEmail,
         website,
+        logo: logo || null,
+        coverImage: coverImage || null,
         facebook,
         instagram,
         twitter,
@@ -318,8 +322,8 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const body = await request.json();
+    const { id } = body;
 
     if (!id) {
       return NextResponse.json(
