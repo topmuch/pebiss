@@ -79,3 +79,26 @@ Stage Summary:
 - All 4 dashboard pages fixed: ads, settings, mon-entreprise, products
 - public/uploads/ directory created
 - Lint passes (only pre-existing .cjs errors)
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Fix dashboard translations, image upload, and ad creation flow
+
+Work Log:
+- Fixed 3 missing translation keys (nav_my_business, nav_photos, nav_products_services) in both FR and PT dictionaries
+- Changed default language from 'pt' to 'fr' in i18n.ts
+- Fixed categoryId/businessId empty string causing Prisma P2003 FK error on ad creation (POST /api/ads 500)
+- Also fixed same issue in PUT /api/ads/[id] route
+- Removed dead code from dashboard-layout.tsx (duplicate navItems, unused Briefcase import)
+- Created public/uploads/ directory
+- Tested full flow in browser: login as enterprise user → create ad with image → verify on dashboard and public page
+- Verified all dev logs: POST /api/ads 201 success, no errors
+- Verified files exist in public/uploads/ directory
+
+Stage Summary:
+- Dashboard sidebar now shows correct French translations for all nav items
+- Default language is French instead of Portuguese
+- Image upload works correctly (FormData key 'files' matches API expectation)
+- Ad creation succeeds with and without category selection
+- All changes committed and pushed (1d26410)
