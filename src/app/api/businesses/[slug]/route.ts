@@ -136,7 +136,25 @@ export async function PUT(
       whatsapp,
       keywords,
       categoryId,
+      addPhoto,
+      removePhoto,
     } = body;
+
+    // Handle addPhoto: create a new BusinessPhoto record
+    if (addPhoto) {
+      const photo = await db.businessPhoto.create({
+        data: { url: addPhoto, businessId: existing.id },
+      });
+      return NextResponse.json({ photo, message: 'Photo ajoutée' });
+    }
+
+    // Handle removePhoto: delete the BusinessPhoto record
+    if (removePhoto) {
+      await db.businessPhoto.delete({
+        where: { id: removePhoto },
+      });
+      return NextResponse.json({ message: 'Photo supprimée' });
+    }
 
     // If name changed, update slug
     let newSlug = slug;
