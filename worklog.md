@@ -168,3 +168,34 @@ Stage Summary:
 - All user-visible text across the site uses i18n translation system
 - No remaining hardcoded English strings on user-facing pages
 
+---
+Task ID: 5
+Agent: Main Agent
+Task: Build superadmin "Données démo" page for creating businesses across all categories
+
+Work Log:
+- Analyzed existing codebase: admin layout, admin API routes, Prisma schema, i18n system
+- Found existing admin API at /api/admin/businesses already supports POST (create with admin ownership), GET (list), PUT (status toggle), DELETE
+- Found existing /api/businesses/[slug] PUT supports full business updates for admins
+- Created new page: src/app/(admin)/admin/demo-data/page.tsx
+  - Stats cards: total businesses, categories, active businesses, categories used
+  - Category cards grid with multicolor gradients, icons, business counts, clickable filter
+  - Search and category filter
+  - Business table with logo, name, category, city, status, views, actions (view/edit/delete)
+  - Create dialog with prominent category selection, all business fields, logo/cover image upload
+  - Edit dialog with same fields, pre-populated from existing business
+  - Delete confirmation dialog
+  - All businesses created belong to admin account (no separate owner needed)
+- Added "Données démo" nav item (Database icon) to admin sidebar in admin-layout.tsx
+- Added 46 new i18n keys in both French and Portuguese
+- Fixed category name display: used categoryTranslations instead of raw slug keys
+- Verified full flow with agent-browser: login as admin → demo-data page loads → categories show with counts → add dialog opens → category dropdown shows all 10 categories → business table displays correctly
+
+Stage Summary:
+- New admin page at /admin/demo-data allows quick creation of businesses in any category
+- All created businesses belong to the admin account and display on homepage
+- Category cards with multicolor gradients and business counts for visual overview
+- Full CRUD: create, edit (via /api/businesses/[slug]), view, delete
+- No new API routes needed - reuses existing admin and business APIs
+- All text translated in French and Portuguese
+

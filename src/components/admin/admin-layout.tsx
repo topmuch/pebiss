@@ -32,6 +32,7 @@ import {
   Settings,
   Sun,
   Moon,
+  Database,
 } from 'lucide-react';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -45,6 +46,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   const navItemsTranslated = [
     { href: '/admin', label: t('nav_dashboard'), icon: LayoutDashboard },
+    { href: '/admin/demo-data', label: t('nav_demo_data'), icon: Database },
     { href: '/admin/entreprises', label: t('nav_enterprises'), icon: Building2 },
     { href: '/admin/categories', label: t('nav_categories'), icon: Tag },
     { href: '/admin/utilisateurs', label: t('nav_users'), icon: Users },
