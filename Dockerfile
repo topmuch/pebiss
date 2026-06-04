@@ -25,6 +25,9 @@ RUN bun run build
 RUN cp -r public .next/standalone/public
 RUN cp -r .next/static .next/standalone/.next/static
 
+# Remove uploads from standalone build (they will be symlinked to persistent volume)
+RUN rm -rf .next/standalone/public/uploads
+
 # Create persistent data directory
 RUN mkdir -p /app/data
 
@@ -35,11 +38,12 @@ ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL=file:/app/data/pebiss.db
 
 # Start command:
-# 1. Ensure /app/public/uploads exists for user uploads (add Coolify volume here!)
-# 2. Ensure /app/data exists for database (add Coolify volume here!)
+# 1. Ensure /app/public/uploads exists (Coolify volume → persistent)
+# 2. Ensure /app/data exists (Coolify volume → persistent)
 # 3. Init database + seed
-# 4. Start server
-# 
+# 4. Symlink uploads into standalone public
+# 5. Start server
+#
 # COOLIFY VOLUMES TO ADD:
 #   /app/public/uploads  → persistent storage for uploaded images
 #   /app/data             → persistent storage for SQLite database
