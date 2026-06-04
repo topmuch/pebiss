@@ -39,13 +39,14 @@ interface Ad {
   image?: string | null;
   type: string;
   createdAt: string;
-  business: {
+  link?: string | null;
+  business?: {
     id: string;
     name: string;
     slug: string;
     logo?: string | null;
     city?: string | null;
-  };
+  } | null;
   category?: { id: string; name: string; slug: string } | null;
 }
 
@@ -215,7 +216,7 @@ export default function AnnoncesPage() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {ads.map((ad) => (
-                <Link key={ad.id} href={`/entreprise/${ad.business.slug}`}>
+                <Link key={ad.id} href={ad.business ? `/entreprise/${ad.business.slug}` : (ad.link || '#')}>
                   <Card className="group hover:shadow-lg transition-all duration-300 border-border/40 h-full">
                     {/* Image */}
                     {ad.image && (
@@ -252,36 +253,49 @@ export default function AnnoncesPage() {
                           {ad.description}
                         </p>
                       )}
-                      <div className="flex items-center gap-3 pt-3 border-t border-border/40">
-                        {ad.business.logo ? (
-                          <img
-                            src={ad.business.logo}
-                            alt={ad.business.name}
-                            className="h-8 w-8 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Building2 className="h-4 w-4 text-primary" />
+                      {ad.business ? (
+                        <div className="flex items-center gap-3 pt-3 border-t border-border/40">
+                          {ad.business.logo ? (
+                            <img
+                              src={ad.business.logo}
+                              alt={ad.business.name}
+                              className="h-8 w-8 rounded-lg object-cover"
+                            />
+                          ) : (
+                            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <Building2 className="h-4 w-4 text-primary" />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {ad.business.name}
+                            </p>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              {ad.business.city && (
+                                <>
+                                  <MapPin className="h-3 w-3" />
+                                  {ad.business.city}
+                                </>
+                              )}
+                              {ad.category && ad.business.city && <span>·</span>}
+                              {ad.category && (
+                                <span className="truncate">{ad.category.slug && categoryTranslations[ad.category.slug] ? categoryTranslations[ad.category.slug][locale] : ad.category?.name}</span>
+                              )}
+                            </div>
                           </div>
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-foreground truncate">
-                            {ad.business.name}
-                          </p>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            {ad.business.city && (
-                              <>
-                                <MapPin className="h-3 w-3" />
-                                {ad.business.city}
-                              </>
-                            )}
-                            {ad.category && ad.business.city && <span>·</span>}
+                        </div>
+                      ) : (
+                        <div className="pt-3 border-t border-border/40">
+                          <div className="flex items-center gap-2">
+                            <Megaphone className="h-4 w-4 text-muted-foreground" />
                             {ad.category && (
-                              <span className="truncate">{ad.category && ad.category.slug && categoryTranslations[ad.category.slug] ? categoryTranslations[ad.category.slug][locale] : ad.category?.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {ad.category.slug && categoryTranslations[ad.category.slug] ? categoryTranslations[ad.category.slug][locale] : ad.category?.name}
+                              </span>
                             )}
                           </div>
                         </div>
-                      </div>
+                      )}
                     </CardContent>
                   </Card>
                 </Link>
