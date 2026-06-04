@@ -57,7 +57,7 @@ export default function PhotosPage() {
       return res.json();
     },
     onSuccess: async (data) => {
-      const urls = data.urls || (data.url ? [data.url] : []);
+      const urls = data.files?.map((f: any) => f.url) || (data.url ? [data.url] : []);
       for (const url of urls) {
         await fetch(`/api/businesses/${slug}`, {
           method: 'PUT',

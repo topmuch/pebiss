@@ -21,8 +21,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL=file:/app/data/pebiss.db
 RUN bun run build
 
-# Create data directory
+# Copy static assets for standalone mode
+RUN cp -r public .next/standalone/public
+RUN cp -r .next/static .next/standalone/.next/static
+
+# Create data and uploads directory
 RUN mkdir -p /app/data
+RUN mkdir -p .next/standalone/public/uploads
 
 EXPOSE 3000
 
@@ -31,4 +36,4 @@ ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL=file:/app/data/pebiss.db
 
 # Start command: init DB, create admin + seed, then start server
-CMD sh -c "mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && exec node .next/standalone/server.js"
+CMD sh -c "mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && mkdir -p .next/standalone/public/uploads && exec node .next/standalone/server.js"

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -37,6 +37,20 @@ interface BusinessCardProps {
   variant?: 'grid' | 'list';
 }
 
+// Cover image with error fallback
+function CoverImage({ src, alt }: { src: string; alt: string }) {
+  const [error, setError] = useState(false);
+  if (error) return null;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      onError={() => setError(true)}
+    />
+  );
+}
+
 export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) {
   const { locale } = useTranslation();
   if (variant === 'list') {
@@ -45,15 +59,9 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
         <Link href={`/entreprise/${business.slug}`} className="block">
           <div className="flex">
             {/* Cover Image */}
-            <div className="relative w-40 sm:w-52 flex-shrink-0">
+            <div className="relative w-40 sm:w-52 flex-shrink-0 bg-muted">
               {business.coverImage ? (
-                <Image
-                  src={business.coverImage}
-                  alt={business.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 160px, 208px"
-                />
+                <CoverImage src={business.coverImage} alt={business.name} />
               ) : (
                 <div className="w-full h-full bg-primary/10 flex items-center justify-center">
                   <Building2 className="h-10 w-10 text-primary/40" />
@@ -110,17 +118,11 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
     <Link href={`/entreprise/${business.slug}`} className="group block">
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-border bg-white" style={{ width: '251px' }}>
         {/* Cover Image — fixed 251×517px portrait */}
-        <div className="relative overflow-hidden" style={{ width: '251px', height: '517px' }}>
+        <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 to-primary/5" style={{ width: '251px', height: '517px' }}>
           {business.coverImage ? (
-            <Image
-              src={business.coverImage}
-              alt={business.name}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-              sizes="502px"
-            />
+            <CoverImage src={business.coverImage} alt={business.name} />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center">
               <Building2 className="h-20 w-20 text-primary/30" />
             </div>
           )}
