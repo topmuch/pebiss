@@ -30,5 +30,5 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL=file:/app/data/pebiss.db
 
-# Start command: init DB, create admin, seed data, then start server
-CMD ["sh", "-c", "mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && echo '=== Step 1: prisma db push ===' && (npx prisma db push --skip-generate 2>&1 || true) && echo '=== Step 2: create-admin ===' && (node scripts/create-admin.cjs 2>&1 || true) && echo '=== Step 3: seed ===' && (node scripts/seed.cjs 2>&1 || true) && echo '=== Step 4: starting server ===' && exec node .next/standalone/server.js"]
+# Start command: init DB, create admin + seed, then start server
+CMD sh -c "mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && exec node .next/standalone/server.js"
