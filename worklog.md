@@ -55,3 +55,27 @@ Work Log:
 Stage Summary:
 - All admin sidebar menu items now show proper translated text in both French and Portuguese
 - Header navigation now includes 4 links: Accueil/Início, Annuaire/Diretório, Annonces/Anúncios, Contactez-nous/Contacto
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Fix image upload - FormData key mismatch causing all dashboard uploads to silently fail
+
+Work Log:
+- Investigated ad image upload flow: dashboard form → /api/upload → public/uploads/
+- Found CRITICAL BUG: Dashboard sends `fd.append('file', file)` but API expects `formData.getAll('files')`
+- The mismatch caused ALL image uploads from the dashboard to return 400 "Aucun fichier fourni"
+- Fixed 4 files with the same bug:
+  - src/app/(dashboard)/dashboard/ads/page.tsx (line 83)
+  - src/app/(dashboard)/dashboard/settings/page.tsx (line 80)
+  - src/app/(dashboard)/dashboard/mon-entreprise/page.tsx (line 146)
+  - src/app/(dashboard)/dashboard/products/page.tsx (line 66)
+- Created public/uploads/ directory
+- Verified image display components are all correct (use plain <img> tags, correct path format)
+- Verified upload API design is correct (auth check, file validation, UUID filenames, mkdir recursive)
+
+Stage Summary:
+- Root cause: FormData key `'file'` (singular) vs API expecting `'files'` (plural)
+- All 4 dashboard pages fixed: ads, settings, mon-entreprise, products
+- public/uploads/ directory created
+- Lint passes (only pre-existing .cjs errors)

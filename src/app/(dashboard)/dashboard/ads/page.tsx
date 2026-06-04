@@ -80,7 +80,7 @@ export default function AdsPage() {
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const fd = new FormData();
-      fd.append('file', file);
+      fd.append('files', file);
       const res = await fetch('/api/upload', { method: 'POST', body: fd });
       if (!res.ok) throw new Error('Erreur');
       return res.json();
