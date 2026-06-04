@@ -102,3 +102,24 @@ Stage Summary:
 - Image upload works correctly (FormData key 'files' matches API expectation)
 - Ad creation succeeds with and without category selection
 - All changes committed and pushed (1d26410)
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Fix photo upload - addPhoto/removePhoto not handled by API
+
+Work Log:
+- Investigated photos page: FormData key 'files' was already correct
+- Found root cause: PUT /api/businesses/[slug] API was missing addPhoto/removePhoto handlers
+- Photos page calls { addPhoto: url } but the API extracted only standard business fields
+- Added addPhoto handler: creates BusinessPhoto record with url + businessId
+- Added removePhoto handler: deletes BusinessPhoto by id
+- Tested full flow via browser JS: upload file → addPhoto to business → verified 3 photos in DB
+- Verified API returns photos correctly: GET /api/businesses/{slug} returns photos array
+- Verified photos display on dashboard page: "Gérez les photos de votre entreprise (3)" with 3 images
+
+Stage Summary:
+- Root cause: API endpoint missing addPhoto/removePhoto support
+- Fix: Added both handlers to PUT /api/businesses/[slug]/route.ts
+- Verified: Upload works, photo saved to DB, photo displayed on dashboard
+- Committed and pushed: 02d764a
