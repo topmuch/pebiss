@@ -106,7 +106,7 @@ export async function PUT(
         ...(description !== undefined && { description }),
         ...(image !== undefined && { image }),
         ...(type && { type }),
-        ...(categoryId !== undefined && { categoryId }),
+        ...(categoryId !== undefined && { categoryId: categoryId || null }),
       },
       include: {
         business: {

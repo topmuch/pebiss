@@ -21,7 +21,7 @@ import {
   Building2,
   Camera,
   Package,
-  Briefcase,
+
   Megaphone,
   Star,
   Settings,
@@ -30,16 +30,6 @@ import {
   ChevronLeft,
   ArrowLeft,
 } from 'lucide-react';
-
-const navItems = [
-  { href: '/dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
-  { href: '/dashboard/mon-entreprise', label: 'Mon entreprise', icon: Building2 },
-  { href: '/dashboard/photos', label: 'Photos', icon: Camera },
-  { href: '/dashboard/products', label: 'Produits & Services', icon: Package },
-  { href: '/dashboard/ads', label: 'Annonces', icon: Megaphone },
-  { href: '/dashboard/reviews', label: 'Avis', icon: Star },
-  { href: '/dashboard/settings', label: 'Paramètres', icon: Settings },
-];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();

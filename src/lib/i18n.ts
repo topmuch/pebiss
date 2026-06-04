@@ -8,7 +8,7 @@ interface I18nState {
 }
 
 export const useI18n = create<I18nState>((set) => ({
-  locale: (typeof window !== 'undefined' && (localStorage.getItem('pebiss-lang') as Locale)) || 'pt',
+  locale: (typeof window !== 'undefined' && (localStorage.getItem('pebiss-lang') as Locale)) || 'fr',
   setLocale: (locale: Locale) => {
     set({ locale });
     localStorage.setItem('pebiss-lang', locale);
@@ -724,6 +724,9 @@ const fr: Record<string, string> = {
   'nav_settings': 'Paramètres',
   'nav_admin_label': 'Administrateur',
   'nav_back_to_site': 'Retour au site',
+  'nav_my_business': 'Mon entreprise',
+  'nav_photos': 'Photos',
+  'nav_products_services': 'Produits & Services',
   // Dynamic banners
   'banners_section_title': 'Annonces Publicitaires',
   'banners_section_desc': 'Découvrez nos annonces et promotions sélectionnées',
@@ -1460,6 +1463,9 @@ const pt: Record<string, string> = {
   'nav_settings': 'Definições',
   'nav_admin_label': 'Administrador',
   'nav_back_to_site': 'Voltar ao site',
+  'nav_my_business': 'Minha empresa',
+  'nav_photos': 'Fotos',
+  'nav_products_services': 'Produtos & Serviços',
   // Dynamic banners
   'banners_section_title': 'Anúncios Publicitários',
   'banners_section_desc': 'Descubra os nossos anúncios e promoções selecionados',
