@@ -2,10 +2,9 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Building2, MapPin, Eye, ArrowRight, Plus } from 'lucide-react';
+import { Building2, MapPin, Eye, Plus, Heart } from 'lucide-react';
 import { RatingStars } from './rating-stars';
 import { useTranslation, categoryTranslations } from '@/lib/i18n';
 
@@ -38,34 +37,35 @@ interface BusinessCardProps {
 }
 
 // Cover image with error fallback + loading state
-function CoverImage({ src, alt }: { src: string; alt: string }) {
+function CoverImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
   const [error, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
   if (error) {
     return (
-      <div className="absolute inset-0 bg-muted flex items-center justify-center">
+      <div className={`bg-muted flex items-center justify-center ${className}`}>
         <Building2 className="h-10 w-10 text-muted-foreground/20" />
       </div>
     );
   }
   return (
-    <>
+    <div className={`relative overflow-hidden ${className}`}>
       {!loaded && (
         <div className="absolute inset-0 bg-muted animate-pulse" />
       )}
       <img
         src={src}
         alt={alt}
-        className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         onLoad={() => setLoaded(true)}
         onError={() => setError(true)}
       />
-    </>
+    </div>
   );
 }
 
 export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) {
   const { locale } = useTranslation();
+
   if (variant === 'list') {
     return (
       <Card className="group hover:shadow-lg transition-all duration-300 border-border/60 overflow-hidden">
@@ -74,7 +74,7 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
             {/* Cover Image */}
             <div className="relative w-40 sm:w-52 flex-shrink-0 bg-muted">
               {business.coverImage ? (
-                <CoverImage src={business.coverImage} alt={business.name} />
+                <CoverImage src={business.coverImage} alt={business.name} className="w-full h-full" />
               ) : (
                 <div className="w-full h-full bg-muted flex items-center justify-center">
                   <Building2 className="h-10 w-10 text-muted-foreground/30" />
@@ -127,49 +127,65 @@ export function BusinessCard({ business, variant = 'grid' }: BusinessCardProps) 
     );
   }
 
+  // Grid variant — square/rectangular card with image top, content bottom
   return (
     <Link href={`/entreprise/${business.slug}`} className="group block">
-      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-border bg-white" style={{ width: '251px' }}>
-        {/* Cover Image — fixed 251×517px portrait */}
-        <div className="relative overflow-hidden bg-muted" style={{ width: '251px', height: '517px' }}>
+      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border border-border/50 hover:border-border bg-white h-full">
+        {/* Image area — ~60% of card height */}
+        <div className="relative overflow-hidden">
           {business.coverImage ? (
-            <CoverImage src={business.coverImage} alt={business.name} />
+            <CoverImage src={business.coverImage} alt={business.name} className="aspect-[4/3]" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Building2 className="h-20 w-20 text-muted-foreground/20" />
+            <div className="aspect-[4/3] bg-muted flex items-center justify-center">
+              <Building2 className="h-16 w-16 text-muted-foreground/15" />
             </div>
           )}
-          {/* Category badge */}
+          {/* Category badge — top left */}
           {business.category && (
-            <div className="absolute top-3 left-3">
+            <div className="absolute top-2.5 left-2.5">
               <Badge className="bg-white/90 text-foreground backdrop-blur-sm border-0 text-[11px] font-medium shadow-sm">
                 {business.category.slug && categoryTranslations[business.category.slug] ? categoryTranslations[business.category.slug][locale] : business.category.name}
               </Badge>
             </div>
           )}
-          {/* Views badge */}
-          <div className="absolute top-3 right-3 flex items-center gap-1 bg-black/40 backdrop-blur-sm text-white text-[11px] px-2 py-1 rounded-full">
-            <Eye className="h-3 w-3" />
-            {business.views}
+          {/* Views + favorite — top right */}
+          <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+            <span className="flex items-center gap-1 bg-black/40 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-full">
+              <Eye className="h-2.5 w-2.5" />
+              {business.views}
+            </span>
+            <span className="flex items-center justify-center h-7 w-7 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/40 transition-colors">
+              <Heart className="h-3.5 w-3.5" />
+            </span>
           </div>
         </div>
 
-        {/* Text area — compact white section below image (~15% of card) */}
-        <div className="px-3 py-2.5 flex items-center justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-foreground text-sm leading-snug group-hover:text-primary transition-colors line-clamp-1">
-              {business.name}
-            </h3>
-            {business.description && (
-              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-1 mt-0.5">
-                {business.description}
-              </p>
+        {/* Content area — ~40% of card */}
+        <div className="p-3.5 flex flex-col gap-2">
+          {/* Business name */}
+          <h3 className="font-semibold text-foreground text-sm leading-snug group-hover:text-primary transition-colors line-clamp-1">
+            {business.name}
+          </h3>
+          {/* Description */}
+          {business.description && (
+            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+              {business.description}
+            </p>
+          )}
+          {/* City + Rating row */}
+          <div className="flex items-center justify-between mt-auto pt-1">
+            {business.city && (
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                {business.city}
+              </span>
             )}
+            <RatingStars
+              rating={business.avgRating || 0}
+              reviewCount={business._count?.reviews}
+              size="sm"
+            />
           </div>
-          {/* Green circular + button */}
-          <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors shadow-sm shrink-0">
-            <Plus className="h-3.5 w-3.5" />
-          </span>
         </div>
       </Card>
     </Link>

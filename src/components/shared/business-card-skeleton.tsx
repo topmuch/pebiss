@@ -26,18 +26,20 @@ export function BusinessCardSkeleton({ variant = 'grid' }: { variant?: 'grid' | 
     );
   }
 
+  // Grid skeleton — matches the new square/rectangular card layout
   return (
-    <Card className="border-border/50 overflow-hidden" style={{ width: '251px' }}>
-      {/* Image skeleton — 251×517px */}
-      <Skeleton className="w-[251px] h-[517px]" />
-      {/* Content skeleton — compact */}
-      <div className="px-3 py-2.5 flex items-center justify-between gap-2">
-        <div className="flex-1 space-y-1.5">
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-3 w-full" />
+    <Card className="border-border/50 overflow-hidden">
+      {/* Image skeleton — 4:3 aspect */}
+      <Skeleton className="aspect-[4/3] w-full" />
+      {/* Content skeleton */}
+      <div className="p-3.5 space-y-2">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-3 w-2/3" />
+        <div className="flex items-center justify-between pt-1">
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="h-3 w-16" />
         </div>
-        {/* Circular button skeleton */}
-        <Skeleton className="h-7 w-7 rounded-full shrink-0" />
       </div>
     </Card>
   );

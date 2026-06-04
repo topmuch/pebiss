@@ -413,16 +413,9 @@ export default function HomePage() {
 
           {/* Listing promo cards data */}
           {(() => {
-            const listingPromos = [
-              { title: t('promo_financial_title'), desc: t('promo_financial_desc'), image: '/listing-banners/listing-finance.png', link: '/annuaire?category=services-financiers', icon: Landmark },
-              { title: t('promo_tourism_title'), desc: t('promo_tourism_desc'), image: '/listing-banners/listing-tourisme.png', link: '/annuaire?category=tourisme-hotellerie', icon: Plane },
-              { title: t('promo_agriculture_title'), desc: t('promo_agriculture_desc'), image: '/listing-banners/listing-agriculture.png', link: '/annuaire?category=agriculture-agroalimentaire', icon: Sprout },
-              { title: t('promo_health_title'), desc: t('promo_health_desc'), image: '/listing-banners/listing-sante.png', link: '/annuaire?category=sante-bien-etre', icon: Stethoscope },
-            ];
-
             if (!businessesData) {
               return (
-                <div className="flex flex-wrap justify-center gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {Array.from({ length: 4 }, (_, i) => (
                     <BusinessCardSkeleton key={i} />
                   ))}
@@ -452,85 +445,13 @@ export default function HomePage() {
               );
             }
 
-            /* Interleave business cards + promo cards: 2 businesses, 1 promo, 2 businesses, 1 promo, … */
-            const items: React.ReactNode[] = [];
             const biz = businesses.slice(0, 8);
-            let promoIdx = 0;
-            biz.forEach((business, i) => {
-              items.push(<BusinessCard key={`biz-${business.id}`} business={business} variant="grid" />);
-              /* Insert a promo card after every 2nd business card */
-              if ((i + 1) % 2 === 0 && promoIdx < listingPromos.length) {
-                const p = listingPromos[promoIdx];
-                items.push(
-                  <Link key={`promo-${promoIdx}`} href={p.link} className="group block shrink-0">
-                    <div className="relative overflow-hidden rounded-lg cursor-pointer hover:shadow-lg transition-all duration-300" style={{ width: '251px' }}>
-                      {/* Image */}
-                      <div className="relative" style={{ width: '251px', height: '517px' }}>
-                        <ImgWithLoad src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                        {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
-                        {/* Badge */}
-                        <div className="absolute top-3 left-3">
-                          <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                            {t('promoted')}
-                          </span>
-                        </div>
-                        {/* Content */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-9 h-9 bg-white/15 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                              <p.icon className="h-4.5 w-4.5 text-white" />
-                            </div>
-                            <h3 className="text-white font-bold text-sm leading-tight">{p.title}</h3>
-                          </div>
-                          <p className="text-white/70 text-xs leading-relaxed mb-3">{p.desc}</p>
-                          <span className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-semibold px-4 py-2 rounded shadow-md group-hover:bg-white/90 transition-colors">
-                            {t('explore')} <ArrowRight className="h-3.5 w-3.5" />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-                promoIdx++;
-              }
-            });
-            /* Append any remaining promo cards that weren't interleaved */
-            while (promoIdx < listingPromos.length) {
-              const p = listingPromos[promoIdx];
-              items.push(
-                <Link key={`promo-${promoIdx}`} href={p.link} className="group block shrink-0">
-                  <div className="relative overflow-hidden rounded-lg cursor-pointer hover:shadow-lg transition-all duration-300" style={{ width: '251px' }}>
-                    <div className="relative" style={{ width: '251px', height: '517px' }}>
-                      <ImgWithLoad src={p.image} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
-                      <div className="absolute top-3 left-3">
-                        <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                          {t('promoted')}
-                        </span>
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-9 h-9 bg-white/15 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                            <p.icon className="h-4.5 w-4.5 text-white" />
-                          </div>
-                          <h3 className="text-white font-bold text-sm leading-tight">{p.title}</h3>
-                        </div>
-                        <p className="text-white/70 text-xs leading-relaxed mb-3">{p.desc}</p>
-                        <span className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-semibold px-4 py-2 rounded shadow-md group-hover:bg-white/90 transition-colors">
-                          {t('explore')} <ArrowRight className="h-3.5 w-3.5" />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              );
-              promoIdx++;
-            }
 
             return (
-              <div className="flex flex-wrap justify-center gap-4">
-                {items}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {biz.map((business) => (
+                  <BusinessCard key={business.id} business={business} variant="grid" />
+                ))}
               </div>
             );
           })()}
