@@ -288,15 +288,26 @@ export default function DemoDataPage() {
     }
   };
 
+  const [createDialogKey, setCreateDialogKey] = useState(0);
+  const [editDialogKey, setEditDialogKey] = useState(0);
+
   const closeCreateDialog = () => {
     setCreateDialogOpen(false);
     setForm(emptyForm);
+    setTimeout(() => setCreateDialogKey(k => k + 1), 100);
   };
 
   const closeEditDialog = () => {
     setEditDialogOpen(false);
     setEditingBusiness(null);
     setForm(emptyForm);
+    setTimeout(() => setEditDialogKey(k => k + 1), 100);
+  };
+
+  const openCreateDialog = () => {
+    setForm(emptyForm);
+    setCreateDialogKey(k => k + 1);
+    setCreateDialogOpen(true);
   };
 
   const openEditDialog = (business: any) => {
@@ -333,7 +344,7 @@ export default function DemoDataPage() {
           <p className="text-muted-foreground">{t('demo_subtitle')}</p>
         </div>
         <Button
-          onClick={() => setCreateDialogOpen(true)}
+          onClick={openCreateDialog}
           className="bg-primary hover:bg-primary/90 text-white"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -495,7 +506,7 @@ export default function DemoDataPage() {
                           variant="outline"
                           size="sm"
                           className="mt-2"
-                          onClick={() => setCreateDialogOpen(true)}
+                          onClick={openCreateDialog}
                         >
                           <Plus className="mr-1.5 h-3.5 w-3.5" />
                           {t('demo_add_first')}
@@ -602,7 +613,7 @@ export default function DemoDataPage() {
       </Card>
 
       {/* ============ CREATE DIALOG ============ */}
-      <Dialog open={createDialogOpen} onOpenChange={(open) => { if (!open) closeCreateDialog(); }}>
+      <Dialog key={`create-${createDialogKey}`} open={createDialogOpen} onOpenChange={(open) => { if (!open) closeCreateDialog(); }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -804,7 +815,7 @@ export default function DemoDataPage() {
       </Dialog>
 
       {/* ============ EDIT DIALOG ============ */}
-      <Dialog open={editDialogOpen} onOpenChange={(open) => { if (!open) closeEditDialog(); }}>
+      <Dialog key={`edit-${editDialogKey}`} open={editDialogOpen} onOpenChange={(open) => { if (!open) closeEditDialog(); }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
