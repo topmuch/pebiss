@@ -774,10 +774,10 @@ function DynamicBannersSection() {
 
   const { data: banners } = useQuery<BannerData[]>({
     queryKey: ['banners-home'],
-    queryFn: () => fetch('/api/banners?position=home').then((r) => r.json()),
+    queryFn: () => fetch('/api/banners?position=home').then((r) => r.json()).then((d) => Array.isArray(d) ? d : []),
   });
 
-  if (!banners || banners.length === 0) return null;
+  if (!banners || !Array.isArray(banners) || banners.length === 0) return null;
 
   return (
     <section className="py-12 md:py-16">

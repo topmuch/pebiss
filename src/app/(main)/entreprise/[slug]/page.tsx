@@ -132,10 +132,10 @@ function DynamicEnterpriseBanners() {
 
   const { data: banners } = useQuery<EnterpriseBannerData[]>({
     queryKey: ['banners-enterprise'],
-    queryFn: () => fetch('/api/banners?position=enterprise').then((r) => r.json()),
+    queryFn: () => fetch('/api/banners?position=enterprise').then((r) => r.json()).then((d) => Array.isArray(d) ? d : []),
   });
 
-  if (!banners || banners.length === 0) return null;
+  if (!banners || !Array.isArray(banners) || banners.length === 0) return null;
 
   const displayBanners = banners.slice(0, 2);
 
