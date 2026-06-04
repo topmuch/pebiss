@@ -143,7 +143,7 @@ export default function AdminCategoriesPage() {
     setDeleteInfo({ hasBusinesses: (cat._count?.businesses || 0) > 0 });
   };
 
-  const categories = data?.categories || [];
+  const categories = Array.isArray(data) ? data : data?.categories || [];
 
   return (
     <div className="space-y-6">
