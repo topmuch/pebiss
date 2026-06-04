@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -52,6 +53,12 @@ const AD_TYPES: Record<string, string> = {
   EVENT: 'bg-purple-100 text-purple-800',
 };
 
+const POSITION_LABELS: Record<string, Record<string, string>> = {
+  home: { fr: 'Homepage', pt: 'Página inicial' },
+  enterprise: { fr: 'Page entreprise', pt: 'Página empresa' },
+  sidebar: { fr: 'Sidebar', pt: 'Barra lateral' },
+};
+
 export default function AdminAnnoncesPage() {
   const { t, locale } = useTranslation();
   const queryClient = useQueryClient();
@@ -67,6 +74,11 @@ export default function AdminAnnoncesPage() {
     type: 'SERVICE',
     categoryId: '',
     image: '',
+    link: '',
+    position: 'home',
+    isActive: true,
+    startDate: '',
+    endDate: '',
   });
 
   const { data, isLoading } = useQuery({
@@ -146,10 +158,15 @@ export default function AdminAnnoncesPage() {
       type: 'SERVICE',
       categoryId: '',
       image: '',
+      link: '',
+      position: 'home',
+      isActive: true,
+      startDate: '',
+      endDate: '',
     });
   };
 
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: string, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -217,6 +234,8 @@ export default function AdminAnnoncesPage() {
                 <TableRow>
                   <TableHead>{t('dash_ads_field_title')}</TableHead>
                   <TableHead>{t('dash_ads_field_type')}</TableHead>
+                  <TableHead>{t('admin_ads_col_position')}</TableHead>
+                  <TableHead>{t('admin_ads_col_active')}</TableHead>
                   <TableHead>{t('dash_ads_field_category')}</TableHead>
                   <TableHead>{t('admin_dash_col_date')}</TableHead>
                   <TableHead className="text-right">{t('admin_ent_col_actions')}</TableHead>
@@ -226,12 +245,12 @@ export default function AdminAnnoncesPage() {
                 {isLoading ? (
                   [...Array(5)].map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell colSpan={5}><Skeleton className="h-12 w-full" /></TableCell>
+                      <TableCell colSpan={7}><Skeleton className="h-12 w-full" /></TableCell>
                     </TableRow>
                   ))
                 ) : ads.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       {t('admin_ads_no_results')}
                     </TableCell>
                   </TableRow>
@@ -253,6 +272,14 @@ export default function AdminAnnoncesPage() {
                       <TableCell>
                         <Badge className={`text-[10px] ${AD_TYPES[ad.type] || 'bg-gray-100 text-gray-800'}`}>
                           {ad.type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm">{POSITION_LABELS[ad.position]?.[locale] || ad.position}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`text-[10px] ${ad.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}>
+                          {ad.isActive ? t('admin_ads_active') : t('admin_ads_inactive')}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm">{ad.category?.name || '-'}</TableCell>
@@ -356,6 +383,59 @@ export default function AdminAnnoncesPage() {
                 </Select>
               </div>
             </div>
+
+            {/* New fields */}
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>{t('admin_ads_field_position')}</Label>
+                <Select value={form.position} onValueChange={(v) => updateField('position', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('dash_ads_select')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="home">{t('admin_ads_position_home')}</SelectItem>
+                    <SelectItem value="enterprise">{t('admin_ads_position_enterprise')}</SelectItem>
+                    <SelectItem value="sidebar">{t('admin_ads_position_sidebar')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>{t('admin_ads_field_link')}</Label>
+                <Input
+                  value={form.link}
+                  onChange={(e) => updateField('link', e.target.value)}
+                  placeholder="/annuaire"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label>{t('admin_ads_field_active')}</Label>
+              <Switch
+                checked={form.isActive}
+                onCheckedChange={(checked) => updateField('isActive', checked)}
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>{t('admin_ads_field_start_date')}</Label>
+                <Input
+                  type="date"
+                  value={form.startDate}
+                  onChange={(e) => updateField('startDate', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('admin_ads_field_end_date')}</Label>
+                <Input
+                  type="date"
+                  value={form.endDate}
+                  onChange={(e) => updateField('endDate', e.target.value)}
+                />
+              </div>
+            </div>
+
             <div className="space-y-3">
               <Label>{t('dash_ads_field_image')}</Label>
               {form.image && (

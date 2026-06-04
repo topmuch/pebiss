@@ -10,9 +10,12 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type') || '';
     const category = searchParams.get('category') || '';
     const businessId = searchParams.get('businessId') || '';
+    const position = searchParams.get('position') || '';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
     const skip = (page - 1) * limit;
+
+    const now = new Date();
 
     const where: Record<string, unknown> = {};
 
@@ -27,6 +30,20 @@ export async function GET(request: NextRequest) {
     if (businessId) {
       where.businessId = businessId;
     }
+
+    if (position) {
+      where.position = position;
+    }
+
+    where.isActive = true;
+
+    // Date range filter: only show if current date is within range, or if no dates set
+    where.OR = [
+      { AND: [{ startDate: { lte: now } }, { endDate: { gte: now } }] },
+      { AND: [{ startDate: { lte: now } }, { endDate: null }] },
+      { AND: [{ startDate: null }, { endDate: { gte: now } }] },
+      { AND: [{ startDate: null }, { endDate: null }] },
+    ];
 
     const [ads, total] = await Promise.all([
       db.ad.findMany({
@@ -88,7 +105,7 @@ export async function POST(request: NextRequest) {
     const userId = (session.user as any).id;
 
     const body = await request.json();
-    const { title, description, image, type, categoryId, businessId } = body;
+    const { title, description, image, type, categoryId, businessId, link, position, isActive, startDate, endDate } = body;
 
     if (!title) {
       return NextResponse.json(
@@ -120,6 +137,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate position
+    const validPositions = ['home', 'enterprise', 'sidebar'];
+    if (position && !validPositions.includes(position)) {
+      return NextResponse.json(
+        { error: 'Position invalide' },
+        { status: 400 }
+      );
+    }
+
     const ad = await db.ad.create({
       data: {
         title,
@@ -128,6 +154,11 @@ export async function POST(request: NextRequest) {
         type: type || 'SERVICE',
         categoryId,
         businessId,
+        link: link || null,
+        position: position || 'home',
+        isActive: isActive !== undefined ? isActive : true,
+        startDate: startDate ? new Date(startDate) : null,
+        endDate: endDate ? new Date(endDate) : null,
       },
       include: {
         business: {

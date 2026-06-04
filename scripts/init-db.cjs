@@ -293,6 +293,9 @@ async function main() {
           type: 'PROMOTION',
           businessId: business.id,
           categoryId: business.categoryId,
+          position: 'home',
+          link: '/annuaire',
+          isActive: true,
         },
       });
     }

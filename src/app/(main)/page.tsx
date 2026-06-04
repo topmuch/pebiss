@@ -368,6 +368,9 @@ export default function HomePage() {
         )}
       </section>
 
+      {/* ============ DYNAMIC BANNERS — Annonces Publicitaires ============ */}
+      <DynamicBannersSection />
+
       {/* ============ CURRENT LISTINGS ============ */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
@@ -753,5 +756,101 @@ function CheckIcon() {
         clipRule="evenodd"
       />
     </svg>
+  );
+}
+
+/* Dynamic banner section that fetches from /api/banners?position=home */
+interface BannerData {
+  id: string;
+  title: string;
+  description?: string | null;
+  image?: string | null;
+  link?: string | null;
+  type: string;
+}
+
+function DynamicBannersSection() {
+  const { t } = useTranslation();
+
+  const { data: banners } = useQuery<BannerData[]>({
+    queryKey: ['banners-home'],
+    queryFn: () => fetch('/api/banners?position=home').then((r) => r.json()),
+  });
+
+  if (!banners || banners.length === 0) return null;
+
+  return (
+    <section className="py-12 md:py-16">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-xl md:text-2xl font-semibold text-foreground">
+              {t('banners_section_title')}
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t('banners_section_desc')}
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {banners.slice(0, 4).map((banner) => (
+            <DynamicBannerCard key={banner.id} banner={banner} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DynamicBannerCard({ banner }: { banner: BannerData }) {
+  const { t } = useTranslation();
+
+  if (banner.image) {
+    return (
+      <Link href={banner.link || '#'} className="group block">
+        <div className="relative overflow-hidden rounded-lg aspect-[4/3] cursor-pointer hover:shadow-lg transition-all duration-300">
+          <img
+            src={banner.image}
+            alt={banner.title}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+          <div className="absolute top-3 left-3">
+            <span className="bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+              {t('ad_badge')}
+            </span>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h3 className="text-white font-semibold text-sm leading-tight mb-1">{banner.title}</h3>
+            {banner.description && (
+              <p className="text-white/70 text-xs leading-relaxed mb-3 line-clamp-2">{banner.description}</p>
+            )}
+            <span className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-semibold px-4 py-2 rounded shadow-md group-hover:bg-white/90 transition-colors">
+              {t('banners_cta')} <ArrowRight className="h-3.5 w-3.5" />
+            </span>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
+  // Text-based banner fallback
+  return (
+    <Link href={banner.link || '#'} className="group block">
+      <div className="bg-gradient-to-b from-[#1a1a2e] to-[#16213e] rounded-lg p-5 flex flex-col justify-between aspect-[4/3] hover:shadow-lg transition-all duration-300">
+        <span className="bg-white/10 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full w-fit">
+          {t('ad_badge')}
+        </span>
+        <div>
+          <h3 className="text-white text-base font-bold leading-snug mb-1.5">{banner.title}</h3>
+          {banner.description && (
+            <p className="text-white/60 text-xs leading-relaxed mb-4 line-clamp-2">{banner.description}</p>
+          )}
+          <span className="inline-flex items-center gap-1.5 bg-[#0099FF] hover:bg-[#0066CC] text-white text-xs font-semibold px-4 py-2 rounded transition-colors">
+            {t('banners_cta')} <ArrowRight className="h-3.5 w-3.5" />
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }

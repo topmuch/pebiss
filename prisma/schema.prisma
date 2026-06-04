@@ -134,15 +134,20 @@ model Review {
 }
 
 model Ad {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String?
   image       String?
-  type        String   @default("SERVICE") // SERVICE, PROMOTION, PRODUCT, EVENT
+  type        String    @default("SERVICE") // SERVICE, PROMOTION, PRODUCT, EVENT
   categoryId  String?
   businessId  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  link        String?
+  position    String    @default("home") // home, enterprise, sidebar
+  isActive    Boolean   @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   business    Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
   category    Category? @relation(fields: [categoryId], references: [id])

@@ -724,6 +724,28 @@ const fr: Record<string, string> = {
   'nav_settings': 'Paramètres',
   'nav_admin_label': 'Administrateur',
   'nav_back_to_site': 'Retour au site',
+  // Dynamic banners
+  'banners_section_title': 'Annonces Publicitaires',
+  'banners_section_desc': 'Découvrez nos annonces et promotions sélectionnées',
+  'banners_cta': 'Voir',
+  // Admin ads new fields
+  'admin_ads_col_position': 'Position',
+  'admin_ads_col_active': 'Statut',
+  'admin_ads_active': 'Active',
+  'admin_ads_inactive': 'Inactive',
+  'admin_ads_field_position': 'Position',
+  'admin_ads_field_link': 'Lien (CTA)',
+  'admin_ads_field_active': 'Active',
+  'admin_ads_field_start_date': 'Date de début',
+  'admin_ads_field_end_date': 'Date de fin',
+  'admin_ads_position_home': 'Page d\'accueil',
+  'admin_ads_position_enterprise': 'Page entreprise',
+  'admin_ads_position_sidebar': 'Sidebar',
+  'admin_ads_delete_confirm': 'Supprimer cette annonce ?',
+  'admin_ads_deleted_msg': 'Annonce supprimée',
+  'admin_ads_error_delete': 'Erreur lors de la suppression',
+  'admin_ads_created_msg': 'Annonce créée avec succès',
+  'admin_ads_error_create': 'Erreur lors de la création',
 };
 
 // Portuguese translations
@@ -1435,6 +1457,28 @@ const pt: Record<string, string> = {
   'nav_settings': 'Definições',
   'nav_admin_label': 'Administrador',
   'nav_back_to_site': 'Voltar ao site',
+  // Dynamic banners
+  'banners_section_title': 'Anúncios Publicitários',
+  'banners_section_desc': 'Descubra os nossos anúncios e promoções selecionados',
+  'banners_cta': 'Ver',
+  // Admin ads new fields
+  'admin_ads_col_position': 'Posição',
+  'admin_ads_col_active': 'Estado',
+  'admin_ads_active': 'Ativo',
+  'admin_ads_inactive': 'Inativo',
+  'admin_ads_field_position': 'Posição',
+  'admin_ads_field_link': 'Link (CTA)',
+  'admin_ads_field_active': 'Ativo',
+  'admin_ads_field_start_date': 'Data de início',
+  'admin_ads_field_end_date': 'Data de fim',
+  'admin_ads_position_home': 'Página inicial',
+  'admin_ads_position_enterprise': 'Página empresa',
+  'admin_ads_position_sidebar': 'Barra lateral',
+  'admin_ads_delete_confirm': 'Eliminar este anúncio?',
+  'admin_ads_deleted_msg': 'Anúncio eliminado',
+  'admin_ads_error_delete': 'Erro ao eliminar',
+  'admin_ads_created_msg': 'Anúncio criado com sucesso',
+  'admin_ads_error_create': 'Erro ao criar',
 };
 
 // Category name translation map: slug -> { fr: string, pt: string }
