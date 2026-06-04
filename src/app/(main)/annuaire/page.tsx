@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -66,7 +66,7 @@ const SENEGAL_REGIONS = [
   'Sédhiou',
 ];
 
-export default function AnnuairePage() {
+function AnnuaireContent() {
   const { t, locale } = useTranslation();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('query') || '');
@@ -373,5 +373,13 @@ export default function AnnuairePage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AnnuairePage() {
+  return (
+    <Suspense>
+      <AnnuaireContent />
+    </Suspense>
   );
 }
