@@ -32,9 +32,9 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
     }
 
-    // Uploads directory: /app/data/uploads in production, public/uploads in dev
-    const uploadsDir =
-      process.env.UPLOADS_DIR || join(process.cwd(), 'public', 'uploads');
+    // Uploads directory: always public/uploads (served statically by Next.js)
+    // This API route is a fallback — Next.js standalone serves public/ natively
+    const uploadsDir = join(process.cwd(), 'public', 'uploads');
     const filePath = join(uploadsDir, filename);
 
     // Check file exists and get its stats

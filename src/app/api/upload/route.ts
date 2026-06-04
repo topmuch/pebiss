@@ -29,8 +29,10 @@ export async function POST(request: NextRequest) {
 
     const uploadedFiles: { url: string; name: string; type: string; size: number }[] = [];
 
-    // Uploads directory: /app/data/uploads in production, public/uploads in dev
-    const uploadsDir = process.env.UPLOADS_DIR || join(process.cwd(), 'public', 'uploads');
+    // Uploads directory: always public/uploads (served statically by Next.js)
+    // In dev: <project>/public/uploads  |  In production (Coolify): /app/public/uploads
+    // Coolify volume must be mounted at /app/public/uploads for persistence
+    const uploadsDir = join(process.cwd(), 'public', 'uploads');
     await mkdir(uploadsDir, { recursive: true });
 
     for (const file of files) {
