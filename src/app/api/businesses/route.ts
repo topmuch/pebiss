@@ -173,17 +173,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user already has a business (ownerId is unique)
     const userId = (session.user as any).id;
-    const existingBusiness = await db.business.findUnique({
-      where: { ownerId: userId },
-    });
-    if (existingBusiness) {
-      return NextResponse.json(
-        { error: 'Vous possédez déjà une entreprise' },
-        { status: 409 }
-      );
-    }
 
     const business = await db.business.create({
       data: {

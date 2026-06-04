@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -42,7 +43,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Search, Eye, Ban, CheckCircle2, Trash2, Building2, Plus } from 'lucide-react';
+import { Search, Eye, Ban, CheckCircle2, Trash2, Building2, Plus, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -53,6 +54,7 @@ export default function AdminEntreprisesPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [actionTarget, setActionTarget] = useState<{ id: string; action: string } | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [createWithOwner, setCreateWithOwner] = useState(false);
 
   const [form, setForm] = useState({
     businessName: '',
@@ -60,6 +62,7 @@ export default function AdminEntreprisesPage() {
     description: '',
     address: '',
     city: '',
+    region: '',
     businessPhone: '',
     businessEmail: '',
     website: '',
@@ -147,12 +150,14 @@ export default function AdminEntreprisesPage() {
 
   const closeDialog = () => {
     setDialogOpen(false);
+    setCreateWithOwner(false);
     setForm({
       businessName: '',
       categoryId: '',
       description: '',
       address: '',
       city: '',
+      region: '',
       businessPhone: '',
       businessEmail: '',
       website: '',
@@ -393,6 +398,14 @@ export default function AdminEntreprisesPage() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label>{t('annuaire_region')}</Label>
+                  <Input
+                    value={form.region}
+                    onChange={(e) => updateField('region', e.target.value)}
+                    placeholder={t('annuaire_region')}
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label>{t('biz_phone')}</Label>
                   <Input
                     value={form.businessPhone}
@@ -421,35 +434,50 @@ export default function AdminEntreprisesPage() {
             </div>
 
             <div className="border-t pt-6">
-              <h3 className="text-sm font-semibold mb-3">{t('admin_ent_owner_info')}</h3>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>{t('admin_ent_owner_name')} *</Label>
-                  <Input
-                    value={form.ownerName}
-                    onChange={(e) => updateField('ownerName', e.target.value)}
-                    placeholder={t('dash_settings_fullname')}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>{t('admin_ent_owner_email')} *</Label>
-                  <Input
-                    type="email"
-                    value={form.ownerEmail}
-                    onChange={(e) => updateField('ownerEmail', e.target.value)}
-                    placeholder="email@exemplo.com"
-                  />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label>{t('dash_settings_new_password')} *</Label>
-                  <Input
-                    type="password"
-                    value={form.ownerPassword}
-                    onChange={(e) => updateField('ownerPassword', e.target.value)}
-                    placeholder={t('dash_settings_password_short')}
-                  />
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold">{t('admin_ent_owner_info')}</h3>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="create-with-owner" className="text-xs text-muted-foreground cursor-pointer">
+                    {t('admin_ent_create_with_owner')}
+                  </Label>
+                  <Switch id="create-with-owner" checked={createWithOwner} onCheckedChange={setCreateWithOwner} />
                 </div>
               </div>
+              {createWithOwner && (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>{t('admin_ent_owner_name')} *</Label>
+                    <Input
+                      value={form.ownerName}
+                      onChange={(e) => updateField('ownerName', e.target.value)}
+                      placeholder={t('dash_settings_fullname')}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t('admin_ent_owner_email')} *</Label>
+                    <Input
+                      type="email"
+                      value={form.ownerEmail}
+                      onChange={(e) => updateField('ownerEmail', e.target.value)}
+                      placeholder="email@exemplo.com"
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>{t('dash_settings_new_password')} *</Label>
+                    <Input
+                      type="password"
+                      value={form.ownerPassword}
+                      onChange={(e) => updateField('ownerPassword', e.target.value)}
+                      placeholder={t('dash_settings_password_short')}
+                    />
+                  </div>
+                </div>
+              )}
+              {!createWithOwner && (
+                <p className="text-xs text-muted-foreground">
+                  {t('admin_ent_owner_admin_hint')}
+                </p>
+              )}
             </div>
 
             <div className="flex gap-2 justify-end pt-2">
@@ -458,10 +486,7 @@ export default function AdminEntreprisesPage() {
                 onClick={() => createMutation.mutate(form)}
                 disabled={
                   !form.businessName.trim() ||
-                  !form.ownerName.trim() ||
-                  !form.ownerEmail.trim() ||
-                  !form.ownerPassword.trim() ||
-                  form.ownerPassword.length < 6 ||
+                  (createWithOwner && (!form.ownerName.trim() || !form.ownerEmail.trim() || !form.ownerPassword.trim() || form.ownerPassword.length < 6)) ||
                   createMutation.isPending
                 }
                 className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white"

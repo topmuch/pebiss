@@ -19,7 +19,7 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  business     Business?
+  business     Business[]
   reviews      Review[]
 }
 
@@ -57,7 +57,7 @@ model Business {
   whatsapp    String?
   keywords    String?
   categoryId  String?
-  ownerId     String        @unique
+  ownerId     String
   isActive    Boolean       @default(true)
   isSuspended Boolean      @default(false)
   views       Int           @default(0)

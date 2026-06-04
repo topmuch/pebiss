@@ -100,7 +100,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/admin/businesses - Create a new business with owner (admin only)
+// POST /api/admin/businesses - Create a new business (admin only)
+// If ownerName/ownerEmail/ownerPassword are provided, creates a new user account
+// If not provided, the business is owned by the admin user
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -126,39 +128,59 @@ export async function POST(request: NextRequest) {
       description,
       address,
       city,
+      region,
+      country,
       businessPhone,
       businessEmail,
       website,
+      facebook,
+      instagram,
+      twitter,
+      linkedin,
+      whatsapp,
+      keywords,
       ownerName,
       ownerEmail,
       ownerPassword,
     } = body;
 
-    if (!businessName || !ownerName || !ownerEmail || !ownerPassword) {
+    if (!businessName) {
       return NextResponse.json(
-        { error: 'Le nom de l\'entreprise, le nom du propriétaire, l\'email et le mot de passe sont requis' },
+        { error: 'Le nom de l\'entreprise est requis' },
         { status: 400 }
       );
     }
 
-    if (ownerPassword.length < 6) {
-      return NextResponse.json(
-        { error: 'Le mot de passe doit contenir au moins 6 caractères' },
-        { status: 400 }
-      );
-    }
+    let ownerId = (session.user as any).id; // Default: admin owns the business
 
-    // Check email uniqueness
-    const existingUser = await db.user.findUnique({ where: { email: ownerEmail } });
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'Un utilisateur avec cet email existe déjà' },
-        { status: 409 }
-      );
-    }
+    // If owner info is provided, create a new user account
+    if (ownerName && ownerEmail && ownerPassword) {
+      if (ownerPassword.length < 6) {
+        return NextResponse.json(
+          { error: 'Le mot de passe doit contenir au moins 6 caractères' },
+          { status: 400 }
+        );
+      }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(ownerPassword, 10);
+      const existingUser = await db.user.findUnique({ where: { email: ownerEmail } });
+      if (existingUser) {
+        return NextResponse.json(
+          { error: 'Un utilisateur avec cet email existe déjà' },
+          { status: 409 }
+        );
+      }
+
+      const hashedPassword = await bcrypt.hash(ownerPassword, 10);
+      const user = await db.user.create({
+        data: {
+          name: ownerName,
+          email: ownerEmail,
+          password: hashedPassword,
+          role: 'ENTERPRISE',
+        },
+      });
+      ownerId = user.id;
+    }
 
     // Generate slug from business name
     const slug = businessName
@@ -172,17 +194,7 @@ export async function POST(request: NextRequest) {
     const existingSlug = await db.business.findUnique({ where: { slug } });
     const finalSlug = existingSlug ? `${slug}-${Date.now()}` : slug;
 
-    // Create user first
-    const user = await db.user.create({
-      data: {
-        name: ownerName,
-        email: ownerEmail,
-        password: hashedPassword,
-        role: 'ENTERPRISE',
-      },
-    });
-
-    // Create business linked to user
+    // Create business
     const business = await db.business.create({
       data: {
         name: businessName,
@@ -191,10 +203,18 @@ export async function POST(request: NextRequest) {
         description,
         address,
         city,
+        region,
+        country: country || 'Sénégal',
         phone: businessPhone,
         email: businessEmail,
         website,
-        ownerId: user.id,
+        facebook,
+        instagram,
+        twitter,
+        linkedin,
+        whatsapp,
+        keywords,
+        ownerId,
         isActive: true,
         isSuspended: false,
       },
@@ -208,7 +228,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ user, business }, { status: 201 });
+    return NextResponse.json({ business }, { status: 201 });
   } catch (error) {
     console.error('Error creating business:', error);
     return NextResponse.json(

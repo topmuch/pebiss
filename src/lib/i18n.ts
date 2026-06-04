@@ -507,6 +507,8 @@ const fr: Record<string, string> = {
   'admin_ent_deleted_msg': 'Entreprise supprimée',
   'admin_ent_created_msg': 'Entreprise créée avec succès',
   'admin_ent_error': 'Erreur lors de l\'action',
+  'admin_ent_create_with_owner': 'Créer un compte séparé',
+  'admin_ent_owner_admin_hint': 'Si désactivé, l\'entreprise sera attribuée à votre compte admin.',
   // Admin users
   'admin_users_title': 'Utilisateurs',
   'admin_users_subtitle': 'Gérez les utilisateurs de la plateforme',
@@ -1249,6 +1251,8 @@ const pt: Record<string, string> = {
   'admin_ent_deleted_msg': 'Empresa eliminada',
   'admin_ent_created_msg': 'Empresa criada com sucesso',
   'admin_ent_error': 'Erro na ação',
+  'admin_ent_create_with_owner': 'Criar conta separada',
+  'admin_ent_owner_admin_hint': 'Se desativado, a empresa será atribuída à sua conta de administrador.',
   // Admin users
   'admin_users_title': 'Utilizadores',
   'admin_users_subtitle': 'Gerir os utilizadores da plataforma',
