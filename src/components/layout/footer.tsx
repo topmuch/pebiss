@@ -112,7 +112,7 @@ export function Footer() {
 
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/40">
-          <p>© {currentYear} Pebiss. Tous droits réservés.</p>
+          <p>{t('copyright', { year: currentYear })}</p>
           <div className="flex gap-6">
             <Link href="#" className="hover:text-white transition-colors">{t('legal')}</Link>
             <Link href="#" className="hover:text-white transition-colors">{t('privacy')}</Link>

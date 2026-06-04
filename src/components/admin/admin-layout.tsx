@@ -200,7 +200,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="left" className="w-64 p-0 bg-[#004A99] dark:bg-[#1e3a5f]">
           <SheetHeader className="sr-only">
-            <SheetTitle>Navigation Admin</SheetTitle>
+            <SheetTitle>{t('nav_admin_sheet_title')}</SheetTitle>
           </SheetHeader>
           {sidebarContent}
         </SheetContent>
@@ -219,7 +219,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0 bg-[#004A99] dark:bg-[#1e3a5f]">
                 <SheetHeader className="sr-only">
-                  <SheetTitle>Navigation Admin</SheetTitle>
+                  <SheetTitle>{t('nav_admin_sheet_title')}</SheetTitle>
                 </SheetHeader>
                 {sidebarContent}
               </SheetContent>

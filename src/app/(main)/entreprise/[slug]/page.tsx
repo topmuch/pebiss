@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/breadcrumb';
 import { RatingStars } from '@/components/shared/rating-stars';
 import { BusinessCard } from '@/components/shared/business-card';
-import { AdBanner1, AdBanner2, AdBanner3, AdBanner4, AdBanner5, AdBannerImmobilier, AdBannerTechnologie, AdBannerRestaurant, AdBannerMode } from '@/components/shared/ad-banner';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation, categoryTranslations } from '@/lib/i18n';
 import {
@@ -465,13 +464,6 @@ export default function BusinessDetailPage() {
               </div>
             </div>
 
-            {/* Image Ad Banners 1-4 - After Meta Row */}
-            <div className="flex flex-wrap gap-4 justify-center">
-              <AdBannerImmobilier />
-              <AdBannerTechnologie />
-              <AdBannerRestaurant />
-              <AdBannerMode />
-            </div>
 
             {/* Description Section */}
             <div className="bg-white border border-[#F0F0F0] rounded">
@@ -577,12 +569,6 @@ export default function BusinessDetailPage() {
               </div>
             )}
 
-            {/* Text Ad Banners 1-3 - After Products/Photos */}
-            <div className="flex flex-wrap gap-4 justify-center">
-              <AdBanner1 />
-              <AdBanner2 />
-              <AdBanner3 />
-            </div>
 
             {/* Dynamic Enterprise Banners */}
             <DynamicEnterpriseBanners />
@@ -957,7 +943,7 @@ export default function BusinessDetailPage() {
                   <a href={`https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="block mb-3">
                     <div className="bg-[#25D366] text-white p-4 flex items-center justify-center gap-2 rounded font-medium text-sm">
                       <MessageCircle className="h-5 w-5" />
-                      Message sur WhatsApp
+                      {t('entreprise_whatsapp_message')}
                     </div>
                   </a>
                 )}
@@ -1015,14 +1001,14 @@ export default function BusinessDetailPage() {
           target="_blank"
           rel="noopener noreferrer"
           className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#1DA851] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
-          title="Contacter sur WhatsApp"
+          title={t('whatsapp_contact')}
         >
           <svg viewBox="0 0 32 32" className="w-7 h-7 fill-current">
             <path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.5 1.128 6.744 3.046 9.378L1.052 31.29l6.128-1.962c2.504 1.624 5.474 2.572 8.652 2.672h.044C24.826 32 32 24.824 32 16.004S24.826 0 16.004 0zm9.348 22.614c-.39 1.1-1.932 2.014-3.168 2.28-.846.18-1.95.324-5.668-1.218-4.76-2.466-7.824-7.284-8.064-7.604-.228-.32-1.892-2.52-1.892-4.804s1.196-3.404 1.618-3.868c.422-.462.92-.58 1.228-.58.306 0 .612.002.88.014.284.014.664-.108 1.04.796.39.94 1.326 3.234 1.444 3.472.118.236.196.514.04.828-.158.314-.236.508-.472.784-.236.274-.496.614-.708.826-.236.236-.482.49-.206.962.276.472 1.224 2.016 2.628 3.266 1.806 1.6 3.322 2.096 3.796 2.332.474.236.748.196 1.022-.118.276-.314 1.186-1.382 1.502-1.856.316-.472.632-.392 1.064-.236.434.158 2.742 1.292 3.212 1.528.47.236.784.354.902.548.118.196.118 1.116-.272 2.214z"/>
           </svg>
           {/* Tooltip */}
           <span className="absolute right-full mr-3 bg-white text-[#242424] text-sm font-medium px-3 py-2 rounded-lg shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            Contacter sur WhatsApp
+          {t('whatsapp_contact')}
             <span className="absolute left-full top-1/2 -translate-y-1/2 border-4 border-transparent border-l-white" />
           </span>
         </a>

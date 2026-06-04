@@ -175,7 +175,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="left" className="w-64 p-0">
           <SheetHeader className="sr-only">
-            <SheetTitle>Navigation</SheetTitle>
+            <SheetTitle>{t('nav_sheet_title')}</SheetTitle>
           </SheetHeader>
           {sidebarContent}
         </SheetContent>
@@ -193,7 +193,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </SheetTrigger>
             <SheetContent side="left" className="w-64 p-0">
               <SheetHeader className="sr-only">
-                <SheetTitle>Navigation</SheetTitle>
+                <SheetTitle>{t('nav_sheet_title')}</SheetTitle>
               </SheetHeader>
               {sidebarContent}
             </SheetContent>
