@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
 
     const uploadedFiles: { url: string; name: string; type: string }[] = [];
 
-    // Ensure uploads directory exists
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
+    // Uploads directory: /app/data/uploads in production, public/uploads in dev
+    const uploadsDir = process.env.UPLOADS_DIR || join(process.cwd(), 'public', 'uploads');
     await mkdir(uploadsDir, { recursive: true });
 
     for (const file of files) {
