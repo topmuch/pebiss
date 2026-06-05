@@ -388,3 +388,25 @@ Stage Summary:
 - All placements gracefully return null when no matching banners exist (no broken UI)
 - API supports filtering by position AND format independently
 - Files changed: banner-placement.tsx (new), page.tsx, entreprise/[slug]/page.tsx, api/ads/route.ts, api/ads/[id]/route.ts, api/banners/route.ts, dashboard/ads/page.tsx
+---
+Task ID: 1
+Agent: Main
+Task: Fix banner creation button not responding
+
+Work Log:
+- Investigated admin annonces page (`src/app/(admin)/admin/annonces/page.tsx`) creation flow
+- Discovered root cause: page uses `toast` from `sonner` library but root layout only had shadcn/ui `Toaster` (not Sonner `Toaster`)
+- All `toast.success()` and `toast.error()` calls silently did nothing — user saw no feedback
+- Fixed `src/app/layout.tsx`: Added `SonnerToaster` from `@/components/ui/sonner` alongside existing shadcn/ui `Toaster`
+- Fixed `src/app/api/ads/route.ts` GET endpoint: Added `search` parameter support and `admin=true` mode (shows all ads including inactive, skips date filtering)
+- Removed unsupported `mode: 'insensitive'` from Prisma query (SQLite incompatible)
+- Updated admin page to send `admin=true` param when fetching ads list
+- Added `handleCreate` using `mutateAsync` for better error handling
+- Added `type="button"` to dialog buttons to prevent any form submission behavior
+
+Stage Summary:
+- Root cause: Sonner Toaster component was missing from the root layout — toast notifications from `sonner` library were invisible
+- Key files changed: `src/app/layout.tsx`, `src/app/api/ads/route.ts`, `src/app/(admin)/admin/annonces/page.tsx`
+- Both Sonner and shadcn/ui Toasters now coexist in the layout
+- API GET endpoint now supports admin mode and search filtering
+- Admin page fetches all ads (including inactive) via `admin=true` parameter

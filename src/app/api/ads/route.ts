@@ -11,6 +11,8 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category') || '';
     const businessId = searchParams.get('businessId') || '';
     const position = searchParams.get('position') || '';
+    const search = searchParams.get('search') || '';
+    const isAdmin = searchParams.get('admin') === 'true';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
     const skip = (page - 1) * limit;
@@ -35,15 +37,22 @@ export async function GET(request: NextRequest) {
       where.position = position;
     }
 
-    where.isActive = true;
+    if (search) {
+      where.title = { contains: search };
+    }
 
-    // Date range filter: only show if current date is within range, or if no dates set
-    where.OR = [
-      { AND: [{ startDate: { lte: now } }, { endDate: { gte: now } }] },
-      { AND: [{ startDate: { lte: now } }, { endDate: null }] },
-      { AND: [{ startDate: null }, { endDate: { gte: now } }] },
-      { AND: [{ startDate: null }, { endDate: null }] },
-    ];
+    // Public mode: only show active ads within date range
+    if (!isAdmin) {
+      where.isActive = true;
+
+      // Date range filter: only show if current date is within range, or if no dates set
+      where.OR = [
+        { AND: [{ startDate: { lte: now } }, { endDate: { gte: now } }] },
+        { AND: [{ startDate: { lte: now } }, { endDate: null }] },
+        { AND: [{ startDate: null }, { endDate: { gte: now } }] },
+        { AND: [{ startDate: null }, { endDate: null }] },
+      ];
+    }
 
     const [ads, total] = await Promise.all([
       db.ad.findMany({

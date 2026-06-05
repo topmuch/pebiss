@@ -98,6 +98,7 @@ export default function AdminAnnoncesPage() {
       if (search) params.set('search', search);
       if (typeFilter !== 'all') params.set('type', typeFilter);
       params.set('limit', '100');
+      params.set('admin', 'true');
       const res = await fetch(`/api/ads?${params}`);
       if (!res.ok) throw new Error('Erreur');
       return res.json();
@@ -188,6 +189,14 @@ export default function AdminAnnoncesPage() {
       toast.success(t('admin_settings_image_uploaded'));
     } catch {
       toast.error(t('admin_settings_upload_error'));
+    }
+  };
+
+  const handleCreate = async () => {
+    try {
+      await createMutation.mutateAsync(form);
+    } catch {
+      // Error handled by onError callback
     }
   };
 
@@ -516,9 +525,10 @@ export default function AdminAnnoncesPage() {
               </div>
             </div>
             <div className="flex gap-2 justify-end pt-2">
-              <Button variant="outline" onClick={closeDialog}>{t('common_cancel')}</Button>
+              <Button type="button" variant="outline" onClick={closeDialog}>{t('common_cancel')}</Button>
               <Button
-                onClick={() => createMutation.mutate(form)}
+                type="button"
+                onClick={handleCreate}
                 disabled={
                   !form.title.trim() ||
                   createMutation.isPending
