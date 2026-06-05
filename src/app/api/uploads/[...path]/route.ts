@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFile, stat } from 'fs/promises';
+import { getUploadsDir } from '@/lib/uploads';
 import { join } from 'path';
 
 // Content type mapping
@@ -32,9 +33,8 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
     }
 
-    // Uploads directory: project root /uploads (NOT inside public/)
-    // In dev: <project>/uploads  |  In production (Coolify): /app/uploads
-    const uploadsDir = join(process.cwd(), 'uploads');
+    // Persistent uploads directory (same volume as database)
+    const uploadsDir = getUploadsDir();
     const filePath = join(uploadsDir, filename);
 
     // Check file exists and get its stats

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { getUploadsDir } from '@/lib/uploads';
 
 // POST /api/upload - Handle file uploads
 export async function POST(request: NextRequest) {
@@ -29,11 +30,8 @@ export async function POST(request: NextRequest) {
 
     const uploadedFiles: { url: string; name: string; type: string; size: number }[] = [];
 
-    // Uploads directory: project root /uploads (NOT inside public/)
-    // In dev: <project>/uploads  |  In production (Coolify): /app/uploads
-    // Coolify volume must be mounted at /app/uploads for persistence
-    const uploadsDir = join(process.cwd(), 'uploads');
-    await mkdir(uploadsDir, { recursive: true });
+    // Persistent uploads directory (same volume as database)
+    const uploadsDir = getUploadsDir();
 
     for (const file of files) {
 

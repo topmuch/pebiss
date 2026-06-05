@@ -18,17 +18,17 @@ async function main() {
   // =============================================
   // 0. Verify persistent storage
   // =============================================
-  const uploadsDir = path.join(process.cwd(), 'uploads');
+  const dbPath = process.env.DATABASE_URL.replace('file:', '');
+  const dataDir = path.dirname(dbPath);
+  const uploadsDir = path.join(dataDir, 'uploads');
   try {
     fs.mkdirSync(uploadsDir, { recursive: true });
     const uploadsFiles = fs.readdirSync(uploadsDir);
     console.log('📁 Uploads directory:', uploadsDir, '(' + uploadsFiles.length + ' files)');
     if (uploadsFiles.length === 0) {
-      console.log('⚠️  WARNING: /app/uploads is EMPTY — no Coolify volume mounted!');
-      console.log('⚠️  All uploaded images will be LOST on next redeploy.');
-      console.log('⚠️  FIX: In Coolify → Service → Storage → Add volume → Container: /app/uploads');
+      console.log('ℹ️  Uploads directory is empty (no images uploaded yet).');
     } else {
-      console.log('✅ Uploads volume is mounted with', uploadsFiles.length, 'files');
+      console.log('✅ Uploads persistent storage has', uploadsFiles.length, 'files');
     }
   } catch (err) {
     console.log('⚠️  Could not check uploads directory:', err.message);
