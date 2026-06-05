@@ -11,8 +11,8 @@ export async function GET(
   try {
     const { slug } = await params;
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1') || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '10') || 10));
     const skip = (page - 1) * limit;
 
     // Check if business exists
@@ -124,6 +124,13 @@ export async function POST(
     if (!rating || rating < 1 || rating > 5) {
       return NextResponse.json(
         { error: 'La note doit être entre 1 et 5' },
+        { status: 400 }
+      );
+    }
+
+    if (comment && comment.length > 2000) {
+      return NextResponse.json(
+        { error: 'Le commentaire ne doit pas dépasser 2000 caractères' },
         { status: 400 }
       );
     }

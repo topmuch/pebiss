@@ -24,8 +24,8 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1') || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20') || 20));
     const status = searchParams.get('status') || ''; // active, suspended, inactive
     const search = searchParams.get('search') || '';
     const skip = (page - 1) * limit;
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
       ownerPassword,
     } = body;
 
-    console.log('[POST /api/admin/businesses] Creating business:', businessName, 'category:', categoryId);
+
 
     if (!businessName || typeof businessName !== 'string' || !businessName.trim()) {
       return NextResponse.json(
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('[POST /api/admin/businesses] Business created:', business.id, business.name);
+
     return NextResponse.json({ business }, { status: 201 });
   } catch (error) {
     console.error('[POST /api/admin/businesses] Error creating business:', error);
@@ -295,11 +295,17 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // Cross-validate isActive/isSuspended: can't be both true
+    let resolvedActive = isActive;
+    let resolvedSuspended = isSuspended;
+    if (resolvedActive === true) resolvedSuspended = false;
+    if (resolvedSuspended === true) resolvedActive = false;
+
     const business = await db.business.update({
       where: { id },
       data: {
-        ...(isSuspended !== undefined && { isSuspended }),
-        ...(isActive !== undefined && { isActive }),
+        ...(resolvedSuspended !== undefined && { isSuspended: resolvedSuspended }),
+        ...(resolvedActive !== undefined && { isActive: resolvedActive }),
       },
       include: {
         category: true,

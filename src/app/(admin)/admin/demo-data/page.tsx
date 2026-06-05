@@ -206,7 +206,7 @@ export default function DemoDataPage() {
         logo: data.logo || null,
         coverImage: data.coverImage || null,
       };
-      console.log('[DemoData] Creating business:', payload.businessName);
+
       const res = await fetch('/api/admin/businesses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -218,11 +218,11 @@ export default function DemoDataPage() {
         throw new Error(err.error || `Erreur serveur (${res.status})`);
       }
       const result = await res.json();
-      console.log('[DemoData] Create success:', result.business?.id, result.business?.name);
+
       return result;
     },
     onSuccess: (data) => {
-      console.log('[DemoData] Mutation success, invalidating queries');
+
       queryClient.invalidateQueries({ queryKey: ['demo-businesses'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast.success(t('demo_created_msg'));

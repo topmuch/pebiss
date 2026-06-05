@@ -335,7 +335,7 @@ export default function MonEntreprisePage() {
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+221 33 XXX XX XX"
+                    placeholder="+245 XXX XXXX"
                   />
                 </div>
                 <div className="space-y-2">
@@ -464,7 +464,7 @@ export default function MonEntreprisePage() {
                     id="whatsapp"
                     value={formData.whatsapp}
                     onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                    placeholder="+221 77 XXX XX XX"
+                    placeholder="+245 XXX XXXX"
                   />
                 </div>
               </div>

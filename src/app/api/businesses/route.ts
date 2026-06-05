@@ -11,12 +11,13 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category') || '';
     const city = searchParams.get('city') || '';
     const region = searchParams.get('region') || '';
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '12');
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1') || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '12') || 12));
     const featured = searchParams.get('featured') === 'true';
     const ownerId = searchParams.get('ownerId') || '';
-    const sortBy = searchParams.get('sortBy') || 'createdAt'; // createdAt, name, views
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const ALLOWED_SORT = ['createdAt', 'name', 'views', 'rating'];
+    const sortBy = ALLOWED_SORT.includes(searchParams.get('sortBy') || '') ? (searchParams.get('sortBy') as string) : 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') === 'asc' ? 'asc' : 'desc';
 
     const skip = (page - 1) * limit;
 

@@ -348,7 +348,7 @@ export default function RegisterPage() {
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="ownerPhone"
-                      placeholder="+221 7X XXX XX XX"
+                      placeholder="+245 XXX XXXX"
                       value={ownerPhone}
                       onChange={(e) => setOwnerPhone(e.target.value)}
                       className="pl-10"

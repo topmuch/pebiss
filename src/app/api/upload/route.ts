@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     await mkdir(uploadsDir, { recursive: true });
 
     for (const file of files) {
-      console.log('[POST /api/upload] File received:', file.name, 'type:', file.type, 'size:', file.size);
+
 
       // Validate file type
       const allowedTypes = [
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         'image/png',
         'image/gif',
         'image/webp',
-        'image/svg+xml',
+        // SVG removed for XSS prevention
       ];
       if (!allowedTypes.includes(file.type)) {
         return NextResponse.json(
@@ -79,11 +79,11 @@ export async function POST(request: NextRequest) {
 
       // Write file
       const bytes = await file.arrayBuffer();
-      console.log('[POST /api/upload] ArrayBuffer size:', bytes.byteLength);
+
       const buffer = Buffer.from(bytes);
       await writeFile(filePath, buffer);
 
-      console.log('[POST /api/upload] File saved:', fileName, 'size:', buffer.length);
+
       uploadedFiles.push({
         url: `/uploads/${fileName}`,
         name: file.name,
