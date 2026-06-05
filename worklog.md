@@ -410,3 +410,35 @@ Stage Summary:
 - Both Sonner and shadcn/ui Toasters now coexist in the layout
 - API GET endpoint now supports admin mode and search filtering
 - Admin page fetches all ads (including inactive) via `admin=true` parameter
+---
+Task ID: 12
+Agent: Main Agent
+Task: Restrict banner formats to 4 specific placements + make fully mobile-responsive
+
+Work Log:
+- Analyzed user request: restrict banner ad formats to exactly 4 placements with mobile responsiveness
+- Updated `src/components/shared/banner-placement.tsx`:
+  - Reduced BANNER_FORMATS to 4: 336x280 (home mid), 728x90 (home footer), 300x600 (detail sidebar), detail_728x90 (detail footer)
+  - Added FORMAT_OPTIONS array for admin dropdown
+  - Made BannerCard fully responsive: `w-full` with CSS `aspect-ratio` — scales to container width on all screen sizes
+  - EnterpriseFooterBanner: removed `lg:col-span-3` wrapper (banner now uses `w-full`)
+- Updated `src/app/(admin)/admin/annonces/page.tsx`:
+  - Updated BANNER_FORMATS to 4 entries matching shared component
+  - Fixed default format from `300x250` to `336x280` (in both initial state and reset)
+- Updated `src/app/(main)/entreprise/[slug]/page.tsx`:
+  - Moved EnterpriseFooterBanner OUTSIDE the left column div (was inside `lg:col-span-2`) to after the grid
+  - Banner now spans full page width instead of being trapped in 2/3 column
+- Updated `prisma/schema.prisma`:
+  - Changed format default from `"300x250"` to `"336x280"`
+  - Updated format comment to list only 4 valid formats
+  - Removed `sidebar` from position comment (unused)
+- Ran `bun run db:push` to sync schema changes to database
+- Ran lint: only pre-existing .cjs errors
+- Dev server compiled successfully with no errors
+
+Stage Summary:
+- 4 banner placements only: 336×280 (accueil milieu), 728×90 (accueil footer), 300×600 (détail sidebar), 728×90 (détail footer)
+- All banners are fully mobile-responsive: `w-full` + CSS `aspect-ratio` scales proportionally on any screen size
+- Enterprise footer banner moved outside grid to span full page width
+- Admin creation dialog shows only 4 format options
+- Schema default updated from stale `300x250` to `336x280`

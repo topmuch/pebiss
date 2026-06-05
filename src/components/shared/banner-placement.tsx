@@ -1,14 +1,23 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useTranslation } from '@/lib/i18n';
 
-// Format definitions — only 3 formats
+// Banner format definitions — 4 placements only
 export const BANNER_FORMATS: Record<string, { label: string; w: number; h: number; usage: string; isWide: boolean }> = {
-  '728x90': { label: '728 × 90', w: 728, h: 90, usage: 'Leaderboard', isWide: true },
-  '336x280': { label: '336 × 280', w: 336, h: 280, usage: 'Rectangle moyen', isWide: false },
-  '300x600': { label: '300 × 600', w: 300, h: 600, usage: 'Sidebar', isWide: false },
+  '336x280':  { label: '336 × 280',  w: 336,  h: 280,  usage: 'Accueil (milieu)',          isWide: false },
+  '728x90':   { label: '728 × 90',   w: 728,  h: 90,   usage: 'Accueil (avant footer)',    isWide: true  },
+  '300x600':  { label: '300 × 600',  w: 300,  h: 600,  usage: 'Détail (sidebar)',          isWide: false },
+  'detail_728x90': { label: '728 × 90', w: 728, h: 90, usage: 'Détail (avant footer)',    isWide: true  },
 };
+
+// Map old format "728x90" used for enterprise footer to the new key
+// Both share the same dimensions but have different position context
+export const FORMAT_OPTIONS = [
+  { key: '336x280',       label: 'Page d\'accueil — Milieu',             dimensions: '336 × 280' },
+  { key: '728x90',        label: 'Page d\'accueil — Avant footer',       dimensions: '728 × 90'  },
+  { key: '300x600',       label: 'Page détail — Sidebar',                dimensions: '300 × 600' },
+  { key: 'detail_728x90', label: 'Page détail — Avant footer',           dimensions: '728 × 90'  },
+];
 
 interface BannerData {
   id: string;
@@ -21,13 +30,13 @@ interface BannerData {
   format: string;
 }
 
-// BannerCard - renders a single banner respecting its format dimensions
+// BannerCard — fully responsive banner that scales to container width
 function BannerCard({ banner, className = '' }: { banner: BannerData; className?: string }) {
-  const fmt = BANNER_FORMATS[banner.format] || { label: banner.format, w: 300, h: 250, usage: '', isWide: false };
+  const fmt = BANNER_FORMATS[banner.format] || { label: banner.format, w: 336, h: 280, usage: '', isWide: false };
 
   const content = (
     <div
-      className={`relative overflow-hidden rounded-lg group cursor-pointer hover:shadow-lg transition-all duration-300 ${className}`}
+      className={`relative overflow-hidden rounded-lg group cursor-pointer hover:shadow-lg transition-all duration-300 w-full ${className}`}
       style={{ aspectRatio: `${fmt.w} / ${fmt.h}` }}
     >
       {banner.image ? (
@@ -59,7 +68,7 @@ function BannerCard({ banner, className = '' }: { banner: BannerData; className?
 
   if (banner.link) {
     return (
-      <a href={banner.link} target="_blank" rel="noopener noreferrer" className="block">
+      <a href={banner.link} target="_blank" rel="noopener noreferrer" className="block w-full">
         {content}
       </a>
     );
@@ -79,7 +88,8 @@ export function useBanners(position: string, format?: string) {
   });
 }
 
-// HomepageMidBanner - 336x280 banner in the middle of homepage
+// HomepageMidBanner — 336x280 banner in the middle of homepage
+// Desktop: centered max-w-[336px] | Mobile: full width, maintains aspect ratio
 export function HomepageMidBanner() {
   const { data: banners } = useBanners('home', '336x280');
 
@@ -96,7 +106,8 @@ export function HomepageMidBanner() {
   );
 }
 
-// HomepageFooterBanner - 728x90 leaderboard before footer on homepage
+// HomepageFooterBanner — 728x90 leaderboard before footer on homepage
+// Desktop: full width | Mobile: full width, scales down maintaining aspect ratio
 export function HomepageFooterBanner() {
   const { data: banners } = useBanners('home', '728x90');
 
@@ -104,12 +115,13 @@ export function HomepageFooterBanner() {
 
   return (
     <div className="container mx-auto px-4 pb-8">
-      <BannerCard banner={banners[0]} className="w-full" />
+      <BannerCard banner={banners[0]} />
     </div>
   );
 }
 
-// EnterpriseSidebarBanner - 300x600 sidebar banner on enterprise detail page
+// EnterpriseSidebarBanner — 300x600 sidebar banner on enterprise detail page
+// Desktop: fills sidebar width | Mobile: full width centered, maintains ratio
 export function EnterpriseSidebarBanner() {
   const { data: banners } = useBanners('enterprise', '300x600');
 
@@ -124,15 +136,16 @@ export function EnterpriseSidebarBanner() {
   );
 }
 
-// EnterpriseFooterBanner - 728x90 banner before footer on enterprise detail page
+// EnterpriseFooterBanner — 728x90 banner before footer on enterprise detail page
+// Desktop: spans full grid width | Mobile: full width, scales down
 export function EnterpriseFooterBanner() {
-  const { data: banners } = useBanners('enterprise', '728x90');
+  const { data: banners } = useBanners('enterprise', 'detail_728x90');
 
   if (!banners || banners.length === 0) return null;
 
   return (
-    <div className="lg:col-span-3 py-4">
-      <BannerCard banner={banners[0]} className="w-full" />
+    <div className="w-full py-4">
+      <BannerCard banner={banners[0]} />
     </div>
   );
 }

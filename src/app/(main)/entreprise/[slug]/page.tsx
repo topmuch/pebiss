@@ -500,9 +500,6 @@ export default function BusinessDetailPage() {
             )}
 
 
-            {/* Enterprise Detail Banner - 728x90 before reviews */}
-            <EnterpriseFooterBanner />
-
             {/* Opening Hours */}
             {business.hours.length > 0 && (
               <div className="bg-white border border-[#F0F0F0] rounded">
@@ -910,6 +907,9 @@ export default function BusinessDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Enterprise Detail Banner — 728x90 before footer (full width) */}
+        <EnterpriseFooterBanner />
 
         {/* Similar Ads */}
         {similarBusinesses && similarBusinesses.businesses.filter((b) => b.slug !== slug).length > 0 && (

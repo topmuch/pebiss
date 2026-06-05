@@ -54,9 +54,10 @@ const AD_TYPES: Record<string, string> = {
 };
 
 const BANNER_FORMATS: Record<string, { label: string; w: number; h: number; usage: string }> = {
-  '728x90': { label: '728 × 90', w: 728, h: 90, usage: 'Leaderboard (avant footer)' },
-  '336x280': { label: '336 × 280', w: 336, h: 280, usage: 'Rectangle (accueil milieu)' },
-  '300x600': { label: '300 × 600', w: 300, h: 600, usage: 'Sidebar (détail annonce)' },
+  '336x280':       { label: '336 × 280', w: 336, h: 280, usage: 'Accueil — Milieu' },
+  '728x90':        { label: '728 × 90',  w: 728, h: 90,  usage: 'Accueil — Avant footer' },
+  '300x600':       { label: '300 × 600', w: 300, h: 600, usage: 'Détail — Sidebar' },
+  'detail_728x90': { label: '728 × 90',  w: 728, h: 90,  usage: 'Détail — Avant footer' },
 };
 
 const POSITION_LABELS: Record<string, Record<string, string>> = {
@@ -81,7 +82,7 @@ export default function AdminAnnoncesPage() {
     image: '',
     link: '',
     position: 'home',
-    format: '300x250',
+    format: '336x280',
     isActive: true,
     startDate: '',
     endDate: '',
@@ -167,7 +168,7 @@ export default function AdminAnnoncesPage() {
       image: '',
       link: '',
       position: 'home',
-      format: '300x250',
+      format: '336x280',
       isActive: true,
       startDate: '',
       endDate: '',

@@ -142,8 +142,8 @@ model Ad {
   categoryId  String?
   businessId  String?
   link        String?
-  position    String    @default("home") // home, enterprise, sidebar
-  format      String    @default("300x250") // 728x90, 320x100, 300x250, 336x280, 970x250, 300x600
+  position    String    @default("home") // home, enterprise
+  format      String    @default("336x280") // 336x280, 728x90, 300x600, detail_728x90
   isActive    Boolean   @default(true)
   startDate   DateTime?
   endDate     DateTime?
