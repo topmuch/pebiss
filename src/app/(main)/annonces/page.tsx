@@ -28,12 +28,9 @@ interface Banner {
 
 // Professional banner formats per IAB standards
 const BANNER_FORMATS: Record<string, { label: string; w: number; h: number; usage: string; isWide: boolean }> = {
-  '728x90': { label: '728 × 90', w: 728, h: 90, usage: 'Header desktop', isWide: true },
-  '320x100': { label: '320 × 100', w: 320, h: 100, usage: 'Header mobile', isWide: true },
-  '300x250': { label: '300 × 250', w: 300, h: 250, usage: 'Liste / Sidebar / Détail', isWide: false },
-  '336x280': { label: '336 × 280', w: 336, h: 280, usage: 'Détail annonce', isWide: false },
-  '970x250': { label: '970 × 250', w: 970, h: 250, usage: 'Bannière large', isWide: true },
-  '300x600': { label: '300 × 600', w: 300, h: 600, usage: 'Sidebar', isWide: false },
+  '728x90': { label: '728 × 90', w: 728, h: 90, usage: 'Leaderboard (avant footer)', isWide: true },
+  '336x280': { label: '336 × 280', w: 336, h: 280, usage: 'Rectangle (accueil milieu)', isWide: false },
+  '300x600': { label: '300 × 600', w: 300, h: 600, usage: 'Sidebar (détail annonce)', isWide: false },
 };
 
 export default function AnnoncesPage() {
@@ -57,15 +54,8 @@ export default function AnnoncesPage() {
     })),
   ];
 
-  const wideBanners = filteredBanners.filter((b) => {
-    const fmt = BANNER_FORMATS[b.format];
-    return fmt?.isWide || b.format === '728x90' || b.format === '320x100' || b.format === '970x250';
-  });
-
-  const gridBanners = filteredBanners.filter((b) => {
-    const fmt = BANNER_FORMATS[b.format];
-    return !fmt?.isWide && b.format;
-  });
+  const wideBanners = filteredBanners.filter((b) => b.format === '728x90');
+  const gridBanners = filteredBanners.filter((b) => b.format === '336x280' || b.format === '300x600');
 
   return (
     <div className="min-h-[60vh]">

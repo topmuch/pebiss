@@ -54,18 +54,14 @@ const AD_TYPES: Record<string, string> = {
 };
 
 const BANNER_FORMATS: Record<string, { label: string; w: number; h: number; usage: string }> = {
-  '728x90': { label: '728 × 90', w: 728, h: 90, usage: 'Header desktop' },
-  '320x100': { label: '320 × 100', w: 320, h: 100, usage: 'Header mobile' },
-  '300x250': { label: '300 × 250', w: 300, h: 250, usage: 'Liste / Sidebar / Détail' },
-  '336x280': { label: '336 × 280', w: 336, h: 280, usage: 'Détail annonce' },
-  '970x250': { label: '970 × 250', w: 970, h: 250, usage: 'Bannière large' },
-  '300x600': { label: '300 × 600', w: 300, h: 600, usage: 'Sidebar' },
+  '728x90': { label: '728 × 90', w: 728, h: 90, usage: 'Leaderboard (avant footer)' },
+  '336x280': { label: '336 × 280', w: 336, h: 280, usage: 'Rectangle (accueil milieu)' },
+  '300x600': { label: '300 × 600', w: 300, h: 600, usage: 'Sidebar (détail annonce)' },
 };
 
 const POSITION_LABELS: Record<string, Record<string, string>> = {
-  home: { fr: 'Homepage', pt: 'Página inicial' },
-  enterprise: { fr: 'Page entreprise', pt: 'Página empresa' },
-  sidebar: { fr: 'Sidebar', pt: 'Barra lateral' },
+  home: { fr: 'Page d\'accueil', pt: 'Página inicial' },
+  enterprise: { fr: 'Page détail annonce', pt: 'Página detalhe' },
 };
 
 export default function AdminAnnoncesPage() {
@@ -437,7 +433,6 @@ export default function AdminAnnoncesPage() {
                   <SelectContent>
                     <SelectItem value="home">{t('admin_ads_position_home')}</SelectItem>
                     <SelectItem value="enterprise">{t('admin_ads_position_enterprise')}</SelectItem>
-                    <SelectItem value="sidebar">{t('admin_ads_position_sidebar')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

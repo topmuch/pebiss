@@ -25,7 +25,7 @@ import { RatingStars } from '@/components/shared/rating-stars';
 import { BusinessCard } from '@/components/shared/business-card';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation, categoryTranslations } from '@/lib/i18n';
-import { EnterpriseDetailBanner, EnterpriseSidebarBanner } from '@/components/shared/banner-placement';
+import { EnterpriseSidebarBanner, EnterpriseFooterBanner } from '@/components/shared/banner-placement';
 import {
   Building2,
   MapPin,
@@ -500,8 +500,8 @@ export default function BusinessDetailPage() {
             )}
 
 
-            {/* Enterprise Detail Banner */}
-            <EnterpriseDetailBanner />
+            {/* Enterprise Detail Banner - 728x90 before reviews */}
+            <EnterpriseFooterBanner />
 
             {/* Opening Hours */}
             {business.hours.length > 0 && (

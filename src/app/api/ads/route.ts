@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate format
-    const validFormats = ['728x90', '320x100', '300x250', '336x280', '970x250', '300x600'];
+    const validFormats = ['728x90', '336x280', '300x600'];
     if (format && !validFormats.includes(format)) {
       return NextResponse.json(
         { error: 'Format invalide' },
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate position
-    const validPositions = ['home', 'enterprise', 'sidebar'];
+    const validPositions = ['home', 'enterprise'];
     if (position && !validPositions.includes(position)) {
       return NextResponse.json(
         { error: 'Position invalide' },

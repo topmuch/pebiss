@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { BusinessCard } from '@/components/shared/business-card';
 import { BusinessCardSkeleton } from '@/components/shared/business-card-skeleton';
 import { useTranslation, categoryTranslations } from '@/lib/i18n';
-import { HomepageHeaderBanner, HomepageGridBanners, HomepageBetweenListings } from '@/components/shared/banner-placement';
+import { HomepageMidBanner, HomepageFooterBanner } from '@/components/shared/banner-placement';
 import {
   Search,
   MapPin,
@@ -333,8 +333,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ HEADER BANNER ============ */}
-      <HomepageHeaderBanner />
+      {/* ============ BANNER — 336x280 Milieu Accueil ============ */}
+      <HomepageMidBanner />
 
       {/* ============ CATEGORIES SECTION — Auto-Slide Multicolor Gradient Squares ============ */}
       <section className="pb-12 md:pb-16 overflow-hidden">
@@ -394,9 +394,6 @@ export default function HomePage() {
           </div>
         )}
       </section>
-
-      {/* ============ DYNAMIC BANNERS — Annonces Publicitaires ============ */}
-      <HomepageGridBanners />
 
       {/* ============ CURRENT LISTINGS ============ */}
       <section className="py-12 md:py-16">
@@ -459,8 +456,6 @@ export default function HomePage() {
               </div>
             );
           })()}
-
-          <HomepageBetweenListings slot="after-listings" />
 
           <div className="mt-6 text-center sm:hidden">
             <Link href="/annuaire">
@@ -605,6 +600,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ============ BANNER 728x90 Avant Footer ============ */}
+      <HomepageFooterBanner />
       {/* ============ FLOATING WHATSAPP BUTTON ============ */}
       <a
         href="https://wa.me/245956007371"
