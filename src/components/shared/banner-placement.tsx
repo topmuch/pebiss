@@ -132,7 +132,7 @@ export function HomepageFooterBanner() {
 }
 
 // EnterpriseSidebarBanner — 300x600 sidebar banner on enterprise detail page
-// Desktop: fills sidebar width | Mobile: full width centered, maintains ratio
+// Desktop: fills sidebar width | Mobile: horizontal banner (limit height, maintain visual)
 export function EnterpriseSidebarBanner() {
   const { data: banners } = useBanners('enterprise', '300x600');
 
@@ -141,7 +141,43 @@ export function EnterpriseSidebarBanner() {
   return (
     <div className="space-y-4">
       {banners.slice(0, 2).map((banner) => (
-        <BannerCard key={banner.id} banner={banner} />
+        <div key={banner.id} className="lg:w-full">
+          {/* Mobile: horizontal banner with max-height | Desktop: full sidebar 300x600 */}
+          <a
+            href={banner.link || '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full"
+          >
+            <div className="relative overflow-hidden rounded-lg group cursor-pointer hover:shadow-lg transition-all duration-300 w-full">
+              {banner.image ? (
+                <>
+                  {/* Mobile: square-ish aspect, max-h-[280px] | Desktop: 300x600 */}
+                  <img
+                    src={banner.image}
+                    alt={banner.title}
+                    className="w-full h-auto max-h-[280px] lg:max-h-none lg:aspect-[300/600] object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3">
+                    <h3 className="text-white font-semibold text-sm leading-tight drop-shadow-md">{banner.title}</h3>
+                    {banner.description && (
+                      <p className="text-white/70 text-xs mt-1 line-clamp-1">{banner.description}</p>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="w-full aspect-[300/250] lg:aspect-[300/600] bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center p-4">
+                  <div className="text-center">
+                    <span className="text-[10px] text-white/40 uppercase font-medium">300 × 600</span>
+                    <h3 className="text-white font-semibold text-sm mt-1">{banner.title}</h3>
+                  </div>
+                </div>
+              )}
+            </div>
+          </a>
+        </div>
       ))}
     </div>
   );
