@@ -88,21 +88,32 @@ export function useBanners(position: string, format?: string) {
   });
 }
 
-// HomepageMidBanner — 336x280 banner in the middle of homepage
-// Desktop: centered max-w-[336px] | Mobile: full width, maintains aspect ratio
+// HomepageMidBanner — all 336x280 banners below categories on homepage
+// Displays a responsive grid with "Offres Sponsorisées" title
 export function HomepageMidBanner() {
-  const { data: banners } = useBanners('home', '336x280');
+  const { data: banners, isLoading } = useBanners('home', '336x280');
 
+  if (isLoading) return null;
   if (!banners || banners.length === 0) return null;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-center">
-        <div className="w-full max-w-[336px]">
-          <BannerCard banner={banners[0]} />
+    <section className="py-8 md:py-12">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-px flex-1 bg-gradient-to-r from-orange-300 to-transparent" />
+          <h2 className="text-lg md:text-xl font-bold text-orange-600 whitespace-nowrap">
+            ⭐ Offres Sponsorisées
+          </h2>
+          <div className="h-px flex-1 bg-gradient-to-l from-orange-300 to-transparent" />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          {banners.map((banner) => (
+            <BannerCard key={banner.id} banner={banner} />
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
