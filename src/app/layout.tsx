@@ -17,7 +17,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#0066CC',
+};
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Pebiss - Annuaire Professionnel du Sénégal",
     template: "%s | Pebiss",
@@ -26,28 +35,49 @@ export const metadata: Metadata = {
   keywords: [
     "annuaire Sénégal",
     "entreprises Sénégal",
-    "référencement",
-    "business directory",
+    "référencement professionnel",
+    "business directory Sénégal",
     "Dakar",
     "Pebiss",
     "professionnel Sénégal",
+    "trouver une entreprise Sénégal",
+    "services Sénégal",
+    "commerces Sénégal",
   ],
-  authors: [{ name: "Pebiss" }],
+  authors: [{ name: "Pebiss", url: SITE_URL }],
+  creator: "Pebiss",
+  publisher: "Pebiss",
   openGraph: {
     title: "Pebiss - Annuaire Professionnel du Sénégal",
     description: "Le premier annuaire professionnel du Sénégal. Trouvez et référencez des entreprises.",
     type: "website",
     locale: "fr_SN",
     siteName: "Pebiss",
+    url: SITE_URL,
+    images: [{ url: `${SITE_URL}/hero-banner.jpg`, width: 1344, height: 768, alt: "Pebiss - Annuaire Professionnel du Sénégal" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Pebiss - Annuaire Professionnel du Sénégal",
     description: "Le premier annuaire professionnel du Sénégal.",
+    images: [`${SITE_URL}/hero-banner.jpg`],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
   },
 };
 
@@ -57,7 +87,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
