@@ -46,7 +46,7 @@ model Business {
   address     String?
   city        String?
   region      String?
-  country     String        @default("Sénégal")
+  country     String        @default("Guinée-Bissau")
   phone       String?
   email       String?
   website     String?

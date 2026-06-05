@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
         businessId: businessId || null,
         link: link || null,
         position: position || 'home',
-        format: format || '300x250',
+        format: format || '336x280',
         isActive: isActive !== undefined ? isActive : true,
         startDate: startDate ? new Date(startDate) : null,
         endDate: endDate ? new Date(endDate) : null,

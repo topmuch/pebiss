@@ -148,11 +148,13 @@ export async function PUT(
       return NextResponse.json({ photo, message: 'Photo ajoutée' });
     }
 
-    // Handle removePhoto: delete the BusinessPhoto record
+    // Handle removePhoto: verify ownership then delete
     if (removePhoto) {
-      await db.businessPhoto.delete({
-        where: { id: removePhoto },
-      });
+      const photo = await db.businessPhoto.findUnique({ where: { id: removePhoto } });
+      if (!photo || photo.businessId !== existing.id) {
+        return NextResponse.json({ error: 'Photo non trouvée' }, { status: 404 });
+      }
+      await db.businessPhoto.delete({ where: { id: removePhoto } });
       return NextResponse.json({ message: 'Photo supprimée' });
     }
 

@@ -3,16 +3,57 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-// GET /api/settings - Get site config (create default if not exists)
+// GET /api/settings - Get public site config (no SMTP or notification fields)
 export async function GET() {
   try {
-    let config = await db.siteConfig.findFirst();
+    let config = await db.siteConfig.findFirst({
+      select: {
+        id: true,
+        siteName: true,
+        logo: true,
+        favicon: true,
+        address: true,
+        phone: true,
+        email: true,
+        seoTitle: true,
+        seoDescription: true,
+        seoImage: true,
+        defaultLang: true,
+        facebook: true,
+        instagram: true,
+        twitter: true,
+        linkedin: true,
+        whatsapp: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
     if (!config) {
       config = await db.siteConfig.create({
         data: {
           siteName: 'Pebiss',
           defaultLang: 'pt',
+        },
+        select: {
+          id: true,
+          siteName: true,
+          logo: true,
+          favicon: true,
+          address: true,
+          phone: true,
+          email: true,
+          seoTitle: true,
+          seoDescription: true,
+          seoImage: true,
+          defaultLang: true,
+          facebook: true,
+          instagram: true,
+          twitter: true,
+          linkedin: true,
+          whatsapp: true,
+          createdAt: true,
+          updatedAt: true,
         },
       });
     }

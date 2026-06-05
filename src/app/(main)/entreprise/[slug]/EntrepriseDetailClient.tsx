@@ -51,8 +51,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Share2,
-  Heart,
-  Flag,
   User,
   Copy,
   Tag,
@@ -751,12 +749,6 @@ export default function EntrepriseDetailClient() {
                     title={t('entreprise_copy_link')}
                   >
                     {copied ? <CheckCircle2 className="h-4 w-4 text-green-600" /> : <Share2 className="h-4 w-4 text-[#242424]" />}
-                  </button>
-                  <button className="w-9 h-9 bg-white border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-[#F6F6F6] transition-colors" title={t('entreprise_favorite')}>
-                    <Heart className="h-4 w-4 text-[#242424]" />
-                  </button>
-                  <button className="w-9 h-9 bg-white border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-[#F6F6F6] transition-colors" title={t('entreprise_report')}>
-                    <Flag className="h-4 w-4 text-[#242424]" />
                   </button>
                 </div>
               </div>

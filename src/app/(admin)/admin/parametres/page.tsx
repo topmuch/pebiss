@@ -31,7 +31,7 @@ export default function AdminParametresPage() {
   const { data: config, isLoading } = useQuery({
     queryKey: ['site-config'],
     queryFn: async () => {
-      const res = await fetch('/api/settings');
+      const res = await fetch('/api/admin/settings');
       if (!res.ok) throw new Error('Erreur');
       return res.json();
     },
