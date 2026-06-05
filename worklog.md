@@ -442,3 +442,42 @@ Stage Summary:
 - Enterprise footer banner moved outside grid to span full page width
 - Admin creation dialog shows only 4 format options
 - Schema default updated from stale `300x250` to `336x280`
+---
+Task ID: 13
+Agent: Main Agent
+Task: Full SEO optimization — metadata, JSON-LD, sitemap, robots, noindex, 404
+
+Work Log:
+- Comprehensive SEO audit revealed: 0/14 pages had per-page metadata, no sitemap, no JSON-LD, no noindex on private pages
+- Created `src/app/robots.ts` — dynamic robots.txt blocking /admin/, /dashboard/, /api/, /login/, /register
+- Created `src/app/sitemap.ts` — dynamic sitemap with all active businesses (priority 0.8), 6 static pages (0.7-1.0), categories (0.5)
+- Updated `src/app/layout.tsx` — root layout:
+  - Added `metadataBase: new URL(SITE_URL)` for proper OG URL resolution
+  - Added `viewport` export with device-width and themeColor #0066CC
+  - Fixed `<html lang>` from "pt" to "fr"
+  - Added OG images (hero-banner.jpg), twitter images
+  - Added googleBot config (max-image-preview: large, max-snippet: -1)
+  - Added `alternates.canonical` and `verification.google`
+  - Expanded keywords to 10 relevant terms
+- Refactored `entreprise/[slug]/page.tsx` to server+client pattern:
+  - New server page.tsx with `generateMetadata` (unique title/description/OG/canonical per business)
+  - Client code moved to `EntrepriseDetailClient.tsx`
+  - JSON-LD `LocalBusiness` schema (address, phone, email, hours, ratings, socials)
+  - JSON-LD `BreadcrumbList` schema (Accueil > Annuaire > Category > Business)
+- Updated `(main)/layout.tsx` — added JSON-LD `WebSite` (with SearchAction) and `Organization` schemas
+- Added `noindex` metadata to admin layout, dashboard layout, auth layout
+- Added unique per-page metadata via layout.tsx in 7 public routes:
+  - annuaire, annonces, contact, apropos, publicite, reseaux-sociaux
+  - Each with title, description, keywords, OG, canonical
+- Created custom `not-found.tsx` (404 page with branded design and navigation links)
+- Removed old static `public/robots.txt` (replaced by dynamic robots.ts)
+- Lint clean (only pre-existing .cjs errors)
+- Pushed commit `bb44927`
+
+Stage Summary:
+- 17 files changed, 1580 insertions, 951 deletions
+- Google Search Console ready: sitemap.xml, robots.txt, proper meta tags on every page
+- Enterprise pages: unique title/description/OG per business + JSON-LD LocalBusiness
+- Homepage: JSON-LD WebSite (SearchAction) + Organization
+- All private pages (admin, dashboard, auth): noindex, nofollow
+- Custom 404 page with navigation back to homepage and annuaire
