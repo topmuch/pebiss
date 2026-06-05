@@ -481,3 +481,39 @@ Stage Summary:
 - Homepage: JSON-LD WebSite (SearchAction) + Organization
 - All private pages (admin, dashboard, auth): noindex, nofollow
 - Custom 404 page with navigation back to homepage and annuaire
+
+---
+Task ID: 14
+Agent: Main Agent
+Task: Fix email configuration - SMTP fields missing from schema, no test email API, no test destination input
+
+Work Log:
+- Diagnosed 5 root causes:
+  1. SiteConfig Prisma model missing SMTP fields (smtpHost, smtpPort, smtpUser, smtpPassword, smtpFromName, smtpFromEmail, smtpEncryption)
+  2. SiteConfig Prisma model missing notification fields (notifNewAd, notifNewReview, notifWeeklyReport, notifAdApproved, notifWelcome)
+  3. No /api/settings/test-email API route existed
+  4. PUT /api/settings route didn't save SMTP/notification fields (not in destructuring)
+  5. No test email destination input - was sending to smtpFromEmail (sender address) instead of user-specified destination
+- Installed nodemailer + @types/nodemailer
+- Updated prisma/schema.prisma: added 7 SMTP fields + 5 notification boolean fields to SiteConfig model
+- Ran bun run db:push to sync schema
+- Updated PUT /api/settings/route.ts: added all SMTP + notification fields to body destructuring and update data
+- Created src/app/api/settings/test-email/route.ts:
+  - Admin-only auth check
+  - Reads SMTP config from database (SiteConfig)
+  - Creates nodemailer transport with proper TLS/SSL configuration
+  - Sends professional HTML test email with SMTP details summary
+  - Returns meaningful error messages for incomplete config or connection failures
+- Updated admin/parametres/page.tsx:
+  - Added testEmail state and testEmailSending loading state
+  - Added destination email input field with label and helper text
+  - Test button now sends to user-specified destination instead of smtpFromEmail
+  - Button disabled until all required fields (SMTP + destination email) are filled
+  - Shows loading state "Envoi en cours..." / "Enviando..." during send
+  - Shows actual error message from API (not generic error)
+
+Stage Summary:
+- Email configuration fully fixed: SMTP fields persist in database, test email endpoint works
+- Admin can now enter any destination email to test SMTP configuration
+- Professional HTML test email includes SMTP connection details
+- All changes: prisma/schema.prisma, api/settings/route.ts, api/settings/test-email/route.ts, admin/parametres/page.tsx

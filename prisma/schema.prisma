@@ -171,6 +171,20 @@ model SiteConfig {
   twitter        String?
   linkedin       String?
   whatsapp       String?
+  // SMTP
+  smtpHost       String?
+  smtpPort       String?
+  smtpUser       String?
+  smtpPassword   String?
+  smtpFromName   String?
+  smtpFromEmail  String?
+  smtpEncryption String   @default("none") // none, tls, ssl
+  // Notifications
+  notifNewAd       Boolean @default(true)
+  notifNewReview   Boolean @default(true)
+  notifWeeklyReport Boolean @default(false)
+  notifAdApproved  Boolean @default(true)
+  notifWelcome     Boolean @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }

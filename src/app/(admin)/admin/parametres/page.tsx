@@ -156,20 +156,30 @@ export default function AdminParametresPage() {
     saveMutation.mutate(form);
   };
 
+  const [testEmail, setTestEmail] = useState('');
+  const [testEmailSending, setTestEmailSending] = useState(false);
+
   const handleTestEmail = async () => {
+    if (!testEmail || !testEmail.includes('@')) {
+      toast.error(locale === 'fr' ? 'Veuillez entrer une adresse email valide' : 'Por favor, insira um endereço de email válido');
+      return;
+    }
+    setTestEmailSending(true);
     try {
       const res = await fetch('/api/settings/test-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.smtpFromEmail }),
+        body: JSON.stringify({ email: testEmail }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || 'Erreur');
       }
       toast.success(t('admin_settings_test_email_success'));
-    } catch {
-      toast.error(t('admin_settings_test_email_error'));
+    } catch (err: any) {
+      toast.error(err.message || t('admin_settings_test_email_error'));
+    } finally {
+      setTestEmailSending(false);
     }
   };
 
@@ -532,14 +542,30 @@ export default function AdminParametresPage() {
 
               <Separator />
 
-              <div>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label>{locale === 'fr' ? 'Email de destination pour le test' : 'Email de destino para o teste'}</Label>
+                  <Input
+                    type="email"
+                    value={testEmail}
+                    onChange={(e) => setTestEmail(e.target.value)}
+                    placeholder="votre@email.com"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {locale === 'fr'
+                      ? 'Entrez l\'adresse email où vous souhaitez recevoir l\'email de test.'
+                      : 'Insira o endereço de email onde deseja receber o email de teste.'}
+                  </p>
+                </div>
                 <Button
                   variant="outline"
                   onClick={handleTestEmail}
-                  disabled={!form.smtpHost || !form.smtpUser || !form.smtpPassword}
+                  disabled={!form.smtpHost || !form.smtpUser || !form.smtpPassword || !testEmail || testEmailSending}
                 >
                   <Mail className="mr-2 h-4 w-4" />
-                  {t('admin_settings_test_email')}
+                  {testEmailSending
+                    ? (locale === 'fr' ? 'Envoi en cours...' : 'Enviando...')
+                    : t('admin_settings_test_email')}
                 </Button>
               </div>
             </CardContent>
