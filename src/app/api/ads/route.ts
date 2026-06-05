@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     const userId = (session.user as any).id;
 
     const body = await request.json();
-    const { title, description, image, type, categoryId, businessId, link, position, isActive, startDate, endDate } = body;
+    const { title, description, image, type, categoryId, businessId, link, position, format, isActive, startDate, endDate } = body;
 
     if (!title) {
       return NextResponse.json(
@@ -137,6 +137,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate format
+    const validFormats = ['728x90', '320x100', '300x250', '336x280', '970x250', '300x600'];
+    if (format && !validFormats.includes(format)) {
+      return NextResponse.json(
+        { error: 'Format invalide' },
+        { status: 400 }
+      );
+    }
+
     // Validate position
     const validPositions = ['home', 'enterprise', 'sidebar'];
     if (position && !validPositions.includes(position)) {
@@ -156,6 +165,7 @@ export async function POST(request: NextRequest) {
         businessId: businessId || null,
         link: link || null,
         position: position || 'home',
+        format: format || '300x250',
         isActive: isActive !== undefined ? isActive : true,
         startDate: startDate ? new Date(startDate) : null,
         endDate: endDate ? new Date(endDate) : null,

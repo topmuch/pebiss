@@ -348,3 +348,43 @@ Stage Summary:
 - 8 annonces displayed in 2-row grid (2 cols mobile, 3 cols tablet, 4 cols desktop)
 - "Découvrez nos catégories populaires" section completely removed from homepage
 - 2 files modified: business-card.tsx, page.tsx
+
+---
+Task ID: 11
+Agent: Main Agent
+Task: Implement banner placement system with IAB standard formats across homepage and enterprise pages
+
+Work Log:
+- Fixed critical bug: POST /api/ads was NOT saving the `format` field — added format extraction + validation
+- Fixed PUT /api/ads/[id] to support updating format, position, link, isActive, startDate, endDate
+- Added format validation: only IAB standard formats accepted (728x90, 320x100, 300x250, 336x280, 970x250, 300x600)
+- Updated /api/banners route to support `?format=` query parameter for format-based filtering
+- Created `src/components/shared/banner-placement.tsx` — centralized banner system:
+  - BANNER_FORMATS constant with 6 IAB standard formats (label, dimensions, usage, isWide)
+  - BannerCard component: renders banner with proper aspect-ratio based on format dimensions
+  - useBanners(position, format?) hook: reusable React Query fetcher
+  - HomepageHeaderBanner: responsive 728×90 (desktop) / 320×100 (mobile) leaderboard
+  - HomepageGridBanners: filtered grid of non-header banners with section title
+  - HomepageBetweenListings: centered 300×250 inline banner between sections
+  - EnterpriseDetailBanner: 336×280 or 300×250 in enterprise content area
+  - EnterpriseSidebarBanner: 300×600 sidebar banners on enterprise page
+- Updated homepage (page.tsx):
+  - Removed old DynamicBannersSection and DynamicBannerCard
+  - Added HomepageHeaderBanner after hero section
+  - Added HomepageGridBanners replacing old DynamicBannersSection
+  - Added HomepageBetweenListings after business cards
+- Updated enterprise page (entreprise/[slug]/page.tsx):
+  - Removed old DynamicEnterpriseBanners and EnterpriseBannerData
+  - Added EnterpriseDetailBanner in content column after photos
+  - Added EnterpriseSidebarBanner in right sidebar after owner card
+- Fixed dashboard/ads/page.tsx: changed default format from 'rectangle' to '300x250'
+- Migrated 11 existing DB banners from format "rectangle" to proper IAB formats distributed across positions
+- Verified with Agent Browser: ALL 6 placements working with proper aspect ratios
+
+Stage Summary:
+- 6 banner placement zones defined across 2 pages (homepage + enterprise detail)
+- Format-aware rendering: each banner respects its IAB standard dimensions (aspect-ratio CSS)
+- Responsive header: 728×90 desktop / 320×100 mobile with hidden/block classes
+- All placements gracefully return null when no matching banners exist (no broken UI)
+- API supports filtering by position AND format independently
+- Files changed: banner-placement.tsx (new), page.tsx, entreprise/[slug]/page.tsx, api/ads/route.ts, api/ads/[id]/route.ts, api/banners/route.ts, dashboard/ads/page.tsx

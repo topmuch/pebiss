@@ -153,7 +153,7 @@ export default function AdsPage() {
       type: ad?.type || 'SERVICE',
       categoryId: ad?.categoryId || '',
       image: ad?.image || '',
-      format: ad?.format || 'rectangle',
+      format: ad?.format || '300x250',
     });
     setImagePreview(ad?.image || null);
     setImageFile(null);
@@ -163,7 +163,7 @@ export default function AdsPage() {
   const closeDialog = () => {
     setDialogOpen(false);
     setEditingAd(null);
-    setForm({ title: '', description: '', type: 'SERVICE', categoryId: '', image: '', format: 'rectangle' });
+    setForm({ title: '', description: '', type: 'SERVICE', categoryId: '', image: '', format: '300x250' });
     setImagePreview(null);
     setImageFile(null);
   };

@@ -88,7 +88,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, description, image, type, categoryId } = body;
+    const { title, description, image, type, categoryId, format, position, link, isActive, startDate, endDate } = body;
 
     // Validate type
     const validTypes = ['SERVICE', 'PROMOTION', 'PRODUCT', 'EVENT'];
@@ -107,6 +107,12 @@ export async function PUT(
         ...(image !== undefined && { image }),
         ...(type && { type }),
         ...(categoryId !== undefined && { categoryId: categoryId || null }),
+        ...(format && { format }),
+        ...(position && { position }),
+        ...(link !== undefined && { link }),
+        ...(isActive !== undefined && { isActive }),
+        ...(startDate !== undefined && { startDate: startDate ? new Date(startDate) : null }),
+        ...(endDate !== undefined && { endDate: endDate ? new Date(endDate) : null }),
       },
       include: {
         business: {
