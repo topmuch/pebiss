@@ -333,9 +333,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ BANNER — 336x280 Milieu Accueil ============ */}
-      <HomepageMidBanner />
-
       {/* ============ CATEGORIES SECTION — Auto-Slide Multicolor Gradient Squares ============ */}
       <section className="pb-12 md:pb-16 overflow-hidden">
         <div className="container mx-auto px-4">
@@ -394,6 +391,9 @@ export default function HomePage() {
           </div>
         )}
       </section>
+
+      {/* ============ BANNER — 336x280 Après Catégories ============ */}
+      <HomepageMidBanner />
 
       {/* ============ CURRENT LISTINGS ============ */}
       <section className="py-12 md:py-16">
