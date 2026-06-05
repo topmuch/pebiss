@@ -1,6 +1,9 @@
 import { MetadataRoute } from 'next'
 import { db } from '@/lib/db'
 
+// Force dynamic rendering — DB is unavailable at Docker build time
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn'
 
