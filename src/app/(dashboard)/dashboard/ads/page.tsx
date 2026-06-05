@@ -45,6 +45,15 @@ const AD_TYPES = [
   { value: 'EVENT', label: 'Événement', color: 'bg-purple-100 text-purple-800' },
 ];
 
+const BANNER_FORMATS = [
+  { value: '728x90', label: '728 × 90', usage: 'Header desktop' },
+  { value: '320x100', label: '320 × 100', usage: 'Header mobile' },
+  { value: '300x250', label: '300 × 250', usage: 'Liste / Sidebar / Détail' },
+  { value: '336x280', label: '336 × 280', usage: 'Détail annonce' },
+  { value: '970x250', label: '970 × 250', usage: 'Bannière large' },
+  { value: '300x600', label: '300 × 600', usage: 'Sidebar' },
+];
+
 export default function AdsPage() {
   const { t, locale } = useTranslation();
   const { slug, business, isLoading } = useBusinessSlug();
@@ -53,7 +62,7 @@ export default function AdsPage() {
   const [editingAd, setEditingAd] = useState<any>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState({
-    title: '', description: '', type: 'SERVICE', categoryId: '', image: '', format: 'rectangle',
+    title: '', description: '', type: 'SERVICE', categoryId: '', image: '', format: '300x250',
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -254,7 +263,9 @@ export default function AdsPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-medium">{ad.title}</h3>
                           <Badge className={`text-[10px] ${getTypeColor(ad.type)}`}>{ad.type}</Badge>
-                          <Badge className="text-[10px] bg-muted text-muted-foreground">{t('banner_format_' + (ad.format || 'rectangle'))}</Badge>
+                          <Badge className="text-[10px] bg-muted text-muted-foreground">
+                            {BANNER_FORMATS.find(f => f.value === ad.format)?.label || ad.format}
+                          </Badge>
                         </div>
                         {ad.description && (
                           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ad.description}</p>
@@ -320,16 +331,15 @@ export default function AdsPage() {
             </div>
             <div className="grid gap-4 grid-cols-2">
               <div className="space-y-2">
-                <Label>{t('banner_format_label')}</Label>
+                <Label>{t('admin_ads_field_format')}</Label>
                 <Select value={form.format} onValueChange={(val) => setForm({ ...form, format: val })}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="square">{t('banner_format_square')}</SelectItem>
-                    <SelectItem value="rectangle">{t('banner_format_rectangle')}</SelectItem>
-                    <SelectItem value="banner">{t('banner_format_banner')}</SelectItem>
-                    <SelectItem value="tall">{t('banner_format_tall')}</SelectItem>
+                    {BANNER_FORMATS.map((fmt) => (
+                      <SelectItem key={fmt.value} value={fmt.value}>{fmt.label} — {fmt.usage}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

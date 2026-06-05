@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
       // Validate file size (min 500 bytes, max 5MB)
       const minSize = 500;
-      const maxSize = 5 * 1024 * 1024;
+      const maxSize = 5 * 1024 * 1024; // 5MB — supports JPG/PNG/GIF/WebP up to 5MB
       if (file.size < minSize) {
         console.error('[POST /api/upload] File too small:', file.size, 'bytes');
         return NextResponse.json(

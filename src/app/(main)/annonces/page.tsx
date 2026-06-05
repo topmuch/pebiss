@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,10 +12,6 @@ import {
   ExternalLink,
   ImageOff,
   LayoutGrid,
-  Square,
-  RectangleHorizontal,
-  Maximize,
-  Smartphone,
 } from 'lucide-react';
 
 interface Banner {
@@ -31,11 +26,14 @@ interface Banner {
   createdAt: string;
 }
 
-const FORMAT_CONFIG: Record<string, { key: string; icon: typeof Square; aspectClass: string }> = {
-  square: { key: 'banner_format_square', icon: Square, aspectClass: 'aspect-square' },
-  rectangle: { key: 'banner_format_rectangle', icon: RectangleHorizontal, aspectClass: 'aspect-[4/3]' },
-  banner: { key: 'banner_format_banner', icon: Maximize, aspectClass: 'aspect-[4/1]' },
-  tall: { key: 'banner_format_tall', icon: Smartphone, aspectClass: 'aspect-[2/3]' },
+// Professional banner formats per IAB standards
+const BANNER_FORMATS: Record<string, { label: string; w: number; h: number; usage: string; isWide: boolean }> = {
+  '728x90': { label: '728 × 90', w: 728, h: 90, usage: 'Header desktop', isWide: true },
+  '320x100': { label: '320 × 100', w: 320, h: 100, usage: 'Header mobile', isWide: true },
+  '300x250': { label: '300 × 250', w: 300, h: 250, usage: 'Liste / Sidebar / Détail', isWide: false },
+  '336x280': { label: '336 × 280', w: 336, h: 280, usage: 'Détail annonce', isWide: false },
+  '970x250': { label: '970 × 250', w: 970, h: 250, usage: 'Bannière large', isWide: true },
+  '300x600': { label: '300 × 600', w: 300, h: 600, usage: 'Sidebar', isWide: false },
 };
 
 export default function AnnoncesPage() {
@@ -49,15 +47,25 @@ export default function AnnoncesPage() {
 
   const filteredBanners = activeFilter === 'all'
     ? (banners || [])
-    : (banners || []).filter((b) => b.format === activeFilter || (!b.format && activeFilter === 'rectangle'));
+    : (banners || []).filter((b) => b.format === activeFilter || (!b.format && activeFilter === '300x250'));
 
   const formatTabs = [
     { value: 'all', label: t('banners_filter_all') },
-    { value: 'rectangle', label: t('banner_format_rectangle') },
-    { value: 'square', label: t('banner_format_square') },
-    { value: 'banner', label: t('banner_format_banner') },
-    { value: 'tall', label: t('banner_format_tall') },
+    ...Object.entries(BANNER_FORMATS).map(([key, fmt]) => ({
+      value: key,
+      label: `${fmt.label}`,
+    })),
   ];
+
+  const wideBanners = filteredBanners.filter((b) => {
+    const fmt = BANNER_FORMATS[b.format];
+    return fmt?.isWide || b.format === '728x90' || b.format === '320x100' || b.format === '970x250';
+  });
+
+  const gridBanners = filteredBanners.filter((b) => {
+    const fmt = BANNER_FORMATS[b.format];
+    return !fmt?.isWide && b.format;
+  });
 
   return (
     <div className="min-h-[60vh]">
@@ -103,20 +111,22 @@ export default function AnnoncesPage() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }, (_, i) => (
-              <Card key={i} className="border-border/40">
-                <CardContent className="p-0">
-                  <Skeleton className="w-full aspect-[4/3] rounded-t-lg" />
-                  <div className="p-5 space-y-3">
-                    <Skeleton className="h-4 w-24 rounded-full" />
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-9 w-28 rounded-lg" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="space-y-6">
+            <Skeleton className="w-full h-[90px] md:h-[100px] rounded-lg" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }, (_, i) => (
+                <Card key={i} className="border-border/40">
+                  <CardContent className="p-0">
+                    <Skeleton className="w-full aspect-[4/3] rounded-t-lg" />
+                    <div className="p-5 space-y-3">
+                      <Skeleton className="h-4 w-24 rounded-full" />
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-9 w-28 rounded-lg" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         )}
 
@@ -135,24 +145,26 @@ export default function AnnoncesPage() {
           </Card>
         )}
 
-        {/* Banners Grid */}
+        {/* Banners Display */}
         {!isLoading && filteredBanners.length > 0 && (
           <div className="space-y-8">
-            {/* Banner format = full-width */}
-            {filteredBanners
-              .filter((b) => b.format === 'banner' || (!b.format && activeFilter === 'banner'))
-              .map((banner) => (
-                <BannerCard key={banner.id} banner={banner} isWide />
-              ))}
+            {/* Wide banners (header/banner formats) */}
+            {wideBanners.length > 0 && (
+              <div className="space-y-4">
+                {wideBanners.map((banner) => (
+                  <BannerCard key={banner.id} banner={banner} isWide />
+                ))}
+              </div>
+            )}
 
-            {/* Other formats in grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredBanners
-                .filter((b) => b.format !== 'banner' && b.format)
-                .map((banner) => (
+            {/* Grid banners (square/rectangle formats) */}
+            {gridBanners.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {gridBanners.map((banner) => (
                   <BannerCard key={banner.id} banner={banner} />
                 ))}
-            </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -162,58 +174,67 @@ export default function AnnoncesPage() {
 
 function BannerCard({ banner, isWide = false }: { banner: Banner; isWide?: boolean }) {
   const { t } = useTranslation();
-  const formatConfig = FORMAT_CONFIG[banner.format || 'rectangle'];
-  const FormatIcon = formatConfig?.icon || RectangleHorizontal;
+  const fmt = BANNER_FORMATS[banner.format] || { label: banner.format, w: 300, h: 250, usage: '', isWide: false };
+  const aspectRatio = `${fmt.w}/${fmt.h}`;
 
   const content = (
     <Card className="group hover:shadow-lg transition-all duration-300 border-border/40 overflow-hidden h-full">
       <CardContent className="p-0">
         {/* Image */}
         {banner.image ? (
-          <div className={`relative ${isWide ? 'w-full' : 'w-full'} ${isWide ? 'max-h-[200px]' : formatConfig?.aspectClass || 'aspect-[4/3]'} overflow-hidden`}>
+          <div className="relative overflow-hidden" style={{
+            aspectRatio: isWide ? undefined : aspectRatio,
+            maxHeight: isWide ? '200px' : undefined,
+          }}>
             <img
               src={banner.image}
               alt={banner.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              style={isWide ? { aspectRatio, width: '100%', height: '100%' } : undefined}
             />
-            <div className="absolute top-3 left-3">
-              <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-xs font-medium gap-1">
-                <FormatIcon className="h-3 w-3" />
-                {t(formatConfig?.key || 'banner_format_rectangle')}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute top-3 left-3 flex gap-2">
+              <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-xs font-medium">
+                {fmt.label}
               </Badge>
+              <Badge variant="secondary" className="bg-black/50 backdrop-blur-sm text-white text-[10px] font-medium">
+                {fmt.usage}
+              </Badge>
+            </div>
+            <div className="absolute bottom-3 left-3 right-3">
+              <h3 className="text-white font-semibold text-sm md:text-base drop-shadow-md">{banner.title}</h3>
             </div>
           </div>
         ) : (
-          <div className={`bg-muted flex items-center justify-center ${formatConfig?.aspectClass || 'aspect-[4/3]'}`}>
-            <ImageOff className="h-12 w-12 text-muted-foreground/30" />
+          <div className="bg-muted flex items-center justify-center" style={{ aspectRatio, minHeight: '120px' }}>
+            <div className="text-center">
+              <ImageOff className="h-10 w-10 text-muted-foreground/30 mx-auto mb-2" />
+              <span className="text-xs text-muted-foreground">{fmt.label}</span>
+            </div>
           </div>
         )}
 
-        {/* Content */}
-        <div className={isWide ? 'p-4 md:p-6' : 'p-4'}>
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              {banner.description && (
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                  {banner.description}
-                </p>
-              )}
-              {banner.link && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white border-pebiss-orange text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.open(banner.link!, '_blank');
-                  }}
-                >
-                  {t('banners_view_details')}
-                  <ExternalLink className="h-3 w-3 ml-1" />
-                </Button>
-              )}
-            </div>
-          </div>
+        {/* Description + CTA */}
+        <div className="p-4">
+          {banner.description && (
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+              {banner.description}
+            </p>
+          )}
+          {banner.link && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-pebiss-orange hover:bg-pebiss-orange/90 text-white border-pebiss-orange text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(banner.link!, '_blank');
+              }}
+            >
+              {t('banners_view_details')}
+              <ExternalLink className="h-3 w-3 ml-1" />
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

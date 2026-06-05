@@ -53,6 +53,15 @@ const AD_TYPES: Record<string, string> = {
   EVENT: 'bg-purple-100 text-purple-800',
 };
 
+const BANNER_FORMATS: Record<string, { label: string; w: number; h: number; usage: string }> = {
+  '728x90': { label: '728 × 90', w: 728, h: 90, usage: 'Header desktop' },
+  '320x100': { label: '320 × 100', w: 320, h: 100, usage: 'Header mobile' },
+  '300x250': { label: '300 × 250', w: 300, h: 250, usage: 'Liste / Sidebar / Détail' },
+  '336x280': { label: '336 × 280', w: 336, h: 280, usage: 'Détail annonce' },
+  '970x250': { label: '970 × 250', w: 970, h: 250, usage: 'Bannière large' },
+  '300x600': { label: '300 × 600', w: 300, h: 600, usage: 'Sidebar' },
+};
+
 const POSITION_LABELS: Record<string, Record<string, string>> = {
   home: { fr: 'Homepage', pt: 'Página inicial' },
   enterprise: { fr: 'Page entreprise', pt: 'Página empresa' },
@@ -76,7 +85,7 @@ export default function AdminAnnoncesPage() {
     image: '',
     link: '',
     position: 'home',
-    format: 'rectangle',
+    format: '300x250',
     isActive: true,
     startDate: '',
     endDate: '',
@@ -161,7 +170,7 @@ export default function AdminAnnoncesPage() {
       image: '',
       link: '',
       position: 'home',
-      format: 'rectangle',
+      format: '300x250',
       isActive: true,
       startDate: '',
       endDate: '',
@@ -279,7 +288,8 @@ export default function AdminAnnoncesPage() {
                       </TableCell>
                       <TableCell>
                         <Badge className="text-[10px] bg-muted text-muted-foreground">
-                          {t('banner_format_' + (ad.format || 'rectangle'))}
+                          {BANNER_FORMATS[ad.format]?.label || ad.format}
+                          <span className="ml-1 opacity-60 text-[9px]">{BANNER_FORMATS[ad.format]?.usage || ''}</span>
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -401,10 +411,11 @@ export default function AdminAnnoncesPage() {
                     <SelectValue placeholder={t('dash_ads_select')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="square">{t('banner_format_square')}</SelectItem>
-                    <SelectItem value="rectangle">{t('banner_format_rectangle')}</SelectItem>
-                    <SelectItem value="banner">{t('banner_format_banner')}</SelectItem>
-                    <SelectItem value="tall">{t('banner_format_tall')}</SelectItem>
+                    {Object.entries(BANNER_FORMATS).map(([key, fmt]) => (
+                      <SelectItem key={key} value={key}>
+                        {fmt.label} — {fmt.usage}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -465,8 +476,16 @@ export default function AdminAnnoncesPage() {
                   <img
                     src={form.image}
                     alt="Aperçu"
-                    className="h-24 w-40 rounded-lg border object-cover"
+                    className="rounded-lg border object-cover"
+                    style={{
+                      maxWidth: '200px',
+                      maxHeight: '150px',
+                      aspectRatio: `${BANNER_FORMATS[form.format]?.w || 300}/${BANNER_FORMATS[form.format]?.h || 250}`,
+                    }}
                   />
+                  <span className="absolute top-1 right-1 bg-black/70 text-white text-[9px] px-1.5 py-0.5 rounded">
+                    {BANNER_FORMATS[form.format]?.label || form.format}
+                  </span>
                 </div>
               )}
               <div className="flex gap-2">
