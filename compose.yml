@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  pebiss:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/pebiss.db
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@pebiss.sn}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-Admin@123456}
+    volumes:
+      # PERSISTENT STORAGE - These volumes survive container rebuilds
+      - pebiss-data:/app/data      # SQLite database
+      - pebiss-uploads:/app/uploads  # Uploaded images (CRITICAL - without this, images are lost on redeploy)
+    restart: unless-stopped
+
+volumes:
+  pebiss-data:
+  pebiss-uploads:

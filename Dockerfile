@@ -35,13 +35,20 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL=file:/app/data/pebiss.db
 
-# Start command:
-# 1. Ensure /app/uploads exists (Coolify volume → persistent uploaded images)
-# 2. Ensure /app/data exists (Coolify volume → persistent SQLite database)
-# 3. Init database + seed
-# 4. Start server
+# ============================================================
+# ⚠️  IMPORTANT — COOLIFY VOLUME CONFIGURATION  ⚠️
+# ============================================================
+# In Coolify service settings → Volumes, add BOTH:
 #
-# COOLIFY VOLUMES TO ADD:
-#   /app/uploads  → persistent storage for uploaded images
-#   /app/data     → persistent storage for SQLite database
+#   /app/data     ← SQLite database (keeps all data: businesses, users, ads)
+#   /app/uploads  ← Uploaded images (keeps user-uploaded files)
+#
+# WITHOUT /app/uploads volume, all uploaded images are LOST on every redeploy!
+# The compose.yml in this repo defines these volumes automatically.
+#
+# If using "Dockerfile" mode in Coolify, add volumes manually in:
+#   Service → Storage → Add volume → Host: auto, Container: /app/uploads
+#   Service → Storage → Add volume → Host: auto, Container: /app/data
+# ============================================================
+
 CMD sh -c "mkdir -p /app/uploads && mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && exec node .next/standalone/server.js"

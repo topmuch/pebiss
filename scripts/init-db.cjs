@@ -5,6 +5,8 @@
 
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
 
 // Force correct DATABASE_URL regardless of Coolify env vars
 process.env.DATABASE_URL = process.env.DATABASE_URL || 'file:/app/data/pebiss.db';
@@ -12,6 +14,25 @@ process.env.DATABASE_URL = process.env.DATABASE_URL || 'file:/app/data/pebiss.db
 async function main() {
   const prisma = new PrismaClient();
   console.log('📍 DATABASE_URL:', process.env.DATABASE_URL);
+
+  // =============================================
+  // 0. Verify persistent storage
+  // =============================================
+  const uploadsDir = path.join(process.cwd(), 'uploads');
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    const uploadsFiles = fs.readdirSync(uploadsDir);
+    console.log('📁 Uploads directory:', uploadsDir, '(' + uploadsFiles.length + ' files)');
+    if (uploadsFiles.length === 0) {
+      console.log('⚠️  WARNING: /app/uploads is EMPTY — no Coolify volume mounted!');
+      console.log('⚠️  All uploaded images will be LOST on next redeploy.');
+      console.log('⚠️  FIX: In Coolify → Service → Storage → Add volume → Container: /app/uploads');
+    } else {
+      console.log('✅ Uploads volume is mounted with', uploadsFiles.length, 'files');
+    }
+  } catch (err) {
+    console.log('⚠️  Could not check uploads directory:', err.message);
+  }
 
   try {
     console.log('🚀 Initializing Pebiss database...');
@@ -305,6 +326,7 @@ async function main() {
           businessId: business.id,
           categoryId: business.categoryId,
           position: 'home',
+          format: ['728x90', '320x100', '300x250', '336x280', '300x600'][businesses.indexOf(business) % 5],
           link: '/annuaire',
           isActive: true,
         },
