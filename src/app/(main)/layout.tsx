@@ -10,7 +10,7 @@ function WebSiteJsonLd() {
     '@type': 'WebSite',
     name: 'Pebiss',
     url: SITE_URL,
-    description: 'Le premier annuaire professionnel de Guinée-Bissau',
+    description: 'Pebiss est le premier annuaire professionnel de Guinée-Bissau. Trouvez et référencez des entreprises facilement.',
     inLanguage: ['fr', 'pt'],
     potentialAction: {
       '@type': 'SearchAction',
@@ -38,7 +38,7 @@ function OrganizationJsonLd() {
     name: 'Pebiss',
     url: SITE_URL,
     logo: `${SITE_URL}/pebiss-logo.png`,
-    description: 'Le premier annuaire professionnel de Guinée-Bissau. Référencez votre entreprise et soyez visible.',
+    description: 'Pebiss est le premier annuaire professionnel de Guinée-Bissau. Trouvez et référencez des entreprises facilement.',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Bissau',

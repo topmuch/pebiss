@@ -570,3 +570,35 @@ Stage Summary:
 - City references changed from Dakar to Bissau
 - Domain placeholders changed from .sn to .gw
 - 18 files modified across the project
+---
+Task ID: 1
+Agent: Main Agent
+Task: Update SEO metadata + Add admin edit button + TikTok in footer
+
+Work Log:
+- Updated root layout metadata description to "Pebiss est le premier annuaire professionnel de Guinée-Bissau. Trouvez et référencez des entreprises facilement."
+- Updated OpenGraph description with same text
+- Updated Twitter card description with same text
+- Updated JSON-LD WebSite and Organization descriptions in (main)/layout.tsx
+- Created AdminEditBusinessDialog component (src/components/admin/admin-edit-business-dialog.tsx)
+  - 3 tabs: Informations, Réseaux sociaux, Photos
+  - Edit business name, description, address, city, region, country, phone, email, website, keywords, category
+  - Edit social links: Facebook, Instagram, Twitter/X, LinkedIn, WhatsApp, TikTok
+  - Photo management: upload new photos, delete existing photos with confirmation
+  - Uses existing PUT /api/businesses/[slug] for text updates and addPhoto/removePhoto for photo management
+  - Uses existing POST /api/upload for file uploads
+- Added "Modifier" button in entreprise detail sidebar (visible only to ADMIN users)
+- Added Pencil icon import to EntrepriseDetailClient.tsx
+- Added 16 new i18n translation keys in both FR and PT
+- Added TikTok icon (SVG) to footer social media links (Facebook, Instagram, Twitter, TikTok)
+- Fixed critical issue: src/app/page.tsx was overwritten with placeholder, removing it so (main)/page.tsx renders for / route
+- Verified via curl: SEO metadata correctly set in HTML
+- Verified via agent-browser: Footer has 7 SVG icons including TikTok path
+- Lint clean (only pre-existing .cjs errors)
+
+Stage Summary:
+- SEO description updated to exact user-specified text across all metadata (title, OG, Twitter, JSON-LD)
+- Admin edit dialog allows superadmin to modify any business listing (text, social links, photos)
+- TikTok added to footer social media links
+- Fixed homepage rendering by removing accidental placeholder page.tsx
+- Files changed: layout.tsx, (main)/layout.tsx, footer.tsx, EntrepriseDetailClient.tsx, admin-edit-business-dialog.tsx (new), i18n.ts

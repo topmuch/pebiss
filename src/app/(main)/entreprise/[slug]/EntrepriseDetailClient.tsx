@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { RatingStars } from '@/components/shared/rating-stars';
 import { BusinessCard } from '@/components/shared/business-card';
+import { AdminEditBusinessDialog } from '@/components/admin/admin-edit-business-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation, categoryTranslations } from '@/lib/i18n';
 import { EnterpriseSidebarBanner, EnterpriseFooterBanner } from '@/components/shared/banner-placement';
@@ -54,6 +55,7 @@ import {
   User,
   Copy,
   Tag,
+  Pencil,
 } from 'lucide-react';
 
 interface BusinessData {
@@ -141,6 +143,7 @@ export default function EntrepriseDetailClient() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const [isSliding, setIsSliding] = useState(true);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const { data: business, isLoading } = useQuery<BusinessData>({
     queryKey: ['business', slug],
@@ -258,6 +261,7 @@ export default function EntrepriseDetailClient() {
   }
 
   const hasAlreadyReviewed = session && business.reviews.some((r) => r.user.id === session.user.id);
+  const isAdmin = (session?.user as any)?.role === 'ADMIN';
 
   return (
     <div className="min-h-screen bg-[#F6F6F6]">
@@ -752,6 +756,16 @@ export default function EntrepriseDetailClient() {
                       </Button>
                     </a>
                   )}
+                  {isAdmin && (
+                    <Button
+                      onClick={() => setEditDialogOpen(true)}
+                      variant="outline"
+                      className="text-sm py-2.5 border-primary text-primary hover:bg-primary/10"
+                    >
+                      <Pencil className="h-3.5 w-3.5 mr-1.5" />
+                      {t('admin_ent_edit_button')}
+                    </Button>
+                  )}
                   <button
                     onClick={handleCopyLink}
                     className="w-9 h-9 bg-white border border-[#F0F0F0] rounded flex items-center justify-center hover:bg-[#F6F6F6] transition-colors"
@@ -932,6 +946,15 @@ export default function EntrepriseDetailClient() {
           </div>
         )}
       </div>
+
+      {/* Admin Edit Dialog */}
+      {isAdmin && business && (
+        <AdminEditBusinessDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          business={business}
+        />
+      )}
 
       {/* Floating WhatsApp Button */}
       {business.whatsapp && (

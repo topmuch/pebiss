@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     default: "Pebiss - Annuaire Professionnel de Guinée-Bissau",
     template: "%s | Pebiss",
   },
-  description: "Le premier annuaire professionnel de Guinée-Bissau. Référencez votre entreprise et soyez visible par des milliers de clients potentiels. Inscription gratuite.",
+  description: "Pebiss est le premier annuaire professionnel de Guinée-Bissau. Trouvez et référencez des entreprises facilement.",
   keywords: [
     "annuaire Guinée-Bissau",
     "entreprises Guinée-Bissau",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   publisher: "Pebiss",
   openGraph: {
     title: "Pebiss - Annuaire Professionnel de Guinée-Bissau",
-    description: "Le premier annuaire professionnel de Guinée-Bissau. Trouvez et référencez des entreprises.",
+    description: "Pebiss est le premier annuaire professionnel de Guinée-Bissau. Trouvez et référencez des entreprises facilement.",
     type: "website",
     locale: "fr_GW",
     siteName: "Pebiss",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Pebiss - Annuaire Professionnel de Guinée-Bissau",
-    description: "Le premier annuaire professionnel de Guinée-Bissau.",
+    description: "Pebiss est le premier annuaire professionnel de Guinée-Bissau. Trouvez et référencez des entreprises facilement.",
     images: [`${SITE_URL}/hero-banner.jpg`],
   },
   robots: {

@@ -36,6 +36,11 @@ export function Footer() {
               <a href="#" className="p-2.5 bg-white/10 hover:bg-white/20 transition-colors">
                 <Twitter className="h-4 w-4" />
               </a>
+              <a href="#" className="p-2.5 bg-white/10 hover:bg-white/20 transition-colors">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15a6.34 6.34 0 0010.68 4.61V12.7a8.28 8.28 0 005.76 2.29V11.5a4.83 4.83 0 01-3.77-1.58V6.69h3.77z"/>
+                </svg>
+              </a>
             </div>
           </div>
 
