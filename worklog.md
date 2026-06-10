@@ -664,3 +664,24 @@ Stage Summary:
 - Auto-disables when end time is reached
 - Admin/dashboard/login/register pages remain accessible during maintenance
 - Files changed: prisma/schema.prisma, api/maintenance/route.ts (new), api/settings/route.ts, middleware.ts, (main)/layout.tsx, components/maintenance-guard.tsx (new), (admin)/admin/parametres/page.tsx, lib/i18n.ts
+---
+Task ID: audit-fixes-1to9
+Agent: Main Agent
+Task: Apply 9 critical audit fixes from security audit
+
+Work Log:
+- Fix 1: Added security headers in middleware (X-Frame-Options: DENY, X-Content-Type-Options: nosniff, Referrer-Policy, Permissions-Policy, HSTS, CSP). Extended matcher to apply to all non-static routes.
+- Fix 2: Added isBlocked check in JWT callback — blocked users are now force-logged-out on next token refresh. Also reduced session maxAge from 30 days to 7 days.
+- Fix 3: Changed /api/ads GET to verify actual admin session instead of trusting unauthenticated `admin=true` query param.
+- Fix 4: Removed SVG from CONTENT_TYPES in both upload routes (uploads/[...path] and serve-image/[filename]) to prevent stored XSS.
+- Fix 5: Masked smtpPassword in GET /api/admin/settings response by destructuring it out before sending.
+- Fix 6: Replaced detailed Prisma error messages with generic user-facing messages in POST /api/admin/businesses and POST /api/settings/test-email.
+- Fix 7: Changed rejectUnauthorized from false to true in SMTP TLS configuration.
+- Fix 8: Added `export const dynamic = 'force-dynamic'` to entreprise/[slug]/page.tsx. Also fixed empty catch {} to log errors.
+- Fix 9: Moved setState during render to useEffect in admin/parametres/page.tsx. Added useEffect import.
+
+Stage Summary:
+- 10 files modified across security, API, and frontend layers
+- All 9 critical audit fixes applied
+- Lint clean (only pre-existing .cjs errors)
+- Dev server compiles without errors

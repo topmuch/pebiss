@@ -12,7 +12,14 @@ export async function GET(request: NextRequest) {
     const businessId = searchParams.get('businessId') || '';
     const position = searchParams.get('position') || '';
     const search = searchParams.get('search') || '';
-    const isAdmin = searchParams.get('admin') === 'true';
+    // Verify admin role from session (not from unauthenticated query param)
+    let isAdmin = false;
+    try {
+      const session = await getServerSession(authOptions);
+      isAdmin = !!(session?.user && (session.user as any).role === 'ADMIN' && searchParams.get('admin') === 'true');
+    } catch {
+      // Not authenticated — stay in public mode
+    }
     const page = Math.max(1, parseInt(searchParams.get('page') || '1') || 1);
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '12') || 12));
     const skip = (page - 1) * limit;

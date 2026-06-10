@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -84,43 +84,45 @@ export default function AdminParametresPage() {
 
   const [initialized, setInitialized] = useState(false);
 
-  // Initialize form when data loads
-  if (config && !initialized) {
-    setForm({
-      siteName: config.siteName || '',
-      logo: config.logo || '',
-      favicon: config.favicon || '',
-      address: config.address || '',
-      phone: config.phone || '',
-      email: config.email || '',
-      seoTitle: config.seoTitle || '',
-      seoDescription: config.seoDescription || '',
-      seoImage: config.seoImage || '',
-      defaultLang: config.defaultLang || 'pt',
-      facebook: config.facebook || '',
-      instagram: config.instagram || '',
-      twitter: config.twitter || '',
-      linkedin: config.linkedin || '',
-      whatsapp: config.whatsapp || '',
-      tiktok: config.tiktok || '',
-      smtpHost: config.smtpHost || '',
-      smtpPort: config.smtpPort || '',
-      smtpUser: config.smtpUser || '',
-      smtpPassword: config.smtpPassword || '',
-      smtpFromName: config.smtpFromName || '',
-      smtpFromEmail: config.smtpFromEmail || '',
-      smtpEncryption: config.smtpEncryption || 'none',
-      notifNewAd: config.notifNewAd ?? true,
-      notifNewReview: config.notifNewReview ?? true,
-      notifWeeklyReport: config.notifWeeklyReport ?? false,
-      notifAdApproved: config.notifAdApproved ?? true,
-      notifWelcome: config.notifWelcome ?? true,
-      maintenanceMode: config.maintenanceMode ?? false,
-      maintenanceMessage: config.maintenanceMessage || '',
-      maintenanceEndTime: config.maintenanceEndTime ? new Date(config.maintenanceEndTime).toISOString().slice(0, 16) : '',
-    });
-    setInitialized(true);
-  }
+  // Initialize form when data loads (useEffect to avoid setState during render)
+  useEffect(() => {
+    if (config && !initialized) {
+      setForm({
+        siteName: config.siteName || '',
+        logo: config.logo || '',
+        favicon: config.favicon || '',
+        address: config.address || '',
+        phone: config.phone || '',
+        email: config.email || '',
+        seoTitle: config.seoTitle || '',
+        seoDescription: config.seoDescription || '',
+        seoImage: config.seoImage || '',
+        defaultLang: config.defaultLang || 'pt',
+        facebook: config.facebook || '',
+        instagram: config.instagram || '',
+        twitter: config.twitter || '',
+        linkedin: config.linkedin || '',
+        whatsapp: config.whatsapp || '',
+        tiktok: config.tiktok || '',
+        smtpHost: config.smtpHost || '',
+        smtpPort: config.smtpPort || '',
+        smtpUser: config.smtpUser || '',
+        smtpPassword: config.smtpPassword || '',
+        smtpFromName: config.smtpFromName || '',
+        smtpFromEmail: config.smtpFromEmail || '',
+        smtpEncryption: config.smtpEncryption || 'none',
+        notifNewAd: config.notifNewAd ?? true,
+        notifNewReview: config.notifNewReview ?? true,
+        notifWeeklyReport: config.notifWeeklyReport ?? false,
+        notifAdApproved: config.notifAdApproved ?? true,
+        notifWelcome: config.notifWelcome ?? true,
+        maintenanceMode: config.maintenanceMode ?? false,
+        maintenanceMessage: config.maintenanceMessage || '',
+        maintenanceEndTime: config.maintenanceEndTime ? new Date(config.maintenanceEndTime).toISOString().slice(0, 16) : '',
+      });
+      setInitialized(true);
+    }
+  }, [config, initialized]);
 
   const updateField = (field: string, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));

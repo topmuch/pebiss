@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import { db } from '@/lib/db'
 import EntrepriseDetailClient from './EntrepriseDetailClient'
 
+export const dynamic = 'force-dynamic';
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.gw'
 const SITE_NAME = 'Pebiss'
 
@@ -162,7 +164,9 @@ export default async function BusinessDetailPage({ params }: Props) {
         _count: { select: { reviews: true } },
       },
     })
-  } catch {}
+  } catch (error) {
+    console.error('[entreprise/slug] Error fetching business:', error);
+  }
 
   return (
     <>

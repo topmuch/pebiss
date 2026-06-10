@@ -252,9 +252,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ business }, { status: 201 });
   } catch (error) {
     console.error('[POST /api/admin/businesses] Error creating business:', error);
-    const msg = error instanceof Error ? error.message : 'Erreur lors de la création de l\'entreprise';
     return NextResponse.json(
-      { error: msg },
+      { error: 'Erreur lors de la création de l\'entreprise' },
       { status: 500 }
     );
   }

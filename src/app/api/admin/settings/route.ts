@@ -27,7 +27,9 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json(config);
+    // Hide sensitive SMTP password from the response
+    const { smtpPassword, ...safeConfig } = config;
+    return NextResponse.json(safeConfig);
   } catch (error) {
     console.error('Error fetching admin settings:', error);
     return NextResponse.json(

@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     // Add TLS option for explicit TLS
     if (config.smtpEncryption === 'tls') {
       (transportOptions as any).tls = {
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
       };
     }
 
@@ -101,11 +101,10 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error sending test email:', error);
-    const message = error?.message || 'Erreur lors de l\'envoi de l\'email de test';
     return NextResponse.json(
-      { error: message },
+      { error: 'Erreur lors de l\'envoi de l\'email de test. Vérifiez votre configuration SMTP.' },
       { status: 500 }
     );
   }
