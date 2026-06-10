@@ -257,6 +257,7 @@ const fr: Record<string, string> = {
   'social_page_whatsapp_desc': 'Contactez-nous directement sur WhatsApp pour un support rapide et personnalisé.',
   'social_page_followers': 'abonnés',
   'social_page_follow': 'Suivre',
+  'social_page_coming_soon': 'Bientôt disponible',
   // Advertising page
   'ads_page_title': 'Faire la publicité',
   'ads_page_subtitle': 'Boostez la visibilité de votre entreprise et atteignez des milliers de clients potentiels sur Pebiss.',
@@ -1144,6 +1145,7 @@ const pt: Record<string, string> = {
   'social_page_whatsapp_desc': 'Contacte-nos diretamente no WhatsApp para um suporte rápido e personalizado.',
   'social_page_followers': 'seguidores',
   'social_page_follow': 'Seguir',
+  'social_page_coming_soon': 'Em breve disponível',
   // Advertising page
   'ads_page_title': 'Publicidade',
   'ads_page_subtitle': 'Aumente a visibilidade da sua empresa e alcance milhares de clientes potenciais no Pebiss.',
