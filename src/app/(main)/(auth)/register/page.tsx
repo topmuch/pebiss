@@ -212,14 +212,23 @@ export default function RegisterPage() {
         throw new Error(data.error || t('register_error_generic'));
       }
 
-      // Auto-login
-      const result = await signIn('credentials', {
-        email: ownerEmail,
-        password,
-        redirect: false,
-      });
-
-      setIsComplete(true);
+      // Auto-login (best effort — if it fails, account is still created)
+      try {
+        const result = await signIn('credentials', {
+          email: ownerEmail,
+          password,
+          redirect: false,
+        });
+        if (result?.ok) {
+          setIsComplete(true);
+        } else {
+          // Login failed but account created — redirect to login page
+          router.push('/login');
+        }
+      } catch {
+        // signIn can throw in some environments — account still created
+        router.push('/login');
+      }
     } catch (error) {
       toast({
         title: t('register_error_generic'),
