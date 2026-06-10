@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.gw'
 
 export const metadata: Metadata = {
   title: 'Annuaire des Entreprises de Guinée-Bissau - Rechercher et Trouver',

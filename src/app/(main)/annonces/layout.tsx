@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.gw'
 
 export const metadata: Metadata = {
   title: 'Annonces et Publicités - Promouvez votre Activité',

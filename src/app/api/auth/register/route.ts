@@ -25,6 +25,8 @@ export async function POST(request: NextRequest) {
       linkedin,
       whatsapp,
       tiktok,
+      coverImage,
+      country,
     } = body;
 
     // Validation
@@ -100,6 +102,8 @@ export async function POST(request: NextRequest) {
         ...(linkedin && { linkedin }),
         ...(whatsapp && { whatsapp }),
         ...(tiktok && { tiktok }),
+        ...(coverImage && { coverImage }),
+        ...(country && { country }),
       },
     });
 

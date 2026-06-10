@@ -5,7 +5,7 @@ import { db } from '@/lib/db'
 export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.gw'
 
   // Fetch all active, non-suspended businesses
   const businesses = await db.business.findMany({

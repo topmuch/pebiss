@@ -1,7 +1,7 @@
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.gw';
 
 // JSON-LD WebSite schema — helps Google understand site search
 function WebSiteJsonLd() {

@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { db } from '@/lib/db'
 import EntrepriseDetailClient from './EntrepriseDetailClient'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.gw'
 const SITE_NAME = 'Pebiss'
 
 interface Props {

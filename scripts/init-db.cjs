@@ -45,7 +45,7 @@ async function main() {
     });
 
     let admin;
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@pebiss.sn';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@pebiss.gw';
     const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123456';
     const adminName = process.env.ADMIN_NAME || 'Administrateur Pebiss';
     const hashedPassword = await bcrypt.hash(adminPassword, 12);

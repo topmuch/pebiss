@@ -602,3 +602,32 @@ Stage Summary:
 - TikTok added to footer social media links
 - Fixed homepage rendering by removing accidental placeholder page.tsx
 - Files changed: layout.tsx, (main)/layout.tsx, footer.tsx, EntrepriseDetailClient.tsx, admin-edit-business-dialog.tsx (new), i18n.ts
+---
+Task ID: 7
+Agent: Main Agent
+Task: Create multi-step onboarding registration flow + fix remaining items
+
+Work Log:
+- Explored codebase to confirm status of all pending tasks
+- Found that SEO metadata, superadmin edit button, country restriction removal, TikTok links, and Sénégal→Guinée-Bissau text adaptation were all already completed in previous sessions
+- Created `/api/upload/route.ts` — POST endpoint for file uploads (validates type, size 5MB max, generates UUID filenames, stores in persistent uploads dir)
+- Updated `/api/auth/register/route.ts` to accept `coverImage` and `country` fields
+- Added 43 new i18n keys (FR + PT) for the 4-step onboarding wizard
+- Completely rewrote `/register/page.tsx` with multi-step onboarding wizard:
+  - Step 1: Business name + Category (required)
+  - Step 2: Full name + Email + Password + Confirm (required)
+  - Step 3: Address + City + Country (optional)
+  - Step 4: Cover photo upload with drag & drop (optional)
+  - Animated step transitions with Framer Motion
+  - Progress bar and step indicators with colored icons
+  - Completion screen with confetti animation and CTA to dashboard/profile
+- Installed `framer-motion` package
+- Changed `pebiss.sn` → `pebiss.gw` in 13 files (all source files + compose.yml + init-db.cjs)
+- Verified all changes compile and render correctly with agent-browser
+
+Stage Summary:
+- Registration page now has a smooth 4-step onboarding wizard
+- Upload API created at `/api/upload` (POST) for image uploads
+- All `pebiss.sn` references replaced with `pebiss.gw`
+- No remaining Sénégal/Senegal references in source code
+- All tasks from previous sessions confirmed complete

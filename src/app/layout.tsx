@@ -23,7 +23,7 @@ export const viewport = {
   themeColor: '#0066CC',
 };
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.gw';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
