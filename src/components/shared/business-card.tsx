@@ -36,10 +36,18 @@ interface BusinessCardProps {
   variant?: 'grid' | 'list';
 }
 
-// Cover image with error fallback + loading state
+// Cover image with error fallback + loading state + retry with reliable endpoint
 function CoverImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
   const [error, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [imgSrc, setImgSrc] = useState(src);
+
+  // Convert /api/uploads/filename to /api/serve-image/filename (more reliable in standalone)
+  const getReliableSrc = (url: string) => {
+    const match = url.match(/\/api\/uploads\/(.+)$/);
+    return match ? `/api/serve-image/${match[1]}` : url;
+  };
+
   if (error) {
     return (
       <div className={`bg-muted flex items-center justify-center ${className}`}>
@@ -53,11 +61,18 @@ function CoverImage({ src, alt, className }: { src: string; alt: string; classNa
         <div className="absolute inset-0 bg-muted animate-pulse" />
       )}
       <img
-        src={src}
+        src={imgSrc}
         alt={alt}
         className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         onLoad={() => setLoaded(true)}
-        onError={() => setError(true)}
+        onError={() => {
+          // First error: retry with the reliable single-segment endpoint
+          if (imgSrc.startsWith('/api/uploads/')) {
+            setImgSrc(getReliableSrc(imgSrc));
+          } else {
+            setError(true);
+          }
+        }}
       />
     </div>
   );

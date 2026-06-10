@@ -52,7 +52,9 @@ export async function GET(
       headers: {
         'Content-Type': contentType,
         'Content-Length': fileStat.size.toString(),
-        'Cache-Control': 'public, max-age=31536000, immutable',
+        // Allow browser revalidation — don't use 'immutable'
+        // so images refresh correctly after redeployment
+        'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
         'X-Content-Type-Options': 'nosniff',
       },
     });

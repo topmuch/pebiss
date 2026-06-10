@@ -19,19 +19,19 @@ function getContentType(filename: string): string {
   return CONTENT_TYPES[ext] || 'application/octet-stream';
 }
 
-// GET /uploads/[...path] - Serve uploaded files directly
-// Fallback route in case the middleware rewrite doesn't work
+// GET /api/serve-image/[filename] - Reliable image serving (single segment, no catch-all)
+// This route works reliably in Next.js standalone mode (Docker/Coolify)
+// Falls back from /api/uploads/[...path] which can be unreliable in standalone builds
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const { path } = await params;
-    const filename = path.join('/');
+    const { filename } = await params;
 
     // Prevent path traversal attacks
-    if (filename.includes('..') || filename.startsWith('/')) {
-      return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
+    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+      return NextResponse.json({ error: 'Invalid filename' }, { status: 400 });
     }
 
     // Persistent uploads directory (same volume as database)
@@ -58,7 +58,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    // File not found or other error
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 }
