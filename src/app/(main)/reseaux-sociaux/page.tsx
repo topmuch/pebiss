@@ -5,6 +5,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Facebook, Instagram, Twitter, Linkedin, MessageCircle } from 'lucide-react';
 
+function TikTokIcon({ className = 'h-8 w-8' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15a6.34 6.34 0 0010.68 4.61V12.7a8.28 8.28 0 005.76 2.29V11.5a4.83 4.83 0 01-3.77-1.58V6.69h3.77z"/>
+    </svg>
+  );
+}
+
 const socialNetworks = [
   {
     key_name: 'social_page_facebook',
@@ -40,6 +48,15 @@ const socialNetworks = [
     Icon: Linkedin,
     color: 'bg-[#0A66C2]',
     hoverColor: 'hover:bg-[#0A66C2]/90',
+    url: '#',
+  },
+  {
+    key_name: 'social_page_tiktok',
+    key_desc: 'social_page_tiktok_desc',
+    followers: '10K',
+    Icon: TikTokIcon,
+    color: 'bg-black dark:bg-white dark:text-black',
+    hoverColor: 'hover:bg-gray-800 dark:hover:bg-gray-200',
     url: '#',
   },
   {
