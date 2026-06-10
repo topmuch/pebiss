@@ -1,5 +1,6 @@
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { MaintenanceGuard } from '@/components/maintenance-guard';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.gw';
 
@@ -70,12 +71,14 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <WebSiteJsonLd />
-      <OrganizationJsonLd />
-      <Header />
-      <main className="flex-1">{children}</main>
-      <Footer />
-    </div>
+    <MaintenanceGuard>
+      <div className="min-h-screen flex flex-col">
+        <WebSiteJsonLd />
+        <OrganizationJsonLd />
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </div>
+    </MaintenanceGuard>
   );
 }

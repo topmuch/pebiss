@@ -187,6 +187,10 @@ model SiteConfig {
   notifWeeklyReport Boolean @default(false)
   notifAdApproved  Boolean @default(true)
   notifWelcome     Boolean @default(true)
+  // Maintenance mode
+  maintenanceMode      Boolean   @default(false)
+  maintenanceMessage   String?
+  maintenanceEndTime   DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }

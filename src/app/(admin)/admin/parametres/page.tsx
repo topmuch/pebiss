@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Settings, Globe, Search, Share2, Mail, Bell, ImageIcon, Upload } from 'lucide-react';
+import { Settings, Globe, Search, Share2, Mail, Bell, ImageIcon, Upload, Wrench, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
 function TikTokIcon({ className = "h-5 w-5" }: { className?: string }) {
@@ -76,6 +76,10 @@ export default function AdminParametresPage() {
     notifWeeklyReport: false,
     notifAdApproved: true,
     notifWelcome: true,
+    // Maintenance
+    maintenanceMode: false,
+    maintenanceMessage: '',
+    maintenanceEndTime: '',
   });
 
   const [initialized, setInitialized] = useState(false);
@@ -111,6 +115,9 @@ export default function AdminParametresPage() {
       notifWeeklyReport: config.notifWeeklyReport ?? false,
       notifAdApproved: config.notifAdApproved ?? true,
       notifWelcome: config.notifWelcome ?? true,
+      maintenanceMode: config.maintenanceMode ?? false,
+      maintenanceMessage: config.maintenanceMessage || '',
+      maintenanceEndTime: config.maintenanceEndTime ? new Date(config.maintenanceEndTime).toISOString().slice(0, 16) : '',
     });
     setInitialized(true);
   }
@@ -233,6 +240,10 @@ export default function AdminParametresPage() {
           <TabsTrigger value="notifications" className="gap-2">
             <Bell className="h-4 w-4" />
             {t('admin_settings_tab_notifications')}
+          </TabsTrigger>
+          <TabsTrigger value="maintenance" className="gap-2">
+            <Wrench className="h-4 w-4" />
+            {t('admin_settings_tab_maintenance')}
           </TabsTrigger>
         </TabsList>
 
@@ -656,6 +667,71 @@ export default function AdminParametresPage() {
                     onCheckedChange={(checked) => updateField('notifWelcome', checked)}
                   />
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Maintenance Tab */}
+        <TabsContent value="maintenance" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">{t('admin_settings_maintenance_title')}</CardTitle>
+              <CardDescription>{t('admin_settings_maintenance_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-lg border">
+                <div className="space-y-0.5">
+                  <p className="font-medium text-sm">
+                    {form.maintenanceMode
+                      ? t('admin_settings_maintenance_active')
+                      : t('admin_settings_maintenance_disable')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t('admin_settings_maintenance_enable')}
+                  </p>
+                </div>
+                <Switch
+                  checked={form.maintenanceMode}
+                  onCheckedChange={(checked) => updateField('maintenanceMode', checked)}
+                />
+              </div>
+
+              {/* Warning */}
+              {form.maintenanceMode && (
+                <div className="flex items-start gap-3 p-4 rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800">
+                  <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                  <p className="text-sm text-amber-800 dark:text-amber-200">
+                    {t('admin_settings_maintenance_warning')}
+                  </p>
+                </div>
+              )}
+
+              <Separator />
+
+              {/* Message */}
+              <div className="space-y-2">
+                <Label>{t('admin_settings_maintenance_message')}</Label>
+                <Textarea
+                  value={form.maintenanceMessage}
+                  onChange={(e) => updateField('maintenanceMessage', e.target.value)}
+                  placeholder={t('admin_settings_maintenance_message_placeholder')}
+                  rows={3}
+                />
+              </div>
+
+              {/* End time */}
+              <div className="space-y-2">
+                <Label>{t('admin_settings_maintenance_end_time')}</Label>
+                <Input
+                  type="datetime-local"
+                  value={form.maintenanceEndTime}
+                  onChange={(e) => updateField('maintenanceEndTime', e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t('admin_settings_maintenance_end_time_hint')}
+                </p>
               </div>
             </CardContent>
           </Card>

@@ -116,6 +116,9 @@ export async function PUT(request: NextRequest) {
       notifWeeklyReport,
       notifAdApproved,
       notifWelcome,
+      maintenanceMode,
+      maintenanceMessage,
+      maintenanceEndTime,
     } = body;
 
     let config = await db.siteConfig.findFirst();
@@ -150,6 +153,9 @@ export async function PUT(request: NextRequest) {
           notifWeeklyReport: notifWeeklyReport ?? false,
           notifAdApproved: notifAdApproved ?? true,
           notifWelcome: notifWelcome ?? true,
+          maintenanceMode: maintenanceMode ?? false,
+          maintenanceMessage,
+          maintenanceEndTime: maintenanceEndTime ? new Date(maintenanceEndTime) : null,
         },
       });
     } else {
@@ -183,6 +189,11 @@ export async function PUT(request: NextRequest) {
           ...(notifWeeklyReport !== undefined && { notifWeeklyReport }),
           ...(notifAdApproved !== undefined && { notifAdApproved }),
           ...(notifWelcome !== undefined && { notifWelcome }),
+          ...(maintenanceMode !== undefined && { maintenanceMode }),
+          ...(maintenanceMessage !== undefined && { maintenanceMessage }),
+          ...(maintenanceEndTime !== undefined && {
+            maintenanceEndTime: maintenanceEndTime ? new Date(maintenanceEndTime) : null,
+          }),
         },
       });
     }

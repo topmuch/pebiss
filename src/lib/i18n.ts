@@ -878,6 +878,27 @@ const fr: Record<string, string> = {
   'banners_no_results_desc': 'Il n\'y a pas encore de bannières actives.',
   'banners_view_details': 'Voir les détails',
   'banners_count': '{count} bannière(s)',
+  // Maintenance page
+  'maintenance_title': 'Site en maintenance',
+  'maintenance_default_message': 'Nous effectuons une mise à jour pour améliorer votre expérience. Nous serons de retour très bientôt !',
+  'maintenance_days': 'Jours',
+  'maintenance_hours': 'Heures',
+  'maintenance_minutes': 'Minutes',
+  'maintenance_seconds': 'Secondes',
+  'maintenance_refresh': 'Vérifier maintenant',
+  'maintenance_progress': 'Travaux en cours...',
+  // Maintenance settings (admin)
+  'admin_settings_tab_maintenance': 'Maintenance',
+  'admin_settings_maintenance_title': 'Mode maintenance',
+  'admin_settings_maintenance_desc': 'Activez le mode maintenance pour rendre le site inaccessible temporairement.',
+  'admin_settings_maintenance_enable': 'Activer le mode maintenance',
+  'admin_settings_maintenance_disable': 'Désactivé — le site est accessible',
+  'admin_settings_maintenance_active': 'Activé — le site est en maintenance',
+  'admin_settings_maintenance_message': 'Message de maintenance',
+  'admin_settings_maintenance_message_placeholder': 'Nous effectuons une mise à jour. Revenez bientôt !',
+  'admin_settings_maintenance_end_time': 'Date/heure de fin estimée',
+  'admin_settings_maintenance_end_time_hint': 'Laissez vide pour une durée indéterminée. Le minuteur s\'arrêtera automatiquement à l\'heure indiquée.',
+  'admin_settings_maintenance_warning': 'Attention : quand le mode maintenance est activé, seuls les administrateurs et le tableau de bord restent accessibles.',
 };
 
 // Portuguese translations
@@ -1743,6 +1764,27 @@ const pt: Record<string, string> = {
   'banners_no_results_desc': 'Ainda não há banners ativos.',
   'banners_view_details': 'Ver detalhes',
   'banners_count': '{count} banner(s)',
+  // Maintenance page
+  'maintenance_title': 'Site em manutenção',
+  'maintenance_default_message': 'Estamos a realizar uma atualização para melhorar a sua experiência. Voltaremos em breve !',
+  'maintenance_days': 'Dias',
+  'maintenance_hours': 'Horas',
+  'maintenance_minutes': 'Minutos',
+  'maintenance_seconds': 'Segundos',
+  'maintenance_refresh': 'Verificar agora',
+  'maintenance_progress': 'Trabalhos em curso...',
+  // Maintenance settings (admin)
+  'admin_settings_tab_maintenance': 'Manutenção',
+  'admin_settings_maintenance_title': 'Modo manutenção',
+  'admin_settings_maintenance_desc': 'Ative o modo manutenção para tornar o site inacessível temporariamente.',
+  'admin_settings_maintenance_enable': 'Ativar modo manutenção',
+  'admin_settings_maintenance_disable': 'Desativado — o site está acessível',
+  'admin_settings_maintenance_active': 'Ativado — o site está em manutenção',
+  'admin_settings_maintenance_message': 'Mensagem de manutenção',
+  'admin_settings_maintenance_message_placeholder': 'Estamos a atualizar. Volte em breve !',
+  'admin_settings_maintenance_end_time': 'Data/hora prevista de fim',
+  'admin_settings_maintenance_end_time_hint': 'Deixe vazio para duração indeterminada. O temporizador parará automaticamente na hora indicada.',
+  'admin_settings_maintenance_warning': 'Atenção : quando o modo manutenção está ativado, apenas os administradores e o painel permanecem acessíveis.',
 };
 
 // Category name translation map: slug -> { fr: string, pt: string }

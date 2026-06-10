@@ -631,3 +631,36 @@ Stage Summary:
 - All `pebiss.sn` references replaced with `pebiss.gw`
 - No remaining Sénégal/Senegal references in source code
 - All tasks from previous sessions confirmed complete
+---
+Task ID: 15
+Agent: Main Agent
+Task: Create maintenance mode page with countdown timer and admin toggle in settings
+
+Work Log:
+- Added 3 new fields to Prisma SiteConfig: maintenanceMode (Boolean), maintenanceMessage (String?), maintenanceEndTime (DateTime?)
+- Ran `bun run db:push` and `bunx prisma generate` to sync schema
+- Created `/api/maintenance/route.ts` (GET): Public endpoint returning maintenance status, auto-disables when end time passes
+- Updated `/api/settings/route.ts` (PUT): Added maintenanceMode, maintenanceMessage, maintenanceEndTime to body destructuring and update data
+- Updated middleware (`src/middleware.ts`): Kept simple `/uploads/` rewrite only (Edge runtime can't use Prisma)
+- Created `MaintenanceGuard` component (`src/components/maintenance-guard.tsx`): Client-side guard that wraps main layout
+  - Fetches `/api/maintenance` on page load
+  - Shows full-screen maintenance overlay with countdown timer when active
+  - Exempt paths: /admin, /dashboard, /login, /register, /maintenance
+  - Shows loading spinner while checking, renders children when inactive
+- Updated `(main)/layout.tsx`: Wrapped content with `<MaintenanceGuard>`
+- Added maintenance tab to admin parametres page (`/admin/paramres`):
+  - Toggle switch to enable/disable maintenance mode
+  - Custom message textarea for maintenance notification
+  - datetime-local input for estimated end time
+  - Warning alert when maintenance is active
+- Added 22 new i18n keys in both FR and PT:
+  - Maintenance page: title, default_message, days, hours, minutes, seconds, refresh, progress
+  - Admin settings: tab name, title, description, enable/disable labels, message placeholder, end time, hint, warning
+
+Stage Summary:
+- Maintenance mode fully implemented with admin toggle and public countdown timer page
+- Admin can activate maintenance from Settings > Maintenance tab (toggle, message, end time)
+- When active, all public pages show full-screen overlay with animated countdown timer
+- Auto-disables when end time is reached
+- Admin/dashboard/login/register pages remain accessible during maintenance
+- Files changed: prisma/schema.prisma, api/maintenance/route.ts (new), api/settings/route.ts, middleware.ts, (main)/layout.tsx, components/maintenance-guard.tsx (new), (admin)/admin/parametres/page.tsx, lib/i18n.ts
