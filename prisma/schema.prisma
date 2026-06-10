@@ -55,6 +55,7 @@ model Business {
   twitter     String?
   linkedin    String?
   whatsapp    String?
+  tiktok      String?
   keywords    String?
   categoryId  String?
   ownerId     String
@@ -171,6 +172,7 @@ model SiteConfig {
   twitter        String?
   linkedin       String?
   whatsapp       String?
+  tiktok         String?
   // SMTP
   smtpHost       String?
   smtpPort       String?

@@ -35,6 +35,14 @@ import {
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
 
+function TikTokIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15a6.34 6.34 0 0010.68 4.61V12.7a8.28 8.28 0 005.76 2.29V11.5a4.83 4.83 0 01-3.77-1.58V6.69h3.77z"/>
+    </svg>
+  );
+}
+
 interface Category {
   id: string;
   name: string;
@@ -53,7 +61,7 @@ export default function RegisterPage() {
   const [categoryId, setCategoryId] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
-  const [country] = useState('Sénégal');
+  const [country, setCountry] = useState('');
   const [businessPhone, setBusinessPhone] = useState('');
   const [businessEmail, setBusinessEmail] = useState('');
   const [website, setWebsite] = useState('');
@@ -71,6 +79,7 @@ export default function RegisterPage() {
   const [twitter, setTwitter] = useState('');
   const [linkedin, setLinkedin] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
+  const [tiktok, setTiktok] = useState('');
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['categories'],
@@ -122,6 +131,8 @@ export default function RegisterPage() {
           twitter: twitter || undefined,
           linkedin: linkedin || undefined,
           whatsapp: whatsapp || undefined,
+          tiktok: tiktok || undefined,
+          country: country || undefined,
         }),
       });
 
@@ -244,7 +255,7 @@ export default function RegisterPage() {
                   <Label htmlFor="city">{t('register_city')} *</Label>
                   <Input
                     id="city"
-                    placeholder={t('register_city_placeholder')}
+                    placeholder="Ex: Bissau"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     required
@@ -255,7 +266,12 @@ export default function RegisterPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="country">{t('register_country')}</Label>
-                  <Input id="country" value={country} disabled className="bg-muted/50" />
+                  <Input
+                    id="country"
+                    placeholder={t('register_country')}
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="businessPhone">{t('register_phone')}</Label>
@@ -280,7 +296,7 @@ export default function RegisterPage() {
                     <Input
                       id="businessEmail"
                       type="email"
-                      placeholder="contact@entreprise.sn"
+                      placeholder="contact@entreprise.gw"
                       value={businessEmail}
                       onChange={(e) => setBusinessEmail(e.target.value)}
                       className="pl-10"
@@ -293,7 +309,7 @@ export default function RegisterPage() {
                     <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="website"
-                      placeholder="www.entreprise.sn"
+                      placeholder="www.entreprise.gw"
                       value={website}
                       onChange={(e) => setWebsite(e.target.value)}
                       className="pl-10"
@@ -459,9 +475,21 @@ export default function RegisterPage() {
                   </Label>
                   <Input
                     id="whatsapp"
-                    placeholder="+221 7X XXX XX XX"
+                    placeholder="+245 9X XXX XXXX"
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tiktok" className="flex items-center gap-2">
+                    <TikTokIcon className="h-4 w-4" />
+                    TikTok
+                  </Label>
+                  <Input
+                    id="tiktok"
+                    placeholder="https://tiktok.com/@username"
+                    value={tiktok}
+                    onChange={(e) => setTiktok(e.target.value)}
                   />
                 </div>
               </div>

@@ -49,21 +49,16 @@ interface Business {
   category?: { id: string; name: string; slug: string } | null;
 }
 
-const SENEGAL_REGIONS = [
-  'Dakar',
-  'Ziguinchor',
-  'Diourbel',
-  'Saint-Louis',
-  'Tambacounda',
-  'Kaolack',
-  'Thiès',
-  'Louga',
-  'Fatick',
-  'Kolda',
-  'Matam',
-  'Kaffrine',
-  'Kédougou',
-  'Sédhiou',
+const GUINEA_BISSAU_REGIONS = [
+  'Bissau',
+  'Biombo',
+  'Cacheu',
+  'Oio',
+  'Bafatá',
+  'Gabú',
+  'Tombali',
+  'Quinara',
+  'Bolama-Bijagós',
 ];
 
 function AnnuaireContent() {
@@ -182,7 +177,7 @@ function AnnuaireContent() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t('annuaire_all_regions')}</SelectItem>
-                    {SENEGAL_REGIONS.map((r) => (
+                    {GUINEA_BISSAU_REGIONS.map((r) => (
                       <SelectItem key={r} value={r}>
                         {r}
                       </SelectItem>

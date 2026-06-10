@@ -4,17 +4,17 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn'
 
 export const metadata: Metadata = {
   title: 'Publicité - Advertise Your Business on Pebiss',
-  description: 'Boostez votre visibilité avec Pebiss. Solutions publicitaires pour entreprises au Sénégal : bannières, annonces sponsorisées et référencement professionnel.',
+  description: 'Boostez votre visibilité avec Pebiss. Solutions publicitaires pour entreprises en Guinée-Bissau : bannières, annonces sponsorisées et référencement professionnel.',
   keywords: [
-    'publicité Sénégal',
+    'publicité Guinée-Bissau',
     'annonces sponsorisées',
     'bannières publicitaires',
-    'marketing digital Sénégal',
+    'marketing digital Guinée-Bissau',
     'visibilité entreprise',
   ],
   openGraph: {
     title: 'Publicité - Pebiss',
-    description: 'Boostez votre visibilité avec Pebiss. Solutions publicitaires pour entreprises au Sénégal.',
+    description: 'Boostez votre visibilité avec Pebiss. Solutions publicitaires pour entreprises en Guinée-Bissau.',
     url: `${SITE_URL}/publicite`,
     images: [{ url: `${SITE_URL}/hero-banner.jpg`, width: 1344, height: 768 }],
   },

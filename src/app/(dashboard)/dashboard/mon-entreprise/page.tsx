@@ -39,6 +39,14 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+function TikTokIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15a6.34 6.34 0 0010.68 4.61V12.7a8.28 8.28 0 005.76 2.29V11.5a4.83 4.83 0 01-3.77-1.58V6.69h3.77z"/>
+    </svg>
+  );
+}
+
 const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
 export default function MonEntreprisePage() {
@@ -48,8 +56,8 @@ export default function MonEntreprisePage() {
   const [activeTab, setActiveTab] = useState('info');
   const [formData, setFormData] = useState({
     name: '', description: '', categoryId: '', keywords: '',
-    phone: '', email: '', website: '', address: '', city: '', country: 'Sénégal',
-    facebook: '', instagram: '', twitter: '', linkedin: '', whatsapp: '',
+    phone: '', email: '', website: '', address: '', city: '', country: '',
+    facebook: '', instagram: '', twitter: '', linkedin: '', whatsapp: '', tiktok: '',
   });
   const [hours, setHours] = useState<Record<number, { openTime: string; closeTime: string; isClosed: boolean }>>({});
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -78,12 +86,13 @@ export default function MonEntreprisePage() {
         website: business.website || '',
         address: business.address || '',
         city: business.city || '',
-        country: business.country || 'Sénégal',
+        country: business.country || '',
         facebook: business.facebook || '',
         instagram: business.instagram || '',
         twitter: business.twitter || '',
         linkedin: business.linkedin || '',
         whatsapp: business.whatsapp || '',
+        tiktok: business.tiktok || '',
       });
       setLogoPreview(business.logo || null);
       setCoverPreview(business.coverImage || null);
@@ -203,6 +212,7 @@ export default function MonEntreprisePage() {
       twitter: formData.twitter,
       linkedin: formData.linkedin,
       whatsapp: formData.whatsapp,
+      tiktok: formData.tiktok,
     });
   };
 
@@ -345,7 +355,7 @@ export default function MonEntreprisePage() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="contact@entreprise.sn"
+                    placeholder="contact@entreprise.gw"
                   />
                 </div>
               </div>
@@ -355,7 +365,7 @@ export default function MonEntreprisePage() {
                   id="website"
                   value={formData.website}
                   onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                  placeholder="https://www.entreprise.sn"
+                  placeholder="https://www.entreprise.gw"
                 />
               </div>
               <div className="space-y-2">
@@ -374,7 +384,7 @@ export default function MonEntreprisePage() {
                     id="city"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    placeholder="Dakar"
+                    placeholder="Bissau"
                   />
                 </div>
                 <div className="space-y-2">
@@ -383,7 +393,7 @@ export default function MonEntreprisePage() {
                     id="country"
                     value={formData.country}
                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                    placeholder="Sénégal"
+                    placeholder="Guinée-Bissau"
                   />
                 </div>
               </div>
@@ -465,6 +475,18 @@ export default function MonEntreprisePage() {
                     value={formData.whatsapp}
                     onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
                     placeholder="+245 XXX XXXX"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tiktok" className="flex items-center gap-2">
+                    <TikTokIcon className="h-4 w-4" />
+                    TikTok
+                  </Label>
+                  <Input
+                    id="tiktok"
+                    value={formData.tiktok}
+                    onChange={(e) => setFormData({ ...formData, tiktok: e.target.value })}
+                    placeholder="https://tiktok.com/@username"
                   />
                 </div>
               </div>

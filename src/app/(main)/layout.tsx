@@ -10,7 +10,7 @@ function WebSiteJsonLd() {
     '@type': 'WebSite',
     name: 'Pebiss',
     url: SITE_URL,
-    description: 'Le premier annuaire professionnel du Sénégal',
+    description: 'Le premier annuaire professionnel de Guinée-Bissau',
     inLanguage: ['fr', 'pt'],
     potentialAction: {
       '@type': 'SearchAction',
@@ -38,7 +38,7 @@ function OrganizationJsonLd() {
     name: 'Pebiss',
     url: SITE_URL,
     logo: `${SITE_URL}/pebiss-logo.png`,
-    description: 'Le premier annuaire professionnel du Sénégal. Référencez votre entreprise et soyez visible.',
+    description: 'Le premier annuaire professionnel de Guinée-Bissau. Référencez votre entreprise et soyez visible.',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Bissau',

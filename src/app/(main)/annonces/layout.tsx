@@ -4,13 +4,13 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn'
 
 export const metadata: Metadata = {
   title: 'Annonces et Publicités - Promouvez votre Activité',
-  description: 'Découvrez les annonces et publicités sur Pebiss. Promouvez votre entreprise, service ou produit auprès de milliers de clients potentiels au Sénégal.',
+  description: 'Découvrez les annonces et publicités sur Pebiss. Promouvez votre entreprise, service ou produit auprès de milliers de clients potentiels en Guinée-Bissau.',
   keywords: [
-    'annonces Sénégal',
-    'publicité Sénégal',
+    'annonces Guinée-Bissau',
+    'publicité Guinée-Bissau',
     'promouvoir entreprise',
     'publicité professionnelle',
-    'marketing Sénégal',
+    'marketing Guinée-Bissau',
   ],
   openGraph: {
     title: 'Annonces et Publicités - Pebiss',

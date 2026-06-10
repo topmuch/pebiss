@@ -197,7 +197,7 @@ export function AdBanner1() {
   return (
     <AdBanner
       title="Boostez votre visibilité"
-      subtitle="Diffusez vos produits et services auprès de milliers de clients au Sénégal"
+      subtitle="Diffusez vos produits et services auprès de milliers de clients en Guinée-Bissau"
       ctaText="Promouvoir"
       ctaLink="/register"
       variant="dark"
@@ -209,7 +209,7 @@ export function AdBanner2() {
   return (
     <AdBanner
       title="Inscrivez votre entreprise"
-      subtitle="Rejoignez le plus grand annuaire d'entreprises au Sénégal gratuitement"
+      subtitle="Rejoignez le plus grand annuaire d'entreprises en Guinée-Bissau gratuitement"
       ctaText="S'inscrire"
       ctaLink="/register"
       variant="gradient"
@@ -233,7 +233,7 @@ export function AdBanner4() {
   return (
     <AdBanner
       title="Développez votre réseau"
-      subtitle="Connectez-vous avec des professionnels et partenaires partout au Sénégal"
+      subtitle="Connectez-vous avec des professionnels et partenaires partout en Guinée-Bissau"
       ctaText="Rejoindre"
       ctaLink="/register"
       variant="light"
@@ -259,7 +259,7 @@ export function AdBannerImmobilier() {
     <AdBanner
       image="/ad-banners/ad-immobilier.png"
       title="Immobilier Premium"
-      subtitle="Trouvez les meilleures offres immobilières au Sénégal"
+      subtitle="Trouvez les meilleures offres immobilières en Guinée-Bissau"
       ctaText="Voir annonces"
       ctaLink="/annuaire?category=immobilier"
     />
@@ -283,7 +283,7 @@ export function AdBannerRestaurant() {
     <AdBanner
       image="/ad-banners/ad-restaurant.png"
       title="Restaurants & Cuisine"
-      subtitle="Découvrez les meilleures adresses culinaires de Dakar"
+      subtitle="Découvrez les meilleures adresses culinaires de Bissau"
       ctaText="Réserver"
       ctaLink="/annuaire?category=restaurants"
     />

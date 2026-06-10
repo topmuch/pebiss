@@ -75,6 +75,7 @@ interface BusinessData {
   twitter?: string | null;
   linkedin?: string | null;
   whatsapp?: string | null;
+  tiktok?: string | null;
   keywords?: string | null;
   isActive: boolean;
   views: number;
@@ -109,6 +110,14 @@ interface SimilarBusiness {
   avgRating?: number;
   _count?: { reviews: number };
   category?: { id: string; name: string; slug: string } | null;
+}
+
+function TikTokIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15a6.34 6.34 0 0010.68 4.61V12.7a8.28 8.28 0 005.76 2.29V11.5a4.83 4.83 0 01-3.77-1.58V6.69h3.77z"/>
+    </svg>
+  );
 }
 
 const DAY_NAMES = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
@@ -540,7 +549,7 @@ export default function EntrepriseDetailClient() {
                   </p>
                   {(() => {
                     const mapQuery = [business.address, business.city, business.region, business.country].filter(Boolean).join(', ');
-                    const encodedQuery = encodeURIComponent(mapQuery || 'Sénégal');
+                    const encodedQuery = encodeURIComponent(mapQuery || 'Guinée-Bissau');
                     return (
                       <iframe
                         src={`https://maps.google.com/maps?q=${encodedQuery}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
@@ -871,7 +880,7 @@ export default function EntrepriseDetailClient() {
                 )}
 
                 {/* Social Links */}
-                {(business.facebook || business.instagram || business.twitter || business.linkedin) && (
+                {(business.facebook || business.instagram || business.twitter || business.linkedin || business.tiktok) && (
                   <div className="flex items-center gap-2 pt-2 border-t border-[#F0F0F0]">
                     {business.facebook && (
                       <a href={business.facebook} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded bg-[#F6F6F6] flex items-center justify-center hover:bg-[#eee] transition-colors">
@@ -891,6 +900,11 @@ export default function EntrepriseDetailClient() {
                     {business.linkedin && (
                       <a href={business.linkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded bg-[#F6F6F6] flex items-center justify-center hover:bg-[#eee] transition-colors">
                         <Linkedin className="h-4 w-4 text-[#242424]" />
+                      </a>
+                    )}
+                    {business.tiktok && (
+                      <a href={business.tiktok} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded bg-[#F6F6F6] flex items-center justify-center hover:bg-[#eee] transition-colors">
+                        <TikTokIcon className="h-4 w-4 text-[#242424]" />
                       </a>
                     )}
                   </div>

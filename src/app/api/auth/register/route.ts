@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
       twitter,
       linkedin,
       whatsapp,
+      tiktok,
     } = body;
 
     // Validation
@@ -98,6 +99,7 @@ export async function POST(request: NextRequest) {
         ...(twitter && { twitter }),
         ...(linkedin && { linkedin }),
         ...(whatsapp && { whatsapp }),
+        ...(tiktok && { tiktok }),
       },
     });
 

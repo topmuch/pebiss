@@ -4,10 +4,10 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://pebiss.sn'
 
 export const metadata: Metadata = {
   title: 'Contactez-nous - Pebiss',
-  description: 'Contactez l\'équipe Pebiss pour toute question, suggestion ou demande d\'information sur notre annuaire professionnel du Sénégal. Nous sommes disponibles par téléphone et email.',
+  description: 'Contactez l\'équipe Pebiss pour toute question, suggestion ou demande d\'information sur notre annuaire professionnel de Guinée-Bissau. Nous sommes disponibles par téléphone et email.',
   keywords: [
     'contact Pebiss',
-    'contacter annuaire Sénégal',
+    'contacter annuaire Guinée-Bissau',
     'support Pebiss',
     'aide annuaire professionnel',
   ],

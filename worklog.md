@@ -517,3 +517,56 @@ Stage Summary:
 - Admin can now enter any destination email to test SMTP configuration
 - Professional HTML test email includes SMTP connection details
 - All changes: prisma/schema.prisma, api/settings/route.ts, api/settings/test-email/route.ts, admin/parametres/page.tsx
+---
+Task ID: 2
+Agent: tiktok-social
+Task: Add TikTok social media field
+
+Work Log:
+- Added TikTokIcon inline SVG component to 4 frontend files (register, mon-entreprise, EntrepriseDetailClient, admin/parametres)
+- register/page.tsx: Added tiktok state variable, TikTok input field in social media section, tiktok in API body, changed country to free text input (removed hardcoded 'Sénégal'), changed city placeholder to 'Ex: Bissau'
+- mon-entreprise/page.tsx: Added tiktok to formData initialization, useEffect population, handleSaveSocial submission, and TikTok input field in Social tab
+- EntrepriseDetailClient.tsx: Added tiktok to BusinessData interface, TikTok link/icon in social links sidebar section
+- api/businesses/route.ts: Added tiktok to POST handler destructuring and business creation data
+- api/admin/businesses/route.ts: Added tiktok to POST handler destructuring and business creation data
+- api/auth/register/route.ts: Added tiktok to registration handler destructuring and business creation data
+- admin/parametres/page.tsx: Added tiktok to form state, initialization from config, and TikTok input in Social tab
+
+Stage Summary:
+- TikTok social media field fully integrated across 7 files (4 frontend, 3 backend)
+- All changes compile cleanly (no new lint errors)
+- Country field is now free text (not hardcoded to Sénégal)
+- City placeholder changed to 'Ex: Bissau'
+
+---
+Task ID: 3
+Agent: main
+Task: Change all Sénégal references to Guinée-Bissau
+
+Work Log:
+- Changed i18n.ts FR cta_desc: "entreprises sénégalaises" → "entreprises bissau-guinéennes"
+- Changed i18n.ts PT cta_desc: "empresas senegalesas" → "empresas guineenses"
+- Changed register_city_placeholder: "Ex: Dakar" → "Ex: Bissau"
+- Changed register_address_placeholder: "Ex: Rue 10, Médina" → "Ex: Avenue 14 de Novembro, Bissau"
+- Changed src/app/layout.tsx: All "Sénégal" → "Guinée-Bissau" in title, description, keywords, OG, twitter, locale "fr_SN" → "fr_GW"
+- Changed src/app/not-found.tsx: "Sénégal" → "Guinée-Bissau"
+- Changed src/app/(main)/layout.tsx: JSON-LD WebSite and Organization descriptions "du Sénégal" → "de Guinée-Bissau"
+- Changed all sub-layout.tsx metadata: annuaire, annonces, apropos, contact, publicite, reseaux-sociaux — all "Sénégal" → "Guinée-Bissau" in titles, descriptions, keywords
+- Changed entreprise/[slug]/page.tsx: fallback "Sénégal" → "Guinée-Bissau" in title, description, keywords, locale "fr_SN" → "fr_GW", country "SN" → "GW"
+- Changed EntrepriseDetailClient.tsx: Google Maps fallback "Sénégal" → "Guinée-Bissau"
+- Changed api/businesses/route.ts: country default "Sénégal" → "Guinée-Bissau"
+- Changed api/admin/businesses/route.ts: country default "Sénégal" → "Guinée-Bissau"
+- Changed dashboard/mon-entreprise/page.tsx: country default "Sénégal" → "" (empty string), placeholder "Sénégal" → "Guinée-Bissau", placeholder "Dakar" → "Bissau", "entreprise.sn" → "entreprise.gw"
+- Changed annuaire/page.tsx: SENEGAL_REGIONS → GUINEA_BISSAU_REGIONS with 9 Guinea-Bissau regions (Bissau, Biombo, Cacheu, Oio, Bafatá, Gabú, Tombali, Quinara, Bolama-Bijagós)
+- Changed shared/ad-banner.tsx: 4 banner subtitles "au Sénégal" → "en Guinée-Bissau", "Dakar" → "Bissau"
+- Changed register/page.tsx: WhatsApp placeholder "+221 7X XXX XX XX" → "+245 9X XXX XXXX", "entreprise.sn" → "entreprise.gw"
+- Verified with rg: zero remaining "senegal" references in all .ts/.tsx files
+
+Stage Summary:
+- All "Sénégal" / "sénégalaise" references changed to "Guinée-Bissau" / "bissau-guinéenne"
+- All "senegales" Portuguese references changed to "guineenses"
+- Country code SN → GW, locale fr_SN → fr_GW, phone prefix +221 → +245
+- Region list replaced with Guinea-Bissau's 9 administrative regions
+- City references changed from Dakar to Bissau
+- Domain placeholders changed from .sn to .gw
+- 18 files modified across the project

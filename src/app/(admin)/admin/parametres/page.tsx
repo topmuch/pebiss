@@ -22,6 +22,14 @@ import { Separator } from '@/components/ui/separator';
 import { Settings, Globe, Search, Share2, Mail, Bell, ImageIcon, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
+function TikTokIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15a6.34 6.34 0 0010.68 4.61V12.7a8.28 8.28 0 005.76 2.29V11.5a4.83 4.83 0 01-3.77-1.58V6.69h3.77z"/>
+    </svg>
+  );
+}
+
 export default function AdminParametresPage() {
   const { t, locale } = useTranslation();
   const queryClient = useQueryClient();
@@ -53,6 +61,7 @@ export default function AdminParametresPage() {
     twitter: '',
     linkedin: '',
     whatsapp: '',
+    tiktok: '',
     // SMTP
     smtpHost: '',
     smtpPort: '',
@@ -89,6 +98,7 @@ export default function AdminParametresPage() {
       twitter: config.twitter || '',
       linkedin: config.linkedin || '',
       whatsapp: config.whatsapp || '',
+      tiktok: config.tiktok || '',
       smtpHost: config.smtpHost || '',
       smtpPort: config.smtpPort || '',
       smtpUser: config.smtpUser || '',
@@ -460,6 +470,17 @@ export default function AdminParametresPage() {
                   value={form.whatsapp}
                   onChange={(e) => updateField('whatsapp', e.target.value)}
                   placeholder="+245 XX XXX XXXX"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <TikTokIcon className="h-4 w-4" />
+                  TikTok
+                </Label>
+                <Input
+                  value={form.tiktok}
+                  onChange={(e) => updateField('tiktok', e.target.value)}
+                  placeholder="https://tiktok.com/@pebiss"
                 />
               </div>
             </CardContent>

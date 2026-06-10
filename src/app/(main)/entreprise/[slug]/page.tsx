@@ -30,10 +30,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       return { title: 'Entreprise non trouvée' }
     }
 
-    const title = `${business.name} - ${business.category?.name || 'Entreprise'} à ${business.city || 'Sénégal'}`
+    const title = `${business.name} - ${business.category?.name || 'Entreprise'} à ${business.city || 'Guinée-Bissau'}`
     const description = business.description
       ? business.description.substring(0, 160)
-      : `${business.name}, ${business.category?.name || 'professionnel'} à ${business.city || 'Sénégal'}. Découvrez ses services, avis et coordonnées sur ${SITE_NAME}.`
+      : `${business.name}, ${business.category?.name || 'professionnel'} à ${business.city || 'Guinée-Bissau'}. Découvrez ses services, avis et coordonnées sur ${SITE_NAME}.`
     const imageUrl = business.coverImage || business.logo || `${SITE_URL}/hero-banner.jpg`
 
     const ogUrl = `${SITE_URL}/entreprise/${slug}`
@@ -41,14 +41,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title,
       description,
-      keywords: [business.name, business.city || '', business.region || '', business.category?.name || '', 'Sénégal', 'annuaire', 'Pebiss'].filter(Boolean),
+      keywords: [business.name, business.city || '', business.region || '', business.category?.name || '', 'Guinée-Bissau', 'annuaire', 'Pebiss'].filter(Boolean),
       openGraph: {
         title,
         description,
         url: ogUrl,
         siteName: SITE_NAME,
         images: [{ url: imageUrl, width: 1200, height: 630, alt: business.name }],
-        locale: 'fr_SN',
+        locale: 'fr_GW',
         type: 'article',
       },
       twitter: {
@@ -82,7 +82,7 @@ function JsonLdLocalBusiness({ business }: { business: any }) {
       streetAddress: business.address || undefined,
       addressLocality: business.city || undefined,
       addressRegion: business.region || undefined,
-      addressCountry: business.country || 'SN',
+      addressCountry: business.country || 'GW',
     },
     ...(business.website && { sameAs: [business.website, business.facebook, business.instagram, business.twitter, business.linkedin].filter(Boolean) }),
     ...(business.category && { category: business.category.name }),

@@ -31,7 +31,7 @@ export default function NotFound() {
         </div>
         <div className="mt-10 flex items-center justify-center gap-2 text-muted-foreground/40">
           <Building2 className="h-5 w-5" />
-          <span className="text-sm">Pebiss - Annuaire Professionnel du Sénégal</span>
+          <span className="text-sm">Pebiss - Annuaire Professionnel de Guinée-Bissau</span>
         </div>
       </div>
     </div>
