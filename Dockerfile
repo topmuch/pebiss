@@ -26,23 +26,24 @@ RUN cp -r public .next/standalone/public
 RUN cp -r .next/static .next/standalone/.next/static
 
 # Create persistent directories
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data /app/uploads
 
 EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL=file:/app/data/pebiss.db
+ENV UPLOADS_DIR=/app/uploads
 
 # ============================================================
 # ⚠️  IMPORTANT — COOLIFY VOLUME CONFIGURATION  ⚠️
 # ============================================================
 # In Coolify service settings → Volumes, add:
 #
-#   /app/data     ← SQLite database + uploaded images (ALL persistent data)
+#   /app/data     ← SQLite database
+#   /app/uploads  ← Uploaded images
 #
-# Uploaded images are stored at /app/data/uploads/ (same volume as DB).
-# This ensures images survive container restarts and redeployments.
+# This ensures data survives container restarts and redeployments.
 # ============================================================
 
-CMD sh -c "mkdir -p /app/data && export DATABASE_URL=file:/app/data/pebiss.db && npx prisma db push --skip-generate && node scripts/init-db.cjs && exec node .next/standalone/server.js"
+CMD sh -c "mkdir -p /app/data /app/uploads && export DATABASE_URL=file:/app/data/pebiss.db && export UPLOADS_DIR=/app/uploads && npx prisma db push --skip-generate && node scripts/init-db.cjs && exec node .next/standalone/server.js"

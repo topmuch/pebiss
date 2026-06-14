@@ -1,25 +1,24 @@
-import { join, dirname } from 'path';
-import { mkdirSync, existsSync, cpSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
+import { mkdirSync, existsSync } from 'fs';
 
 /**
- * Resolve the persistent uploads directory.
+ * Resolve the uploads directory.
  *
- * In production (Docker/Coolify):
- *   DATABASE_URL = file:/app/data/pebiss.db
- *   → uploads stored at <cwd>/db/uploads/  (same volume as DB)
+ * Priority:
+ *   1. UPLOADS_DIR env var (explicit, recommended for production)
+ *   2. Fallback: <cwd>/uploads
  *
- * In development:
- *   DATABASE_URL = file:./db/custom.db
- *   → uploads stored at <cwd>/db/uploads/
- *
- * This ensures images survive container restarts because they share
- * the same persistent volume as the SQLite database.
+ * In production (Docker/Coolify): UPLOADS_DIR=/app/uploads
+ * In development: uses <project>/uploads
  */
 function resolveUploadsDir(): string {
-  const dbUrl = process.env.DATABASE_URL || 'file:./db/custom.db';
-  const dbPath = dbUrl.replace(/^file:/, '');
-  const dataDir = dirname(dbPath);
-  return join(process.cwd(), dataDir, 'uploads');
+  // 1. Explicit env var (production)
+  if (process.env.UPLOADS_DIR) {
+    return process.env.UPLOADS_DIR;
+  }
+
+  // 2. Fallback: <cwd>/uploads
+  return join(process.cwd(), 'uploads');
 }
 
 let _uploadsDir: string | null = null;
@@ -30,45 +29,8 @@ export function getUploadsDir(): string {
     // Ensure directory exists
     if (!existsSync(_uploadsDir)) {
       mkdirSync(_uploadsDir, { recursive: true });
+      console.log(`[uploads] Created directory: ${_uploadsDir}`);
     }
   }
   return _uploadsDir;
-}
-
-/**
- * One-time migration: copy uploads from old location to new persistent location.
- * Called once at server startup. Does nothing if source doesn't exist or is empty.
- */
-export function migrateOldUploads(): void {
-  const newDir = getUploadsDir();
-  const oldDir = join(process.cwd(), 'uploads');
-
-  // Skip if old dir doesn't exist
-  if (!existsSync(oldDir)) return;
-
-  // Read contents of both directories
-  let oldFiles: string[] = [];
-  let newFiles: string[] = [];
-  try {
-    oldFiles = readdirSync(oldDir);
-    newFiles = existsSync(newDir) ? readdirSync(newDir) : [];
-  } catch {
-    return;
-  }
-
-  if (oldFiles.length === 0 || newFiles.length > 0) return;
-
-  try {
-    for (const file of oldFiles) {
-      const src = join(oldDir, file);
-      const dst = join(newDir, file);
-      if (statSync(src).isFile()) {
-        cpSync(src, dst);
-        console.log(`[migrate] Copied ${file} → persistent uploads`);
-      }
-    }
-    console.log(`[migrate] ✅ Migrated ${oldFiles.length} files to persistent storage`);
-  } catch (err) {
-    console.error('[migrate] Error migrating uploads:', err);
-  }
 }
